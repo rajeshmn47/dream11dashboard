@@ -9,6 +9,7 @@
 .selected{
     background-color: #1A73E8 !important;
     color:#FFFFFF !important;
+    font-size:1;
 }
 .notselected{
     background-color: transparent !important;
