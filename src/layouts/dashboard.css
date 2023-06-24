@@ -1,6 +1,6 @@
 .MuiButton-root{
-    color:#FFFFFF !important;
     color:#000000 !important;
+    display: block;
 }
 .MuiButtonGroup-root{
     border-radius: 12px !important;
