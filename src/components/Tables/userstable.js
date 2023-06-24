@@ -1,16 +1,13 @@
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { URL } from "constants/userconstants";
 //import { URL } from "./../../constants/userconstants";
 //import { getrowClass } from "../../../utils/getrowclass";
 import MatchesJoined from "./matchesjoined";
 import CreatedAt from "./createdat";
 import "./users.css";
-import { getrowClass } from "utils/getrowclass";
 
 const columns = [
   {
@@ -149,33 +146,12 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-export function Users({ matchdata, team }) {
+export function Users({ users }) {
   const [match, setMatch] = useState(null);
   const { id } = useParams();
-  const [users, setUsers] = useState([]);
-  const [players, setPlayers] = useState([]);
-  const [allPlayers, setAllplayers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dreamTeam, setDreamTeam] = useState([]);
   const [next, setNext] = useState(false);
-  useEffect(() => {
-    const all = [];
-    if (team?.length > 0) {
-      team.forEach((t) => {
-        all.push(...t.players);
-      });
-    }
-    setAllplayers([...all]);
-  }, [team]);
-  useEffect(() => {
-    async function getupcoming() {
-      setLoading(true);
-      const data = await axios.get(`${URL}/getallusers`);
-      setUsers(data.data.data);
-      setLoading(false);
-    }
-    getupcoming();
-  }, [id]);
 
   return (
     <Box
@@ -206,7 +182,6 @@ export function Users({ matchdata, team }) {
             },
           },
         }}
-        getRowClassName={(params) => getrowClass(allPlayers, dreamTeam, params.row.playerName)}
       />
     </Box>
   );

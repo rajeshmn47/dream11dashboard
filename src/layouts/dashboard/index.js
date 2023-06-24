@@ -39,40 +39,46 @@ import Team from "components/Tables/teamstable";
 import Contests from "components/Tables/conteststable";
 import { URL } from "constants/userconstants";
 import { setchartdata } from "utils/chartdata";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { setlinechartdata } from "utils/chartdata";
 import { setmatcheschartdata } from "utils/chartdata";
+import "./../dashboard.css";
+import { Button, ButtonGroup } from "@mui/material";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
-  const [loading,setLoading]=useState(false)
-  const [teams,setTeams]=useState([]);
-  const [users,setUsers]=useState([]);
-  const [allusers,setAllUsers]=useState([])
-  const [chartData,setChartData]=useState();
-  const [salesData,setSalesData]=useState([]);
-  const [matchesChart,setMatchesChart]=useState([]);
+  const [loading, setLoading] = useState(false);
+  const [teams, setTeams] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [allusers, setAllUsers] = useState([]);
+  const [allteams, setAllTeams] = useState([]);
+  const [chartData, setChartData] = useState();
+  const [salesData, setSalesData] = useState([]);
+  const [matchesChart, setMatchesChart] = useState([]);
+  const [allMatches, setAllMatches] = useState([]);
+  const [type, setType] = useState("week");
   useEffect(() => {
     async function getteams() {
       setLoading(true);
-      let data = await axios.get(`${URL}/gettodayteams`);
+      let allteamsdata = await axios.get(`${URL}/getallteams`);
+      setAllTeams(allteamsdata.data.teams);
       let alluserdata = await axios.get(`${URL}/auth/getallusers`);
       setAllUsers(alluserdata.data.users);
-      setChartData(setchartdata(data.data.teams));
-      setTeams(data.data.teams)
-      let userdata = await axios.get(`${URL}/auth/gettodayusers`);
-      let ab=setlinechartdata(userdata.data.users)
-      console.log(ab,'ab')
-      setSalesData(ab)
-      setUsers(userdata.data.users);
-      let z = await axios.get(`${URL}/todaymatches`);
-      let matchesdata=setmatcheschartdata(z);
-      setMatchesChart(matchesdata);
+      let allmatchesdata = await axios.get(`${URL}/allmatches`);
+      console.log(allmatchesdata.data.matches, "mat");
+      setAllMatches(allmatchesdata.data.matches);
       setLoading(false);
     }
     getteams();
   }, []);
+  useEffect(() => {
+    setChartData(setchartdata(allteams, type));
+    setSalesData(setlinechartdata(allusers, type));
+    setMatchesChart(setmatcheschartdata(allMatches, type));
+  }, [type, allteams, allusers, allMatches]);
+
+  useEffect(() => {}, [type]);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -113,7 +119,7 @@ function Dashboard() {
                 color="success"
                 icon="store"
                 title="Revenue"
-                count={allusers.reduce((a,b)=>b.wallet+a,0)}
+                count={allusers.reduce((a, b) => b.wallet + a, 0)}
                 percentage={{
                   color: "success",
                   amount: "+1%",
@@ -138,20 +144,46 @@ function Dashboard() {
             </MDBox>
           </Grid>
         </Grid>
+        <ButtonGroup
+          variant="contained"
+          aria-label="outlined primary button group"
+          style={{ color: "#FFFFFF !important" }}
+        >
+          <Button
+            onClick={() => setType("day")}
+            className={type == "day" ? "selected" : "notselected"}
+          >
+            day
+          </Button>
+          <Button
+            onClick={() => setType("week")}
+            className={type == "week" ? "selected" : "notselected"}
+          >
+            week
+          </Button>
+          <Button
+            onClick={() => setType("month")}
+            className={type == "month" ? "selected" : "notselected"}
+          >
+            month
+          </Button>
+        </ButtonGroup>
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={12} md={6} lg={6}>
               <MDBox mb={3}>
-                {chartData&&<ReportsBarChart
-                  color="info"
-                  title="teams created"
-                  description="Last Campaign Performance"
-                  date="campaign sent 2 days ago"
-                  chart={chartData}
-                />}
+                {chartData && (
+                  <ReportsBarChart
+                    color="info"
+                    title="today's teams"
+                    description="Last Campaign Performance"
+                    date="campaign sent 2 days ago"
+                    chart={chartData}
+                  />
+                )}
               </MDBox>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={12} md={6} lg={6}>
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="success"
@@ -166,11 +198,22 @@ function Dashboard() {
                 />
               </MDBox>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
+            <Grid item xs={12} md={6} lg={6}>
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="dark"
-                  title="live matches"
+                  title="Today's matches"
+                  description="Last Campaign Performance"
+                  date="just updated"
+                  chart={matchesChart}
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={6}>
+              <MDBox mb={3}>
+                <ReportsLineChart
+                  color="primary"
+                  title="Today's matches"
                   description="Last Campaign Performance"
                   date="just updated"
                   chart={matchesChart}
@@ -192,13 +235,13 @@ function Dashboard() {
         <MDBox>
           <Grid container spacing={3}>
             <Grid item xs={12} md={12} lg={12}>
-           <Users/>
+              <Users users={allusers} />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
-           <Team/>
+              <Team teams={allteams} />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
-           <Contests/>
+              <Contests />
             </Grid>
           </Grid>
         </MDBox>

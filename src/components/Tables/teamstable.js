@@ -131,25 +131,14 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
   },
 }));
 
-export function Team({ matchdata, team }) {
+export function Team({ teams }) {
   const [match, setMatch] = useState(null);
   const { id } = useParams();
-  const [teams, setTeams] = useState([]);
   const [players, setPlayers] = useState([]);
   const [allPlayers, setAllplayers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [dreamTeam, setDreamTeam] = useState([]);
   const [next, setNext] = useState(false);
-  useEffect(() => {
-    async function getupcoming() {
-      setLoading(true);
-      const data = await axios.get(`${URL}/getallteams`);
-      setTeams(data.data.teams);
-      setLoading(false);
-    }
-    getupcoming();
-  }, [id]);
-
   return (
     <Box
       sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }}
