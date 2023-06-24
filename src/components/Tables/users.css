@@ -13,3 +13,7 @@
   color: #7b809a;
   font-family: "Roboto", "Helvetica", "Arial", sans-serif;
 }
+.tabletitle h6 {
+  color: #344767 !important;
+  margin-top: 20px;
+}

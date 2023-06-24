@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import MatchesJoined from "./matchesjoined";
 import CreatedAt from "./createdat";
 import "./users.css";
+import MDTypography from "components/MDTypography";
 
 const columns = [
   {
@@ -154,36 +155,42 @@ export function Users({ users }) {
   const [next, setNext] = useState(false);
 
   return (
-    <Box
-      sx={{
-        height: 400,
-        width: "100%",
-        color: "#FFFFFF !important",
-        boxShadow:
-          "box-shadow: 0rem 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),0rem 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06)",
-      }}
-      className="container"
-    >
-      <StripedDataGrid
-        loading={loading}
-        rows={users}
-        columns={columns}
-        disableRowSelectionOnClick
-        getRowId={(row) => row._id}
-        showCellVerticalBorder
-        showColumnVerticalBorder
-        columnHeaderHeight={42}
-        rowHeight={42}
-        initialState={{
-          columns: {
-            columnVisibilityModel: {
-              // Hide columns status and traderName, the other columns will remain visible
-              playerId: false,
-            },
-          },
+    <>
+      {" "}
+      <MDTypography variant="h6" color="#344767" className="tabletitle">
+        Users Table
+      </MDTypography>
+      <Box
+        sx={{
+          height: 400,
+          width: "100%",
+          color: "#FFFFFF !important",
+          boxShadow:
+            "box-shadow: 0rem 0.25rem 0.375rem -0.0625rem rgba(0, 0, 0, 0.1),0rem 0.125rem 0.25rem -0.0625rem rgba(0, 0, 0, 0.06)",
         }}
-      />
-    </Box>
+        className="container"
+      >
+        <StripedDataGrid
+          loading={loading}
+          rows={users}
+          columns={columns}
+          disableRowSelectionOnClick
+          getRowId={(row) => row._id}
+          showCellVerticalBorder
+          showColumnVerticalBorder
+          columnHeaderHeight={42}
+          rowHeight={42}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                // Hide columns status and traderName, the other columns will remain visible
+                playerId: false,
+              },
+            },
+          }}
+        />
+      </Box>
+    </>
   );
 }
 

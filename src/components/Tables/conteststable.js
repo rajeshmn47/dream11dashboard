@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import { URL } from "./../../constants/userconstants";
 import { getrowClass } from "../../utils/getrowclass";
 import CreatedAt from "./createdat";
+import MDTypography from "components/MDTypography";
 
 const columns = [
   {
@@ -15,7 +16,6 @@ const columns = [
     width: 180,
     hide: true,
     editable: true,
-
   },
   {
     field: "updatedAt",
@@ -36,7 +36,6 @@ const columns = [
     width: 180,
     editable: true,
   },
-
 ];
 
 const ODD_OPACITY = 0.2;
@@ -60,9 +59,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       "&:hover, &.Mui-hovered": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
@@ -93,9 +90,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       "&:hover, &.Mui-hovered": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
@@ -125,9 +120,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       "&:hover, &.Mui-hovered": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
@@ -145,7 +138,7 @@ export function Contests({ matchdata, team }) {
   const [match, setMatch] = useState(null);
   const { id } = useParams();
   const [teams, setTeams] = useState([]);
-  const [contests,setContests]=useState([])
+  const [contests, setContests] = useState([]);
   const [players, setPlayers] = useState([]);
   const [allPlayers, setAllplayers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -155,38 +148,40 @@ export function Contests({ matchdata, team }) {
     async function getupcoming() {
       setLoading(true);
       const data = await axios.get(`${URL}/getallcontests`);
-      console.log(data,'data')
-     setContests(data.data.contests)
-      setLoading(false)
+      console.log(data, "data");
+      setContests(data.data.contests);
+      setLoading(false);
     }
     getupcoming();
   }, [id]);
 
   return (
-    <Box
-      sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }}
-      className="container"
-    >
-      <StripedDataGrid
-        loading={loading}
-        rows={contests}
-        columns={columns}
-        disableRowSelectionOnClick
-        getRowId={(row) => row._id}
-        showCellVerticalBorder
-        showColumnVerticalBorder
-        columnHeaderHeight={42}
-        rowHeight={42}
-        initialState={{
-          columns: {
-            columnVisibilityModel: {
-              // Hide columns status and traderName, the other columns will remain visible
-              playerId: false,
+    <>
+      <MDTypography variant="h6" color="#344767" className="tabletitle">
+        Contests Table
+      </MDTypography>
+      <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">
+        <StripedDataGrid
+          loading={loading}
+          rows={contests}
+          columns={columns}
+          disableRowSelectionOnClick
+          getRowId={(row) => row._id}
+          showCellVerticalBorder
+          showColumnVerticalBorder
+          columnHeaderHeight={42}
+          rowHeight={42}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                // Hide columns status and traderName, the other columns will remain visible
+                playerId: false,
+              },
             },
-          },
-        }}
-      />
-    </Box>
+          }}
+        />
+      </Box>
+    </>
   );
 }
 

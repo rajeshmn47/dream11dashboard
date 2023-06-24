@@ -10,6 +10,7 @@ import MatchesJoined from "./matchesjoined";
 import CreatedAt from "./createdat";
 import "./users.css";
 import User from "./user";
+import MDTypography from "components/MDTypography";
 
 const columns = [
   {
@@ -50,9 +51,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       "&:hover, &.Mui-hovered": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
@@ -83,9 +82,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       "&:hover, &.Mui-hovered": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
@@ -115,9 +112,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
       "&:hover, &.Mui-hovered": {
         backgroundColor: alpha(
           theme.palette.primary.main,
-          ODD_OPACITY +
-            theme.palette.action.selectedOpacity +
-            theme.palette.action.hoverOpacity
+          ODD_OPACITY + theme.palette.action.selectedOpacity + theme.palette.action.hoverOpacity
         ),
         // Reset on touch devices, it doesn't add specificity
         "@media (hover: none)": {
@@ -140,30 +135,32 @@ export function Team({ teams }) {
   const [dreamTeam, setDreamTeam] = useState([]);
   const [next, setNext] = useState(false);
   return (
-    <Box
-      sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }}
-      className="container"
-    >
-      <StripedDataGrid
-        loading={loading}
-        rows={teams}
-        columns={columns}
-        disableRowSelectionOnClick
-        getRowId={(row) => row._id}
-        showCellVerticalBorder
-        showColumnVerticalBorder
-        columnHeaderHeight={42}
-        rowHeight={42}
-        initialState={{
-          columns: {
-            columnVisibilityModel: {
-              // Hide columns status and traderName, the other columns will remain visible
-              playerId: false,
+    <>
+      <MDTypography variant="h6" color="#344767" className="tabletitle">
+        Teams Table
+      </MDTypography>
+      <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">
+        <StripedDataGrid
+          loading={loading}
+          rows={teams}
+          columns={columns}
+          disableRowSelectionOnClick
+          getRowId={(row) => row._id}
+          showCellVerticalBorder
+          showColumnVerticalBorder
+          columnHeaderHeight={42}
+          rowHeight={42}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                // Hide columns status and traderName, the other columns will remain visible
+                playerId: false,
+              },
             },
-          },
-        }}
-      />
-    </Box>
+          }}
+        />
+      </Box>
+    </>
   );
 }
 
