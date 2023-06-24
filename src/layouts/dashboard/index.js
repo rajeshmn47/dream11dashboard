@@ -74,7 +74,7 @@ function Dashboard() {
   }, []);
   useEffect(() => {
     setChartData(setchartdata(allteams, type));
-    setSalesData(setlinechartdata(allusers, type));
+    setSalesData(setchartdata(allusers, type));
     setMatchesChart(setmatcheschartdata(allMatches, type));
   }, [type, allteams, allusers, allMatches]);
 
