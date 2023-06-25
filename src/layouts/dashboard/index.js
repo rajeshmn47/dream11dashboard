@@ -81,7 +81,7 @@ function Dashboard() {
     setChartData(setchartdata(allteams, type,'teams'));
     setSalesData(setchartdata(allusers, type,'users'));
     setTransactionsChart(setchartdata(transactions,type,'transactions'))
-    setMatchesChart(setmatcheschartdata(allMatches, type));
+    setMatchesChart(setmatcheschartdata(allMatches, type,'matches'));
   }, [type, allteams, allusers, allMatches,transactions]);
 
   useEffect(() => {}, [type]);
