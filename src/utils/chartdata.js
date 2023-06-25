@@ -161,6 +161,38 @@ export function setmatcheschartdata(matches, type) {
   }
 }
 
+export function setdoughchartdata(arr,type) {
+  let data = {
+    labels: ["M", "T", "W", "T", "F", "S", "S"],
+    datasets: { label: "Sales", data: [50, 20, 10, 22, 50, 10, 40] },
+  };
+  let users=[];
+  let matchids=[];
+    for (let i = 0; i < arr.length; i++) {
+    users.push(arr[i].username);
+    matchids.push(arr[i].matchIds.length)
+    }
+    data.labels = users;
+    data.datasets.label = "matches";
+    data.datasets.data = matchids;
+    data.datasets.backgroundColor=[
+      'rgba(255, 99, 132, 0.2)',
+      'rgba(54, 162, 235, 0.2)',
+      'rgba(255, 206, 86, 0.2)',
+      'rgba(75, 192, 192, 0.2)',
+      'rgba(153, 102, 255, 0.2)',
+      'rgba(255, 159, 64, 0.2)',
+    ];
+    data.datasets.borderColor=[ 
+    'rgba(255, 99, 132, 1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(75, 192, 192, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)'];
+    return data;
+}
+
 export function todaysdata(arr){
   let today = [];
   for (let i = 0; i < arr.length; i++) {
@@ -172,4 +204,46 @@ export function todaysdata(arr){
     }
   }
   return today;
+}
+
+export function thisweekdata(arr){
+  let thisweekdata = [];
+  for (let i = 0; i < arr.length; i++) {
+    let a = new Date(arr[i].createdAt).getDate();
+    let b = new Date().getDate();
+    let d = b - a;
+    let x = new Date().getMonth();
+    let y = new Date(arr[i].createdAt).getMonth();
+    if (d < 7 && x == y) {
+      thisweekdata.push(new Date(arr[i].createdAt).getDay());
+    }
+  }
+  return thisweekdata;
+}
+
+export function lastweekdata(arr){
+  let lastweekdata = [];
+  for (let i = 0; i < arr.length; i++) {
+    let a = new Date(arr[i].createdAt).getDate();
+    let b = new Date().getDate();
+    let d = b - a;
+    let x = new Date().getMonth();
+    let y = new Date(arr[i].createdAt).getMonth();
+    if (d >7 && (d<14) && x == y) {
+      lastweekdata.push(new Date(arr[i].createdAt).getDay());
+    }
+  }
+  return lastweekdata;
+}
+
+export function getpercentage(arr){
+let a=thisweekdata(arr).length;
+let b=lastweekdata(arr).length;
+let z=((a/b)*100)-100;
+if(z>0){
+return Math.floor(z);
+}
+else{
+  return Math.floor(z);
+}
 }

@@ -46,6 +46,9 @@ import { setmatcheschartdata } from "utils/chartdata";
 import "./../dashboard.css";
 import { Button, ButtonGroup } from "@mui/material";
 import { todaysdata } from "utils/chartdata";
+import { getpercentage } from "utils/chartdata";
+import DefaultDoughnutChart from "examples/Charts/DoughnutCharts/DefaultDoughnutChart";
+import { setdoughchartdata } from "utils/chartdata";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
@@ -60,6 +63,7 @@ function Dashboard() {
   const [transactions,setTransactions]=useState([]);
   const [transactionsChart, setTransactionsChart] = useState([]);
   const [allMatches, setAllMatches] = useState([]);
+  const [doughnutData,setDoughnutData]=useState([])
   const [type, setType] = useState("week");
   useEffect(() => {
     async function getteams() {
@@ -82,9 +86,12 @@ function Dashboard() {
     setSalesData(setchartdata(allusers, type,'users'));
     setTransactionsChart(setchartdata(transactions,type,'transactions'))
     setMatchesChart(setmatcheschartdata(allMatches, type,'matches'));
+    setDoughnutData(setdoughchartdata(allusers,'users'))
   }, [type, allteams, allusers, allMatches,transactions]);
 
-  useEffect(() => {}, [type]);
+  useEffect(() => {
+    console.log(doughnutData,'dough')
+  }, [type]);
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -98,8 +105,8 @@ function Dashboard() {
                 title="Today's Teams"
                 count={todaysdata(allteams).length}
                 percentage={{
-                  color: "success",
-                  amount: "+55%",
+                  color: getpercentage(allteams)>0?"success":"error",
+                  amount:getpercentage(allteams)>0?"+"+getpercentage(allteams)+"%":getpercentage(allteams)+"%",
                   label: "than lask week",
                 }}
               />
@@ -112,9 +119,9 @@ function Dashboard() {
                 title="Today's Users"
                 count={todaysdata(allusers).length}
                 percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
+                  color: getpercentage(allusers)>0?"success":"error",
+                  amount: getpercentage(allusers)>0?"+"+getpercentage(allusers)+"%":getpercentage(allusers)+"%",
+                  label: "than last week",
                 }}
               />
             </MDBox>
@@ -223,6 +230,17 @@ function Dashboard() {
                   description="Last Campaign Performance"
                   date="just updated"
                   chart={transactionsChart}
+                />
+              </MDBox>
+            </Grid>
+            <Grid item xs={12} md={6} lg={12}>
+              <MDBox mb={3}>
+                <DefaultDoughnutChart
+                  color="primary"
+                  title="Users"
+                  description="Last Campaign Performance"
+                  date="just updated"
+                  chart={doughnutData}
                 />
               </MDBox>
             </Grid>
