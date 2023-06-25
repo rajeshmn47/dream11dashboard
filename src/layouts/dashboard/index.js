@@ -45,6 +45,7 @@ import { setlinechartdata } from "utils/chartdata";
 import { setmatcheschartdata } from "utils/chartdata";
 import "./../dashboard.css";
 import { Button, ButtonGroup } from "@mui/material";
+import { todaysdata } from "utils/chartdata";
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData;
@@ -56,6 +57,8 @@ function Dashboard() {
   const [chartData, setChartData] = useState();
   const [salesData, setSalesData] = useState([]);
   const [matchesChart, setMatchesChart] = useState([]);
+  const [transactions,setTransactions]=useState([]);
+  const [transactionsChart, setTransactionsChart] = useState([]);
   const [allMatches, setAllMatches] = useState([]);
   const [type, setType] = useState("week");
   useEffect(() => {
@@ -66,17 +69,20 @@ function Dashboard() {
       let alluserdata = await axios.get(`${URL}/auth/getallusers`);
       setAllUsers(alluserdata.data.users);
       let allmatchesdata = await axios.get(`${URL}/allmatches`);
-      console.log(allmatchesdata.data.matches, "mat");
+      let alltransactionsdata = await axios.get(`${URL}/payment/alltransactions`);
+      console.log(alltransactionsdata.data, "mat");
+      setTransactions(alltransactionsdata.data)
       setAllMatches(allmatchesdata.data.matches);
       setLoading(false);
     }
     getteams();
   }, []);
   useEffect(() => {
-    setChartData(setchartdata(allteams, type));
-    setSalesData(setchartdata(allusers, type));
+    setChartData(setchartdata(allteams, type,'teams'));
+    setSalesData(setchartdata(allusers, type,'users'));
+    setTransactionsChart(setchartdata(transactions,type,'transactions'))
     setMatchesChart(setmatcheschartdata(allMatches, type));
-  }, [type, allteams, allusers, allMatches]);
+  }, [type, allteams, allusers, allMatches,transactions]);
 
   useEffect(() => {}, [type]);
   return (
@@ -90,7 +96,7 @@ function Dashboard() {
                 color="dark"
                 icon="weekend"
                 title="Today's Teams"
-                count={teams.length}
+                count={todaysdata(allteams).length}
                 percentage={{
                   color: "success",
                   amount: "+55%",
@@ -104,7 +110,7 @@ function Dashboard() {
               <ComplexStatisticsCard
                 icon="leaderboard"
                 title="Today's Users"
-                count={users.length}
+                count={todaysdata(allusers).length}
                 percentage={{
                   color: "success",
                   amount: "+3%",
@@ -213,10 +219,10 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="primary"
-                  title="Today's matches"
+                  title="Today's transactions"
                   description="Last Campaign Performance"
                   date="just updated"
-                  chart={matchesChart}
+                  chart={transactionsChart}
                 />
               </MDBox>
             </Grid>

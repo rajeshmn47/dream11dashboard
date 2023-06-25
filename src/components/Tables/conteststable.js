@@ -157,7 +157,7 @@ export function Contests({ matchdata, team }) {
 
   return (
     <>
-      <MDTypography variant="h6" color="#344767" className="tabletitle">
+      <MDTypography variant="h6" color="#344767" className="tabletitlei">
         Contests Table
       </MDTypography>
       <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">

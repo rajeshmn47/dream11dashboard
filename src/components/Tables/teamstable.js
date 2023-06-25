@@ -136,7 +136,7 @@ export function Team({ teams }) {
   const [next, setNext] = useState(false);
   return (
     <>
-      <MDTypography variant="h6" color="#344767" className="tabletitle">
+      <MDTypography variant="h6" color="#344767" className="tabletitlei">
         Teams Table
       </MDTypography>
       <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">

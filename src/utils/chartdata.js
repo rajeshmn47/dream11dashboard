@@ -52,7 +52,7 @@ const formattedhours = [
   "0am",
 ];
 const formattedweeks = ["S", "M", "T", "W", "T", "F", "S"];
-export function setchartdata(teams, type) {
+export function setchartdata(teams, type,l) {
   if (type == "day") {
     let data = {
       labels: ["M", "T", "W", "T", "F", "S", "S"],
@@ -99,7 +99,7 @@ export function setchartdata(teams, type) {
       weeklydata.push(a.length);
     }
     data.labels = formattedweeks;
-    data.datasets.label = "teams";
+    data.datasets.label = l;
     data.datasets.data = weeklydata;
     return data;
   }
@@ -159,4 +159,17 @@ export function setmatcheschartdata(matches, type) {
     data.datasets.data = weeklydata;
     return data;
   }
+}
+
+export function todaysdata(arr){
+  let today = [];
+  for (let i = 0; i < arr.length; i++) {
+    let x = new Date(arr[i].createdAt);
+    let y = new Date();
+    let z = x.getDate() == y.getDate() && x.getMonth() == y.getMonth();
+    if (z) {
+      today.push(new Date(arr[i].createdAt).getHours());
+    }
+  }
+  return today;
 }
