@@ -319,7 +319,7 @@ function Dashboard() {
               <Card>
                 <MDBox
                   mx={2}
-                  mt={-3}
+                  mt={3}
                   py={3}
                   px={2}
                   variant="gradient"
@@ -344,7 +344,7 @@ function Dashboard() {
               <Card>
                 <MDBox
                   mx={2}
-                  mt={-3}
+                  mt={3}
                   py={3}
                   px={2}
                   variant="gradient"
@@ -358,7 +358,7 @@ function Dashboard() {
                 </MDBox>
                 <MDBox pt={3}>
                   <DataTable
-                    table={{columns:wcolumns,rows:wrows}}
+                    table={{ columns: wcolumns, rows: wrows }}
                     isSorted={false}
                     entriesPerPage={false}
                     showTotalEntries={false}

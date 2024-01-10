@@ -152,7 +152,7 @@ export function Contests({ matchdata, team }) {
       setContests(data.data.contests);
       setLoading(false);
     }
-    getupcoming();
+    //();
   }, [id]);
 
   return (
