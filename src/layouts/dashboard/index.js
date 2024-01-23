@@ -61,8 +61,8 @@ import { setdoughchartdata } from "utils/chartdata";
 
 
 const ApproveButton = styled(Button)`
-  background-color: var(--green);
-  color: #ffffff;
+  background: linear-gradient(195deg, #66BB6A, #43A047) !important;
+  color: #ffffff !important;
   width: 160px;
   margin: 0 auto;
   &:hover {
@@ -392,16 +392,20 @@ function Dashboard() {
           <h5>₹{selected?.data && selected?.data.amount}</h5>
         </DeatilTop>
         <DeatilTop>
-          <p>utr no.</p>
-          <h5>₹ {selected?.data?.utr}</h5>
+          <p>user</p>
+          <h5>{selected?.data?.user[0]?.username}</h5>
         </DeatilTop>
         <DeatilTop>
-          <p>reciept image</p>
-          <h5>₹ 0</h5>
+          <p>upi ID</p>
+          <h5>{selected?.data?.user[0]?.upiId}</h5>
         </DeatilTop>
-        <ApproveButton onClick={() =>
+        <DeatilTop>
+          <p>account details</p>
+          <h5>{selected?.data?.user[0]?.accountNumber}</h5>
+          <h5>{selected?.data?.user[0]?.ifsc}</h5>
+        </DeatilTop>
+        <ApproveButton color="success" onClick={() =>
           handleApprove()}>approve</ApproveButton>
-
       </Drawer>
       <Footer />
     </DashboardLayout>

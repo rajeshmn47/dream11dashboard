@@ -15,3 +15,6 @@
     background-color: transparent !important;
     color:#000000;
 }
+.mdbox{
+    cursor: pointer;
+}

@@ -25,8 +25,10 @@ import { useState } from "react";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
+import "./../../dashboard.css";
 
-export default function data({wcolumnData,handleWView}) {
+export default function data({ wcolumnData, handleWView }) {
+  console.log(wcolumnData, 'columndata');
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
       <MDAvatar src={image} name={name} size="sm" />
@@ -48,7 +50,7 @@ export default function data({wcolumnData,handleWView}) {
     </MDBox>
   );
 
- 
+
 
   return {
     wcolumns: [
@@ -58,23 +60,23 @@ export default function data({wcolumnData,handleWView}) {
       { Header: "action", accessor: "action", align: "center" },
     ],
 
-    wrows: [...wcolumnData.map((c)=>{
-   return {
-        author: <Author image={team2} name="John Michael" email="john@creative-tim.com" />,
+    wrows: [...wcolumnData.map((c) => {
+      return {
+        author: <Author image={team2} name={c.user[0].username} email={c.user[0].email} />,
         function: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            {c.upiId}
-            </MDTypography>
-          ),
+            {c.user[0].upiId}
+          </MDTypography>
+        ),
         status: (
-        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-          {c.amount}
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            {c.amount}
           </MDTypography>
         ),
         action: (
-          <MDBox ml={-1} onClick={()=>handleWView(c)}>
-          <MDBadge badgeContent="view" color="success" variant="gradient" size="sm" />
-        </MDBox>
+          <MDBox ml={-1} onClick={() => handleWView(c)} className="mdbox">
+            <MDBadge badgeContent="view" color="success" variant="gradient" size="sm" />
+          </MDBox>
         ),
       }
     })]
