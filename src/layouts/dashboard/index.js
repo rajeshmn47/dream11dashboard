@@ -154,8 +154,11 @@ function Dashboard() {
   const handleWView = (s) => {
     setSelected({ open: true, data: s, type: 'w' })
   }
-  const handleApprove = () => {
-    axios.get(`${URL}/payment/approve?userId=${selected.data.userId}&depositId=${selected.data._id}`)
+  const handleApprove = async () => {
+    await axios.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
+    setSelected({...selected,open:false});
+    let w = await axios.get(`${URL}/payment/withdrawData`);
+    setWColumnData(w.data.withdrawals);
   }
   const { columns, rows } = depositsTableData({ columnData, handleView });
   const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
@@ -341,7 +344,7 @@ function Dashboard() {
                   />
                 </MDBox>
               </Card>
-              <Card>
+              <Card className="withdrawals">
                 <MDBox
                   mx={2}
                   mt={3}
