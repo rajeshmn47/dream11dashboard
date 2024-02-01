@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState } from "react";
 
 // react-router-dom components
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 
 // @mui material components
 import Card from "@mui/material/Card";
@@ -28,7 +28,6 @@ import MuiLink from "@mui/material/Link";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import GoogleIcon from "@mui/icons-material/Google";
-
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -40,11 +39,35 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import { API } from "api";
+import { URL } from "constants/userconstants";
+import axios from "axios";
+import { setLoggedIn } from "context";
+import { useMaterialUIController } from "context";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-
+  const navigate = useNavigate();
+  const [controller, dispatch] = useMaterialUIController();
+  const [data, setData] = useState({ email: '', password: '' });
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setData({ ...data, [name]: value })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const responseData = await axios.post(`${URL}/auth/login`, {
+      myform: { ...data }
+    });
+    console.log(responseData, 'response')
+    localStorage.setItem("token", JSON.stringify(responseData.data.token));
+    localStorage.setItem("user", JSON.stringify(responseData.data.user));
+    setLoggedIn(dispatch, true);
+    navigate('/dashboard')
+  }
 
   return (
     <BasicLayout image={bgImage}>
@@ -84,10 +107,10 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth />
+              <MDInput type="email" label="Email" fullWidth name="email" value={data.email} onChange={(e) => handleChange(e)} />
             </MDBox>
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth />
+              <MDInput type="password" label="Password" fullWidth name="password" value={data.password} onChange={(e) => handleChange(e)} />
             </MDBox>
             <MDBox display="flex" alignItems="center" ml={-1}>
               <Switch checked={rememberMe} onChange={handleSetRememberMe} />
@@ -101,7 +124,7 @@ function Basic() {
                 &nbsp;&nbsp;Remember me
               </MDTypography>
             </MDBox>
-            <MDBox mt={4} mb={1}>
+            <MDBox mt={4} mb={1} onClick={(e) => handleSubmit(e)}>
               <MDButton variant="gradient" color="info" fullWidth>
                 sign in
               </MDButton>

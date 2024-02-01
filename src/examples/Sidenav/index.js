@@ -49,7 +49,7 @@ import {
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
-  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor } = controller;
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor, loggedIn } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
 
@@ -83,8 +83,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
+  console.log(loggedIn,'loggedIn')
+
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.map(({ type, name, icon, title, noCollapse, key, href, route }) => {
+  const renderRoutes = routes.filter((r) => ((!loggedIn) || !((r.key == 'sign-in') || (r.key == 'sign-up')))).map(({ type, name, icon, title, noCollapse, key, href, route }) => {
     let returnValue;
 
     if (type === "collapse") {
@@ -138,7 +140,8 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     }
 
     return returnValue;
-  });
+  })
+
 
   return (
     <SidenavRoot

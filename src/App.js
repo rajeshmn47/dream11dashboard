@@ -52,6 +52,7 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 // Images
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
+import { setLoggedIn } from "context";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -79,6 +80,10 @@ export default function App() {
     setRtlCache(cacheRtl);
   }, []);
 
+  useEffect(() => {
+    checkUserToken()
+  }, [])
+
   // Open sidenav when mouse enter on mini sidenav
   const handleOnMouseEnter = () => {
     if (miniSidenav && !onMouseEnter) {
@@ -92,6 +97,18 @@ export default function App() {
     if (onMouseEnter) {
       setMiniSidenav(dispatch, true);
       setOnMouseEnter(false);
+    }
+  };
+
+  const checkUserToken = () => {
+    const userToken = JSON.parse(localStorage.getItem("token"));
+    const user = JSON.parse(localStorage.getItem("user"));
+    console.log(user,'user')
+    if (!userToken || userToken === "undefined") {
+      setLoggedIn(dispatch,false);
+    }
+    else{
+    setLoggedIn(dispatch,true);
     }
   };
 
