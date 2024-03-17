@@ -59,7 +59,7 @@ function Basic() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const responseData = await axios.post(`${URL}/auth/login`, {
+    const responseData = await axios.post(`${URL}/auth/logine`, {
       myform: { ...data }
     });
     console.log(responseData, 'response')

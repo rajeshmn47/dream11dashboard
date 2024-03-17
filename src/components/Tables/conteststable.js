@@ -8,6 +8,7 @@ import { URL } from "./../../constants/userconstants";
 import { getrowClass } from "../../utils/getrowclass";
 import CreatedAt from "./createdat";
 import MDTypography from "components/MDTypography";
+import { API } from "api";
 
 const columns = [
   {
@@ -147,7 +148,7 @@ export function Contests({ matchdata, team }) {
   useEffect(() => {
     async function getupcoming() {
       setLoading(true);
-      const data = await axios.get(`${URL}/getallcontests`);
+      const data = await API.get(`${URL}/getallcontests`);
       console.log(data, "data");
       setContests(data.data.contests);
       setLoading(false);

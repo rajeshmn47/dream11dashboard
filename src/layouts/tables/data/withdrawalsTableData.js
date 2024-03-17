@@ -65,7 +65,7 @@ export default function data({ wcolumnData, handleWView }) {
         author: <Author image={team2} name={c?.user[0]?.username} email={c?.user[0]?.email} />,
         function: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-            {c.user[0].upiId}
+            {c.user[0]?.upiId}
           </MDTypography>
         ),
         status: (

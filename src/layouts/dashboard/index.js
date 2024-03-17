@@ -58,6 +58,7 @@ import { todaysdata } from "utils/chartdata";
 import { getpercentage } from "utils/chartdata";
 import DefaultDoughnutChart from "examples/Charts/DoughnutCharts/DefaultDoughnutChart";
 import { setdoughchartdata } from "utils/chartdata";
+import { API } from "api";
 
 
 const ApproveButton = styled(Button)`
@@ -114,9 +115,9 @@ function Dashboard() {
   useEffect(() => {
     async function getDeposits() {
       setLoading(true);
-      let a = await axios.get(`${URL}/payment/depositData`);
+      let a = await API.get(`${URL}/payment/depositData`);
       setColumnData(a.data.deposits);
-      let w = await axios.get(`${URL}/payment/withdrawData`);
+      let w = await API.get(`${URL}/payment/withdrawData`);
       setWColumnData(w.data.withdrawals);
     }
     getDeposits();
@@ -124,12 +125,12 @@ function Dashboard() {
   useEffect(() => {
     async function getteams() {
       setLoading(true);
-      let allteamsdata = await axios.get(`${URL}/getallteams`);
+      let allteamsdata = await API.get(`${URL}/getallteams`);
       setAllTeams(allteamsdata.data.teams);
-      let alluserdata = await axios.get(`${URL}/auth/getallusers`);
+      let alluserdata = await API.get(`${URL}/auth/getallusers`);
       setAllUsers(alluserdata.data.users);
-      let allmatchesdata = await axios.get(`${URL}/allmatches`);
-      let alltransactionsdata = await axios.get(`${URL}/payment/alltransactions`);
+      let allmatchesdata = await API.get(`${URL}/allmatches`);
+      let alltransactionsdata = await API.get(`${URL}/payment/alltransactions`);
       console.log(alltransactionsdata.data, "mat");
       setTransactions(alltransactionsdata.data)
       setAllMatches(allmatchesdata.data.matches);
@@ -155,9 +156,9 @@ function Dashboard() {
     setSelected({ open: true, data: s, type: 'w' })
   }
   const handleApprove = async () => {
-    await axios.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
+    await API.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
     setSelected({...selected,open:false});
-    let w = await axios.get(`${URL}/payment/withdrawData`);
+    let w = await API.get(`${URL}/payment/withdrawData`);
     setWColumnData(w.data.withdrawals);
   }
   const { columns, rows } = depositsTableData({ columnData, handleView });

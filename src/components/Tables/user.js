@@ -5,6 +5,7 @@ import { FURL, URL } from "./../../constants/userconstants";
 import { getDisplayDate } from "../../utils/dateformat";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API } from "api";
 
 const Container = styled.div`
   display: flex;
@@ -26,7 +27,7 @@ export function User(props) {
   console.log(value, "vcalue");
   useEffect(() => {
     async function getuser() {
-      const data = await axios.get(`${URL}/auth/getuser/${value}`);
+      const data = await API.get(`${URL}/auth/getuser/${value}`);
       setUser(data.data.user);
     }
     getuser();
