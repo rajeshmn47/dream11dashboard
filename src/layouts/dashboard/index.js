@@ -110,8 +110,11 @@ function Dashboard() {
   const [transactions, setTransactions] = useState([]);
   const [transactionsChart, setTransactionsChart] = useState([]);
   const [allMatches, setAllMatches] = useState([]);
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [todayMatches, setTodayMatches] = useState([]);
   const [doughnutData, setDoughnutData] = useState([])
   const [type, setType] = useState("week");
+  const [date, setDate] = useState(new Date());
   useEffect(() => {
     async function getDeposits() {
       setLoading(true);
@@ -130,10 +133,12 @@ function Dashboard() {
       let alluserdata = await API.get(`${URL}/auth/getallusers`);
       setAllUsers(alluserdata.data.users);
       let allmatchesdata = await API.get(`${URL}/allmatches`);
+      let allMatches = await API.get(`${URL}/recentMatches`);
       let alltransactionsdata = await API.get(`${URL}/payment/alltransactions`);
-      console.log(alltransactionsdata.data, "mat");
-      setTransactions(alltransactionsdata.data)
-      setAllMatches(allmatchesdata.data.matches);
+      console.log(allMatches?.data, "alle");
+      setTransactions(alltransactionsdata.data);
+      setAllMatches(allmatchesdata?.data?.matches);
+      setRecentMatches(allMatches?.data?.all?.results);
       setLoading(false);
     }
     getteams();
@@ -142,12 +147,13 @@ function Dashboard() {
     setChartData(setchartdata(allteams, type, 'teams'));
     setSalesData(setchartdata(allusers, type, 'users'));
     setTransactionsChart(setchartdata(transactions, type, 'transactions'))
-    setMatchesChart(setmatcheschartdata(allMatches, type, 'matches'));
+    if (allMatches?.length > 0) {
+      setMatchesChart(setmatcheschartdata(allMatches, type, 'matches'));
+    }
     setDoughnutData(setdoughchartdata(allusers, 'users'))
   }, [type, allteams, allusers, allMatches, transactions]);
 
   useEffect(() => {
-    console.log(doughnutData, 'dough')
   }, [type]);
   const handleView = (s) => {
     setSelected({ open: true, data: s })
@@ -157,12 +163,13 @@ function Dashboard() {
   }
   const handleApprove = async () => {
     await API.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
-    setSelected({...selected,open:false});
+    setSelected({ ...selected, open: false });
     let w = await API.get(`${URL}/payment/withdrawData`);
     setWColumnData(w.data.withdrawals);
   }
   const { columns, rows } = depositsTableData({ columnData, handleView });
   const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
+  console.log(allMatches, "allmatches");
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -203,7 +210,7 @@ function Dashboard() {
                 color="success"
                 icon="store"
                 title="Revenue"
-                count={allusers.reduce((a, b) => b.wallet + a, 0)}
+                count={Math.floor(allusers.reduce((a, b) => b.wallet + a, 0))}
                 percentage={{
                   color: "success",
                   amount: "+1%",
@@ -219,6 +226,67 @@ function Dashboard() {
                 icon="person_add"
                 title="Users"
                 count={allusers.length}
+                percentage={{
+                  color: "success",
+                  amount: "",
+                  label: "Just updated",
+                }}
+              />
+            </MDBox>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} marginTop={1}>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="dark"
+                icon="weekend"
+                title="Pending KYC"
+                count={todaysdata(allteams).length}
+                percentage={{
+                  color: getpercentage(allteams) > 0 ? "success" : "error",
+                  amount: getpercentage(allteams) > 0 ? "+" + getpercentage(allteams) + "%" : getpercentage(allteams) + "%",
+                  label: "than lask week",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                icon="leaderboard"
+                title="Withdrawal requests"
+                count={wcolumnData?.length}
+                percentage={{
+                  color: getpercentage(allusers) > 0 ? "success" : "error",
+                  amount: getpercentage(allusers) > 0 ? "+" + getpercentage(allusers) + "%" : getpercentage(allusers) + "%",
+                  label: "than last week",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="success"
+                icon="store"
+                title="Total Deposits"
+                count={Math.floor(allusers.reduce((a, b) => b.wallet + a, 0))}
+                percentage={{
+                  color: "success",
+                  amount: "+1%",
+                  label: "than yesterday",
+                }}
+              />
+            </MDBox>
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <MDBox mb={1.5}>
+              <ComplexStatisticsCard
+                color="primary"
+                icon="person_add"
+                title="Upcoming Matches"
+                count={(recentMatches.filter((m) => ((new Date(m.date)?.getDate() == new Date()?.getDate())))).length}
                 percentage={{
                   color: "success",
                   amount: "",
@@ -304,7 +372,7 @@ function Dashboard() {
                 />
               </MDBox>
             </Grid>
-            <Grid item xs={12} md={6} lg={12}>
+            {/*<Grid item xs={12} md={6} lg={12}>
               <MDBox mb={3}>
                 <DefaultDoughnutChart
                   color="primary"
@@ -315,6 +383,7 @@ function Dashboard() {
                 />
               </MDBox>
             </Grid>
+                */}
           </Grid>
         </MDBox>
         <MDBox>
@@ -372,7 +441,7 @@ function Dashboard() {
               </Card>
             </Grid>
             <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview />
+              <OrdersOverview allMatches={(recentMatches.filter((m) => ((new Date(m.date) > new Date(date.getTime() - 48 * 60 * 60 * 1000)) && (new Date(m.date) < new Date(date.getTime() + 48 * 60 * 60 * 1000)))).sort((a, b) => new Date(a.date) - new Date(b.date)))} />
             </Grid>
           </Grid>
         </MDBox>

@@ -47,6 +47,7 @@ import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import MatchDetails from "layouts/matchdetails";
 
 const routes = [
   {
@@ -59,7 +60,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Tables",
+    name: "Withdrawals(24)",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
@@ -67,7 +68,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Billing",
+    name: "KYC(5)",
     key: "billing",
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/billing",
@@ -75,7 +76,31 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "RTL",
+    name: "Matches(24)",
+    key: "tables",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/tables",
+    component: <Tables />,
+  },
+  {
+    type: "collapse",
+    name: "Deposits(24)",
+    key: "tables",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/tables",
+    component: <Tables />,
+  },
+  {
+    type: "collapsed",
+    name: "MatchDetails",
+    key: "matchDetails",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/matchDetails/:id",
+    component: <MatchDetails />,
+  },
+  {
+    type: "collapse",
+    name: "Suspicious Activities(4)",
     key: "rtl",
     icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
     route: "/rtl",

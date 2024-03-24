@@ -22,10 +22,10 @@ import PropTypes from "prop-types";
 import MDBadgeRoot from "components/MDBadge/MDBadgeRoot";
 
 const MDBadge = forwardRef(
-  ({ color, variant, size, circular, indicator, border, container, children, ...rest }, ref) => (
+  ({ color, variant, size, circular, indicator, border, container, children, matches, ...rest }, ref) => (
     <MDBadgeRoot
       {...rest}
-      ownerState={{ color, variant, size, circular, indicator, border, container, children }}
+      ownerState={{ color, variant, size, circular, indicator, border, container, matches, children }}
       ref={ref}
       color="default"
     >

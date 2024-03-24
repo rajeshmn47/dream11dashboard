@@ -28,9 +28,13 @@ import { useTimeline } from "examples/Timeline/context";
 
 // Custom styles for the TimelineItem
 import timelineItem from "examples/Timeline/TimelineItem/styles";
+import { Badge } from "@mui/material";
+import MDBadge from "components/MDBadge";
+import { useNavigate } from "react-router-dom";
 
-function TimelineItem({ color, icon, title, dateTime, description, lastItem }) {
+function TimelineItem({ matchId, color, icon, status, title, dateTime, description, lastItem }) {
   const isDark = useTimeline();
+  const navigate = useNavigate();
 
   return (
     <MDBox position="relative" mb={3} sx={(theme) => timelineItem(theme, { lastItem, isDark })}>
@@ -55,6 +59,14 @@ function TimelineItem({ color, icon, title, dateTime, description, lastItem }) {
         <MDTypography variant="button" fontWeight="medium" color={isDark ? "white" : "dark"}>
           {title}
         </MDTypography>
+        <MDBox mt={0.5}>
+          <MDTypography variant="button" fontWeight="medium" color={isDark ? "white" : "dark"}>
+            <div onClick={() => navigate(`/matchDetails/${matchId}`)} style={{ display: "inline-block" }}>
+              <MDBadge badgeContent="view" color="warning" variant="gradient" size="sm" matches />
+            </div>
+            <MDBadge badgeContent={status} color={color} variant="gradient" size="sm" matches />
+          </MDTypography>
+        </MDBox>
         <MDBox mt={0.5}>
           <MDTypography variant="caption" color={isDark ? "secondary" : "text"}>
             {dateTime}

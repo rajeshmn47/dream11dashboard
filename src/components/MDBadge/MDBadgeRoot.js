@@ -19,7 +19,7 @@ import { styled } from "@mui/material/styles";
 
 export default styled(Badge)(({ theme, ownerState }) => {
   const { palette, typography, borders, functions } = theme;
-  const { color, circular, border, size, indicator, variant, container, children } = ownerState;
+  const { color, circular, border, size, indicator, variant, container, children, matches } = ownerState;
 
   const { white, dark, gradients, badgeColors } = palette;
   const { size: fontSize, fontWeightBold } = typography;
@@ -100,7 +100,8 @@ export default styled(Badge)(({ theme, ownerState }) => {
   // styles for the badge with no children and container={false}
   const standAloneStyles = () => ({
     position: "static",
-    marginLeft: pxToRem(8),
+    marginLeft: !matches ? pxToRem(8) : 0,
+    marginRight: matches ? pxToRem(8) : 0,
     transform: "none",
     fontSize: pxToRem(9),
   });
