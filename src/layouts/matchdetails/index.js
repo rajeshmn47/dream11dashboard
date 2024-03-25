@@ -74,7 +74,7 @@ display:none;
   }
 `;
 const Status = styled.p`
-
+white-space:nowrap;
 @media (max-width: 600px) {
     font-size:12px;
   }
@@ -169,10 +169,10 @@ function MatchDetails() {
                         }}
                       >
                         <GreenMark />
-                       <Status>
-                        {liveMatch?.result == 'Complete' ? 'Completed' : liveMatch?.result == 'In Progress' ?
-                          'In Play' : getDisplayDate(match?.date, new Date())}
-                          </Status>
+                        <Status>
+                          {liveMatch?.result == 'Complete' ? 'Completed' : liveMatch?.result == 'In Progress' ?
+                            'In Play' : getDisplayDate(match?.date, new Date())}
+                        </Status>
                       </Grid>
                       <Grid item sm={5} xs={5} style={{ textAlign: 'right' }}>
                         <>
