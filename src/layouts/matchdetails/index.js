@@ -57,6 +57,28 @@ const GreenMark = styled.span`
   display: block;
   margin-right: 6px;
 `;
+const TeamName = styled.p`
+text-overflow: ellipsis;
+overflow: hidden;
+display:block;
+@media (max-width: 600px) {
+    display:none;
+  }
+`;
+const TeamCode = styled.p`
+text-overflow: ellipsis;
+overflow: hidden;
+display:none;
+@media (max-width: 600px) {
+    display:block;
+  }
+`;
+const Status = styled.p`
+
+@media (max-width: 600px) {
+    font-size:12px;
+  }
+`;
 
 function MatchDetails() {
   const { columns, rows } = authorsTableData();
@@ -115,28 +137,31 @@ function MatchDetails() {
                       justifyContent="space-between"
                       alignItems="center"
                     >
-                      <Grid item sm={4} xs={4} style={{ textAlign: 'left' }}>
-                        <p
+                      <Grid item sm={5} xs={5} style={{ textAlign: 'left' }}>
+                        <TeamName>
+                          {match?.teamHomeName}
+                        </TeamName>
+                        <TeamCode
                           style={{
                             textOverflow: 'ellipsis',
                             overflow: 'hidden',
                           }}
                         >
-                          {match?.teamHomeName}
-                        </p>
+                          {match?.teamHomeCode}
+                        </TeamCode>
                         <Grid container>
-                          <Grid item sm={4} xs={4} md={2} style={{ textAlign: 'left' }}>
+                          <Grid item sm={3} xs={3} md={2} style={{ textAlign: 'left' }}>
                             <FlagImg src={match?.teamHomeFlagUrl} alt="flag" />
                           </Grid>
-                          <Grid item sm={4} xs={4} md={3} style={{ textAlign: 'left' }}>
+                          <Grid item sm={6} xs={6} md={3} style={{ textAlign: 'left' }}>
                             {liveMatch?.runFI || "-"}/{liveMatch?.wicketsFI || "-"}
                           </Grid>
                         </Grid>
                       </Grid>
                       <Grid
                         item
-                        sm={4}
-                        xs={4}
+                        sm={2}
+                        xs={2}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -144,25 +169,26 @@ function MatchDetails() {
                         }}
                       >
                         <GreenMark />
+                       <Status>
                         {liveMatch?.result == 'Complete' ? 'Completed' : liveMatch?.result == 'In Progress' ?
                           'In Play' : getDisplayDate(match?.date, new Date())}
+                          </Status>
                       </Grid>
-                      <Grid item sm={4} xs={4} style={{ textAlign: 'right' }}>
+                      <Grid item sm={5} xs={5} style={{ textAlign: 'right' }}>
                         <>
-                          <p
-                            style={{
-                              textOverflow: 'ellipsis',
-                              overflow: 'hidden',
-                            }}
-                          >
+                          <TeamName>
                             {' '}
                             {match?.teamAwayName}
-                          </p>
+                          </TeamName>
+                          <TeamCode>
+                            {' '}
+                            {match?.teamAwayCode}
+                          </TeamCode>
                           <Grid container justifyContent="flex-end">
                             <Grid item sm={6} xs={6} md={3} lg={3} style={{ textAlign: 'right' }}>
                               {liveMatch?.runSI || "-"}/{liveMatch?.wicketsSI || "-"}
                             </Grid>
-                            <Grid item sm={6} xs={6} md={2} lg={2} style={{ textAlign: 'right' }}>
+                            <Grid item sm={3} xs={3} md={2} lg={2} style={{ textAlign: 'right' }}>
                               <FlagImg src={match?.teamAwayFlagUrl} alt="flag" />
                             </Grid>
                           </Grid>

@@ -101,14 +101,19 @@ export default function App() {
   };
 
   const checkUserToken = () => {
-    const userToken = JSON.parse(localStorage.getItem("token"));
-    const user = JSON.parse(localStorage.getItem("user"));
-    console.log(user,'user')
-    if (!userToken || userToken === "undefined") {
-      setLoggedIn(dispatch,false);
-    }
-    else{
-    setLoggedIn(dispatch,true);
+    try {
+      const userToken = JSON.parse(localStorage.getItem("token"));
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log(user, 'user')
+      if (!userToken || userToken === "undefined") {
+        setLoggedIn(dispatch, false);
+      }
+      else {
+        setLoggedIn(dispatch, true);
+      }
+    } catch (error) {
+      localStorage.removeItem('token');
+      setLoggedIn(dispatch, false);
     }
   };
 
