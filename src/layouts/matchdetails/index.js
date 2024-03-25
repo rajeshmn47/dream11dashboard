@@ -84,6 +84,7 @@ function MatchDetails() {
   const { columns, rows } = authorsTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
   const [contests, setContests] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [contestUsers, setContestUsers] = useState([]);
   const [match, setMatch] = useState([]);
@@ -97,7 +98,9 @@ function MatchDetails() {
       setAllUsers(alluserdata.data.users);
       let matchData = await API.get(`${URL}/getmatch/${id}`);
       setMatch(matchData?.data?.match);
-      setLiveMatch(matchData?.data?.livematch)
+      setLiveMatch(matchData?.data?.livematch);
+      const teamsData = await API.get(`${URL}/getTeamsofMatch/${id}`);
+      setTeams([...teamsData?.data?.teams])
     }
     if (id) {
       getContests()
@@ -113,7 +116,7 @@ function MatchDetails() {
     }
   }, [allUsers, contests]);
   const { wcolumns, wrows } = contestsTableData({ wcolumnData: contests });
-  const { ucolumns, urows } = contestUsersTableData({ ucolumnData: contestUsers });
+  const { ucolumns, urows } = contestUsersTableData({ ucolumnData: contestUsers, contests: contests, teams: teams });
   console.log(liveMatch, 'match');
   return (
     <DashboardLayout>

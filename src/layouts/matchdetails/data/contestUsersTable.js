@@ -28,7 +28,7 @@ import team4 from "assets/images/team-4.jpg";
 import "./../../dashboard.css";
 import MDProgress from "components/MDProgress";
 
-export default function data({ ucolumnData }) {
+export default function data({ ucolumnData, contests, teams }) {
   console.log(ucolumnData, 'columnedata');
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -65,7 +65,9 @@ export default function data({ ucolumnData }) {
   return {
     ucolumns: [
       { Header: "username", accessor: "username", align: "left" },
-      { Header: "wallet", accessor: "wallet", align: "left" }
+      { Header: "wallet", accessor: "wallet", align: "left" },
+      { Header: "teams", accessor: "teamse", align: "left" },
+      { Header: "contests", accessor: "contestse", align: "left" },
     ],
 
     urows: ucolumnData?.length > 0 ? [...ucolumnData?.map((c) => {
@@ -75,6 +77,12 @@ export default function data({ ucolumnData }) {
         </MDTypography>,
         wallet: <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
           {c?.wallet}
+        </MDTypography>,
+        contestse: <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          {contests?.filter((co) => co.userIds.includes(c?._id)).length}
+        </MDTypography>,
+        teamse: <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          {teams?.filter((t) => t?.userId == c?._id).length}
         </MDTypography>
       }
     })] : []
