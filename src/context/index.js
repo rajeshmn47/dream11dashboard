@@ -83,7 +83,7 @@ function MaterialUIControllerProvider({ children }) {
     openConfigurator: false,
     direction: "ltr",
     layout: "dashboard",
-    darkMode: false,
+    darkMode: true,
     loggedIn: false
   };
 
