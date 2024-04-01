@@ -115,7 +115,8 @@ function Dashboard() {
     async function getteams() {
       setLoading(true);
       let allteamsdata = await API.get(`${URL}/getallteams`);
-      setAllTeams(allteamsdata.data.teams);
+      setTeams(allteamsdata.data.teams);
+      setAllTeams([...allteamsdata.data.teams.map((team)=>({...team.team[0]}))])
       let alluserdata = await API.get(`${URL}/auth/getallusers`);
       setAllUsers(alluserdata.data.users);
       let allmatchesdata = await API.get(`${URL}/allmatches`);
@@ -155,7 +156,7 @@ function Dashboard() {
   }
   const { columns, rows } = depositsTableData({ columnData, handleView });
   const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
-  console.log(allMatches, "allmatches");
+  console.log(allteams, "allmatches");
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -437,7 +438,7 @@ function Dashboard() {
               <Users users={allusers} />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
-              <Team teams={allteams} />
+              <Team teams={teams} />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
               <Contests />
