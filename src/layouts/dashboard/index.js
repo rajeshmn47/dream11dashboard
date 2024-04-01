@@ -301,7 +301,7 @@ function Dashboard() {
             week
           </Button>
           <Button
-            onClick={() => alert('its not working')}
+            onClick={() => setType("month")}
             className={type == "month" ? "selected" : "notselected"}
           >
             month
