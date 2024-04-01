@@ -21,6 +21,13 @@ const columns = [
     editable: true
   },
   {
+    field: "email",
+    headerName: "EMAIL",
+    width: 180,
+    hide: true,
+    editable: true
+  },
+  {
     field: "createdAt",
     headerName: "CREATED AT",
     width: 180,
@@ -142,7 +149,7 @@ export function Team({ teams }) {
       <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">
         <StripedDataGrid
           loading={loading}
-          rows={teams?.map((t) => { return ({ ...t.team[0],username:t.user[0].username })})}
+          rows={teams?.map((t) => { return ({ ...t.team[0],username:t.user[0].username,email:t.user[0].email })})}
           columns={columns}
           disableRowSelectionOnClick
           getRowId={(row) => row._id}
