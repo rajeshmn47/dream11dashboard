@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { getDisplayDate } from "utils/dateformat";
-import { FURL } from "./../../constants/userconstants";
+import { FURL } from "../../constants/userconstants";
 import PropTypes from "prop-types";
 
 const Container = styled.div`
@@ -21,11 +21,9 @@ const Container = styled.div`
 `;
 export function CreatedAt(props) {
   const { value } = props;
-  console.log(value,'value');
-  const date = value?.createdAt ? value?.createdAt : value?.createdAt
   return (
     <Container className="dream">
-      <p>{getDisplayDate(value, "sc", new Date())}</p>
+      <p>{getDisplayDate(value?.createdAt, "sc", new Date())}</p>
       <img className="dreamicon" src={`${FURL}/dreamteam.jpeg`} />
     </Container>
   );

@@ -154,6 +154,7 @@ export function Contests({ matchdata, team }) {
       setLoading(false);
     }
     //();
+    getupcoming()
   }, [id]);
 
   return (

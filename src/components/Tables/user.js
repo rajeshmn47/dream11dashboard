@@ -23,18 +23,10 @@ const Container = styled.div`
 `;
 export function User(props) {
   const { value } = props;
-  const [user, setUser] = useState(null);
   console.log(value, "vcalue");
-  useEffect(() => {
-    async function getuser() {
-      const data = await API.get(`${URL}/auth/getuser/${value}`);
-      setUser(data.data.user);
-    }
-    getuser();
-  }, [value]);
   return (
     <Container className="dream">
-      <p>{user?.username && user.username}</p>
+      <p>{value?.username && value.username}</p>
     </Container>
   );
 }

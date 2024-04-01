@@ -17,30 +17,19 @@ Coded by www.creative-tim.com
 import Grid from "@mui/material/Grid";
 import { Drawer } from "@mui/material";
 import DataTable from "examples/Tables/DataTable";
-
-// Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import Card from "@mui/material/Card";
-// Material Dashboard 2 React components
 import MDTypography from "components/MDTypography";
-// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import ComplexStatisticsCard from "examples/Cards/StatisticsCards/ComplexStatisticsCard";
-
-// Data
-import reportsBarChartData from "layouts/dashboard/data/reportsBarChartData";
 import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
-
-import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import depositsTableData from "layouts/tables/data/depositsTableData";
 import withdrawalsTableData from "layouts/tables/data/withdrawalsTableData";
-// Dashboard components
-import Projects from "layouts/dashboard/components/Projects";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import Users from "components/Tables/userstable";
 import Team from "components/Tables/teamstable";
@@ -49,14 +38,11 @@ import Contests from "components/Tables/conteststable";
 import { URL } from "constants/userconstants";
 import { setchartdata } from "utils/chartdata";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { setlinechartdata } from "utils/chartdata";
 import { setmatcheschartdata } from "utils/chartdata";
 import "./../dashboard.css";
 import { Button, ButtonGroup } from "@mui/material";
 import { todaysdata } from "utils/chartdata";
 import { getpercentage } from "utils/chartdata";
-import DefaultDoughnutChart from "examples/Charts/DoughnutCharts/DefaultDoughnutChart";
 import { setdoughchartdata } from "utils/chartdata";
 import { API } from "api";
 

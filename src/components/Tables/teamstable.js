@@ -14,12 +14,11 @@ import MDTypography from "components/MDTypography";
 
 const columns = [
   {
-    field: "userId",
+    field: "username",
     headerName: "USER",
     width: 180,
     hide: true,
-    editable: true,
-    renderCell: User,
+    editable: true
   },
   {
     field: "createdAt",
@@ -134,6 +133,7 @@ export function Team({ teams }) {
   const [loading, setLoading] = useState(false);
   const [dreamTeam, setDreamTeam] = useState([]);
   const [next, setNext] = useState(false);
+  console.log(teams?.map((t) => { return ({ ...t.team[0],username:t.user[0].username }) }),'teamsee')
   return (
     <>
       <MDTypography variant="h6" color="#344767" className="tabletitlei">
@@ -142,7 +142,7 @@ export function Team({ teams }) {
       <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">
         <StripedDataGrid
           loading={loading}
-          rows={teams}
+          rows={teams?.map((t) => { return ({ ...t.team[0],username:t.user[0].username })})}
           columns={columns}
           disableRowSelectionOnClick
           getRowId={(row) => row._id}

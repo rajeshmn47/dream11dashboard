@@ -158,7 +158,7 @@ export function Users({ users }) {
     <>
       {" "}
       <MDTypography variant="h6" color="#344767" className="tabletitle">
-        Users Table
+        Users Tables
       </MDTypography>
       <Box
         sx={{
