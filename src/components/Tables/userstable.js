@@ -50,6 +50,12 @@ const columns = [
     width: 90,
     editable: true,
   },
+  {
+    field: "verified",
+    headerName: "VERIFIED",
+    width: 90,
+    editable: true,
+  }
 ];
 const ODD_OPACITY = 0.2;
 const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
