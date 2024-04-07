@@ -427,8 +427,8 @@ function Dashboard() {
                 </MDBox>
               </Card>
             </Grid>
-            <Grid item xs={12} md={6} lg={4}>
-              <OrdersOverview allMatches={(recentMatches.filter((m) => ((new Date(m.date) > new Date(date.getTime() - 48 * 60 * 60 * 1000)) && (new Date(m.date) < new Date(date.getTime() + 48 * 60 * 60 * 1000)))).sort((a, b) => new Date(a.date) - new Date(b.date)))} />
+            <Grid item xs={12} md={6} lg={4} className="matcheslist">
+              <OrdersOverview allMatches={(recentMatches.filter((m) => ((new Date(m.date) > new Date(date.getTime() - 24 * 60 * 60 * 1000)) && (new Date(m.date) < new Date(date.getTime() + 24 * 60 * 60 * 1000)))).sort((a, b) => new Date(a.date) - new Date(b.date)))} />
             </Grid>
           </Grid>
         </MDBox>

@@ -16,7 +16,7 @@ Coded by www.creative-tim.com
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 
 // @mui material components
 import { ThemeProvider } from "@mui/material/styles";
@@ -68,6 +68,7 @@ export default function App() {
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
+  const navigate = useNavigate();
   const { pathname } = useLocation();
 
   // Cache for the rtl
@@ -107,6 +108,8 @@ export default function App() {
       console.log(user, 'user')
       if (!userToken || userToken === "undefined") {
         setLoggedIn(dispatch, false);
+        navigate('/authentication/sign-in')
+
       }
       else {
         setLoggedIn(dispatch, true);

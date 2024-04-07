@@ -1,23 +1,32 @@
-.MuiButton-root{
-    color:#000000 !important;
+.MuiButton-root {
+    color: #000000 !important;
     display: block;
 }
-.MuiButtonGroup-root{
+
+.MuiButtonGroup-root {
     border-radius: 12px !important;
     border: 1px solid #1A73E8;
 }
-.selected{
+
+.selected {
     background-color: #1A73E8 !important;
-    color:#FFFFFF !important;
-    font-size:1;
+    color: #FFFFFF !important;
+    font-size: 1;
 }
-.notselected{
+
+.notselected {
     background-color: transparent !important;
-    color:#000000;
+    color: #000000;
 }
-.mdbox{
+
+.mdbox {
     cursor: pointer;
 }
-.withdrawals{
+
+.withdrawals {
     margin-top: 20px;
+}
+
+.matcheslist {
+    max-height: 1125px;
 }
