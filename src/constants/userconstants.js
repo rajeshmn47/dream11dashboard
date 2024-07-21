@@ -58,8 +58,8 @@ function geturl() {
     return "http://localhost:8000";
     //return "https://apk.thepowerplay.co";
   }
-  ////return "https://apk.thepowerplay.co";
-  return "https://dreamelevenclonebackend.onrender.com";
+  //return "https://apk.thepowerplay.co";
+  return "https://backendforpuand-dream11.onrender.com/auth/getallusers";
 }
 
 function getfrontendurl() {
