@@ -59,7 +59,7 @@ function geturl() {
     //return "https://apk.thepowerplay.co";
   }
   //return "https://apk.thepowerplay.co";
-  return "https://backendforpuand-dream11.onrender.com";
+  return "https://dreamelevenclonebackend.onrender.com";
 }
 
 function getfrontendurl() {
