@@ -59,7 +59,7 @@ function geturl() {
     //return "https://apk.thepowerplay.co";
   }
   //return "https://apk.thepowerplay.co";
-  return "https://dreamelevenclonebackend.onrender.com";
+  return "https://dreamelevenclonebackend-m6g4.onrender.com";
 }
 
 function getfrontendurl() {
