@@ -54,7 +54,6 @@ function DataTable({
     : ["5", "10", "15", "20", "25"];
   const columns = useMemo(() => table.columns, [table]);
   const data = useMemo(() => table.rows, [table]);
-
   const tableInstance = useTable(
     { columns, data, initialState: { pageIndex: 0 } },
     useGlobalFilter,
@@ -194,6 +193,7 @@ function DataTable({
                   width={column.width ? column.width : "auto"}
                   align={column.align ? column.align : "left"}
                   sorted={setSortedValue(column)}
+                  
                 >
                   {column.render("Header")}
                 </DataTableHeadCell>

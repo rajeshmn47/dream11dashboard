@@ -57,6 +57,8 @@ function geturl() {
   if (current == "local") {
     return "http://localhost:8000";
     //return "https://apk.thepowerplay.co";
+    //return "http://46.28.44.4:8000";
+
   }
   //return "https://apk.thepowerplay.co";
   //return "https://dreamelevenclonebackend-m6g4.onrender.com";

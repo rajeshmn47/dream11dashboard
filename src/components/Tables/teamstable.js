@@ -137,10 +137,13 @@ export function Team({ teams }) {
   const { id } = useParams();
   const [players, setPlayers] = useState([]);
   const [allPlayers, setAllplayers] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [dreamTeam, setDreamTeam] = useState([]);
   const [next, setNext] = useState(false);
-  console.log(teams?.map((t) => { return ({ ...t.team[0],username:t.user[0].username }) }),'teamsee')
+  useEffect(() => {
+    teams.length > 0 && setLoading(false)
+  }, [teams])
+  console.log(teams?.map((t) => { return ({ ...t?.team[0], username: t.user[0]?.username }) }), 'teamsee')
   return (
     <>
       <MDTypography variant="h6" color="#344767" className="tabletitlei">
@@ -149,7 +152,7 @@ export function Team({ teams }) {
       <Box sx={{ height: 400, width: "100%", color: "#FFFFFF !important" }} className="container">
         <StripedDataGrid
           loading={loading}
-          rows={teams?.map((t) => { return ({ ...t.team[0],username:t.user[0].username,email:t.user[0].email })})}
+          rows={teams?.map((t) => { return ({ ...t.team[0], username: t.user[0]?.username, email: t.user[0]?.email }) })}
           columns={columns}
           disableRowSelectionOnClick
           getRowId={(row) => row._id}

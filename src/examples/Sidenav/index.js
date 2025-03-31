@@ -83,8 +83,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  console.log(loggedIn,'loggedIn')
-
   // Render all the routes from the routes.js (All the visible items on the Sidenav)
   const renderRoutes = routes.filter((r) => ((!loggedIn) || !((r.key == 'sign-in') || (r.key == 'sign-up')))).map(({ type, name, icon, title, noCollapse, key, href, route }) => {
     let returnValue;

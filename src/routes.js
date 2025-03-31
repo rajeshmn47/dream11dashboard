@@ -48,6 +48,13 @@ import SignUp from "layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import MatchDetails from "layouts/matchdetails";
+import Matches from "layouts/matches";
+import Contests from "layouts/contestTypes";
+import ApiKeyManagement from "layouts/apikeymanagement";
+import Withdrawals from "layouts/withdrawals";
+import KYC from "layouts/kyc";
+import SuspiciousActivities from "layouts/suspiciousActivities";
+import Deposits from "layouts/deposits";
 
 const routes = [
   {
@@ -61,34 +68,42 @@ const routes = [
   {
     type: "collapse",
     name: "Withdrawals(24)",
-    key: "tables",
+    key: "withdrawals",
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    route: "/withdrawals",
+    component: <Withdrawals />,
   },
   {
     type: "collapse",
     name: "KYC(5)",
-    key: "billing",
+    key: "kyc",
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/billing",
-    component: <Billing />,
+    route: "/kyc",
+    component: <KYC/>,
+  },
+  {
+    type: "collapse",
+    name: "Contests(24)",
+    key: "contests",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/contests",
+    component: <Contests />,
   },
   {
     type: "collapse",
     name: "Matches(24)",
-    key: "tables",
+    key: "matches",
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    route: "/matches",
+    component: <Matches />,
   },
   {
     type: "collapse",
     name: "Deposits(24)",
-    key: "tables",
+    key: "deposits",
     icon: <Icon fontSize="small">table_view</Icon>,
-    route: "/tables",
-    component: <Tables />,
+    route: "/deposits",
+    component: <Deposits />,
   },
   {
     type: "collapsed",
@@ -101,10 +116,10 @@ const routes = [
   {
     type: "collapse",
     name: "Suspicious Activities(4)",
-    key: "rtl",
+    key: "suspicious",
     icon: <Icon fontSize="small">format_textdirection_r_to_l</Icon>,
-    route: "/rtl",
-    component: <RTL />,
+    route: "/suspicious",
+    component: <SuspiciousActivities />,
   },
   {
     type: "collapse",
@@ -121,6 +136,14 @@ const routes = [
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
     component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "ApiKey Management",
+    key: "apikey",
+    icon: <Icon fontSize="small">person</Icon>,
+    route: "/apikey",
+    component: <ApiKeyManagement />,
   },
   {
     type: "collapse",

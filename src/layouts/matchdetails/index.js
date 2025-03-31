@@ -13,41 +13,32 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-// @mui material components
-import Grid from "@mui/material/Grid";
-import Card from "@mui/material/Card";
-
-// Material Dashboard 2 React components
-import MDBox from "components/MDBox";
-import MDTypography from "components/MDTypography";
-
-// Material Dashboard 2 React example components
+import { useEffect, useState } from "react";
+import { Box, CircularProgress, Button, Card, Grid, Typography } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
-
-// Data
+import MDBox from "components/MDBox";
+import MDTypography from "components/MDTypography";
+import { API } from "api";
+import { URL } from "constants/userconstants";
+import styled from "@emotion/styled";
+import { useNavigate, useParams } from "react-router-dom";
 import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
 import contestsTableData from "./data/contestTableData";
 import contestUsersTableData from "./data/contestUsersTable";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { API } from "api";
-import { URL } from "constants/userconstants";
-import styled from "@emotion/styled";
-import { Typography } from "@mui/material";
 import { getDisplayDate } from "utils/dateformat";
 
 const FlagImg = styled.img`
-width:25px;
-margin: 0 5px
+  width: 25px;
+  margin: 0 5px;
 `;
 const Teams = styled.div`
-display:flex;
-justify-content:flex-start;
-align-items:center;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
 `;
 const GreenMark = styled.span`
   background-color: var(--green);
@@ -58,31 +49,41 @@ const GreenMark = styled.span`
   margin-right: 6px;
 `;
 const TeamName = styled.p`
-text-overflow: ellipsis;
-overflow: hidden;
-display:block;
-@media (max-width: 600px) {
-    display:none;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  @media (max-width: 600px) {
+    display: none;
   }
 `;
 const TeamCode = styled.p`
-text-overflow: ellipsis;
-overflow: hidden;
-display:none;
-@media (max-width: 600px) {
-    display:block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: none;
+  @media (max-width: 600px) {
+    display: block;
   }
 `;
 const Status = styled.p`
-white-space:nowrap;
-@media (max-width: 600px) {
-    font-size:12px;
+  white-space: nowrap;
+  @media (max-width: 600px) {
+    font-size: 12px;
+  }
+`;
+
+const StatusContainer = styled.div`
+display:flex;
+flex-direction:column;
+align-items:center;
+  @media (max-width: 600px) {
+    font-size: 12px;
   }
 `;
 
 function MatchDetails() {
   const { columns, rows } = authorsTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
+  const [loading, setLoading] = useState(false);
   const [contests, setContests] = useState([]);
   const [teams, setTeams] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
@@ -90,34 +91,72 @@ function MatchDetails() {
   const [match, setMatch] = useState([]);
   const [liveMatch, setLiveMatch] = useState([]);
   const { id } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    async function getContests() {
-      const { data } = await API.get(`${URL}/getcontests/${id}`);
-      setContests([...data?.contests]);
-      let alluserdata = await API.get(`${URL}/auth/getallusers`);
-      setAllUsers(alluserdata.data.users);
-      let matchData = await API.get(`${URL}/getmatch/${id}`);
-      setMatch(matchData?.data?.match);
-      setLiveMatch(matchData?.data?.livematch);
-      const teamsData = await API.get(`${URL}/getTeamsofMatch/${id}`);
-      setTeams([...teamsData?.data?.teams])
-    }
     if (id) {
-      getContests()
+      getContests();
     }
-  }, [id])
+  }, [id]);
+
   useEffect(() => {
     async function fetchUsers() {
-      let a = allUsers.filter((user) => !!(contests?.find((contest) => contest.userIds.includes(user?._id))))
-      setContestUsers(a?.length > 0 ? [...a] : [])
+      let a = allUsers.filter((user) => !!(contests?.find((contest) => contest.userIds.includes(user?._id))));
+      setContestUsers(a?.length > 0 ? [...a] : []);
     }
     if (allUsers?.length > 0 && contests?.length > 0) {
-      fetchUsers()
+      fetchUsers();
     }
   }, [allUsers, contests]);
+
   const { wcolumns, wrows } = contestsTableData({ wcolumnData: contests });
   const { ucolumns, urows } = contestUsersTableData({ ucolumnData: contestUsers, contests: contests, teams: teams });
-  console.log(liveMatch, 'match');
+
+  async function getContests() {
+    const { data } = await API.get(`${URL}/getcontests/${id}`);
+    setContests([...data?.contests]);
+    let alluserdata = await API.get(`${URL}/auth/getallusers`);
+    setAllUsers(alluserdata.data.users);
+    let matchData = await API.get(`${URL}/getmatch/${id}`);
+    setMatch(matchData?.data?.match);
+    setLiveMatch(matchData?.data?.livematch);
+    const teamsData = await API.get(`${URL}/getTeamsofMatch/${id}`);
+    setTeams([...teamsData?.data?.teams]);
+  }
+
+  const handleUpdate = async () => {
+    // Implement the update logic here
+    console.log("Update button clicked");
+    async function fetchMatches() {
+      setLoading(true);
+      try {
+        const response = await API.get(`${URL}/api/match/update_to_live/${id}`);
+        const response_data = await API.get(`${URL}/api/match/update_live_scores/${id}`);
+        //setAllMatches(response.data.matches || []);
+        getContests()
+      } catch (error) {
+        console.error("Error fetching matches:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMatches();
+  };
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await API.delete(`${URL}/api/match/deletematch/${id}`);
+      console.log("Delete successful");
+      navigate("/matches"); // Redirect to matches list after deletion
+    } catch (error) {
+      console.error("Delete failed:", error);
+      setLoading(false);
+    }
+  };
+
+  const isDelayedOrNotUpdated = !liveMatch?.result || !(liveMatch?.result.toLowerCase() == 'complete' || liveMatch?.result.toLowerCase() == 'abandon');
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -172,10 +211,15 @@ function MatchDetails() {
                         }}
                       >
                         <GreenMark />
-                        <Status>
-                          {liveMatch?.result == 'Complete' ? 'Completed' : liveMatch?.result == 'In Progress' ?
-                            'In Play' : getDisplayDate(match?.date, new Date())}
-                        </Status>
+                        <StatusContainer>
+                          <Status>
+                            {liveMatch?.result === 'Complete' ? 'Completed' : liveMatch?.result === 'In Progress' ?
+                              'In Play' : liveMatch?.result === 'Abandon' ? 'Abandoned' : null}
+                          </Status>
+                          <Status>
+                            {getDisplayDate(match?.date, new Date())}
+                          </Status>
+                        </StatusContainer>
                       </Grid>
                       <Grid item sm={5} xs={5} style={{ textAlign: 'right' }}>
                         <>
@@ -204,6 +248,19 @@ function MatchDetails() {
               <Typography variant="h6" textAlign="center">
                 {liveMatch?.status}
               </Typography>
+              {isDelayedOrNotUpdated && (
+                <MDBox display="flex" justifyContent="center" alignItems="center" mt={2} p={2}>
+                  <Typography variant="h6" color="error">
+                    Match Delayed or Not Updated
+                  </Typography>
+                  <Button variant="contained" color="primary" onClick={handleUpdate} sx={{ ml: 2 }}>
+                    Update
+                  </Button>
+                  <Button variant="contained" color="error" onClick={handleDelete} sx={{ ml: 2 }}>
+                    Delete Match
+                  </Button>
+                </MDBox>
+              )}
             </Card>
           </Grid>
           <Grid item xs={12}>

@@ -36,7 +36,7 @@ function OrdersOverview({ allMatches }) {
 
         </MDBox>
       </MDBox>
-      <MDBox p={2}>
+      <MDBox p={2} sx={{ overflow: 'auto', maxHeight: '400px' }}>
         {allMatches?.map((match) =>
           <TimelineItem
             matchId={match?.id}

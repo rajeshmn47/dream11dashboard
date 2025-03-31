@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 //import { URL } from "./../../constants/userconstants";
 //import { getrowClass } from "../../../utils/getrowclass";
@@ -156,9 +156,13 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 export function Users({ users }) {
   const [match, setMatch] = useState(null);
   const { id } = useParams();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [dreamTeam, setDreamTeam] = useState([]);
   const [next, setNext] = useState(false);
+
+  useEffect(() => {
+    users?.length > 0 && setLoading(false)
+  }, [users])
 
   return (
     <>

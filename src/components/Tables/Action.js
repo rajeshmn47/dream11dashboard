@@ -1,7 +1,11 @@
 import styled from "@emotion/styled";
+import { Button } from "@mui/material";
 import { getDisplayDate } from "utils/dateformat";
 import { FURL } from "./../../constants/userconstants";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import MDBox from "components/MDBox";
+import MDBadge from "components/MDBadge";
 
 const Container = styled.div`
   display: flex;
@@ -19,21 +23,27 @@ const Container = styled.div`
     align-items: center;
   }
 `;
-export function CreatedAt(props) {
-  const { value } = props;
-  console.log(props,'props')
-  const date = value?.createdAt ? value?.createdAt : value?.createdAt
+export function Action(props) {
+  console.log(props, 'props')
+  const navigate = useNavigate();
+  const { matchId } = props.row;
+  const { onEdit } = props;
+
   return (
-    <Container className="dream">
-      <p>{getDisplayDate(value, "sc", new Date())}</p>
-      <img className="dreamicon" src={`${FURL}/dreamteam.jpeg`} />
+    <Container>
+      <MDBox ml={-1} onClick={() => navigate(`/matchDetails/${matchId}`)} className="mdbox">
+        <MDBadge badgeContent="view" color="success" variant="gradient" size="sm" />
+      </MDBox>
+      <Button variant="contained" color="primary" size="small" sx={{ ml: 1, color: '#fff' }} onClick={() => onEdit(props.row)}>
+        Edit
+      </Button>
     </Container>
   );
 }
 
-export default CreatedAt;
+export default Action;
 
-CreatedAt.propTypes = {
+Action.propTypes = {
   color: PropTypes.oneOf([
     "primary",
     "secondary",

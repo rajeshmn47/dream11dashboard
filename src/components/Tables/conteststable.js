@@ -12,8 +12,8 @@ import { API } from "api";
 
 const columns = [
   {
-    field: "userId",
-    headerName: "USER",
+    field: "price",
+    headerName: "Total Prize",
     width: 180,
     hide: true,
     editable: true,
