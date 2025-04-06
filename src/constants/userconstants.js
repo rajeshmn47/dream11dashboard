@@ -63,7 +63,8 @@ function geturl() {
   //return "https://apk.thepowerplay.co";
   //return "https://dreamelevenclonebackend-m6g4.onrender.com";
   //return "https://dreamelevenclonebackend-7l34.onrender.com";
-  return "https://fantasycricket4u.com"
+  //return "https://fantasycricket4u.com"
+  return "https://backend.dreambet11.io"
 }
 
 function getfrontendurl() {
