@@ -17,15 +17,17 @@ import { URL } from "constants/userconstants";
 
 function Configuration() {
     const [config, setConfig] = useState({
-        name: "Dream11 Pro",
-        tier: "Free",
+        name: "",
+        tier: "",
     });
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         async function getConfig() {
             const { data } = await API.get(`${URL}/api/config`)
-            setConfig(data?.configs?.[0])
+            if (data?.configs?.length > 0) {
+                setConfig(data?.configs?.[0])
+            }
         }
         getConfig()
     }
