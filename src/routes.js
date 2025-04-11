@@ -55,6 +55,7 @@ import Withdrawals from "layouts/withdrawals";
 import KYC from "layouts/kyc";
 import SuspiciousActivities from "layouts/suspiciousActivities";
 import Deposits from "layouts/deposits";
+import Configuration from "layouts/config";
 
 const routes = [
   {
@@ -79,7 +80,7 @@ const routes = [
     key: "kyc",
     icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/kyc",
-    component: <KYC/>,
+    component: <KYC />,
   },
   {
     type: "collapse",
@@ -136,6 +137,14 @@ const routes = [
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
     component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "Configuration(24)",
+    key: "configuration",
+    icon: <Icon fontSize="small">table_view</Icon>,
+    route: "/configuration",
+    component: <Configuration />,
   },
   {
     type: "collapse",
