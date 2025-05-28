@@ -55,9 +55,10 @@ export const CLEAR_ERRORS = "CLEAR_ERRORS";
 function geturl() {
   const current = process.env.REACT_APP_API;
   if (current == "local") {
-    return "http://localhost:8000";
+    return "http://localhost:9000";
     //return "https://apk.thepowerplay.co";
     //return "http://46.28.44.4:8000";
+    //return "https://mangogames.fun/api"
 
   }
   //return "https://apk.thepowerplay.co";

@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useEffect, useState } from "react";
 import { Box, CircularProgress, Button, Card, Grid } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -26,7 +11,8 @@ import { URL } from "constants/userconstants";
 import styled from "@emotion/styled";
 import { useNavigate } from "react-router-dom";
 import matchesTableData from "layouts/tables/data/matchesTableData";
-import EditMatchModal from "components/Tables/EditMatch";
+import EditMatchModal from "components/matches/EditMatch";
+import AddMatch from "components/matches/AddMatch";
 
 const FlagImg = styled.img`
   width: 25px;
@@ -80,9 +66,31 @@ function Matches() {
   const [loading, setLoading] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [newMatch, setNewMatch] = useState({
+    matchId: "",
+    teamHomeName: "",
+    teamAwayName: "",
+    teamHomeCode: "",
+    teamAwayCode: "",
+    teamHomeId: "",
+    teamAwayId: "",
+    teamHomeFlagUrl: "",
+    teamAwayFlagUrl: "",
+    format: "t20",
+    type: "i",
+    date: "",
+    enddate: "",
+    matchTitle: "",
+    seriesId: "",
+  });
+
 
   useEffect(() => {
-    async function fetchMatches() {
+    fetchMatches();
+  }, []);
+
+   async function fetchMatches() {
       setLoading(true);
       try {
         const response = await API.get(`${URL}/allmatches`);
@@ -93,8 +101,6 @@ function Matches() {
         setLoading(false);
       }
     }
-    fetchMatches();
-  }, []);
 
   const filterMatches = (status) => {
     setSelectedFilter(status);
@@ -121,7 +127,7 @@ function Matches() {
       } else if (selectedFilter === 'notUpdated') {
         // Matches that are not updated due to Cricbuzz API key not working
         if (currentDate > matchDate) {
-          const isNotUpdated = (!match.matchlive || !match.matchlive[0]?.result) || (currentDate > matchEndDate && !(match.matchlive?.[0]?.result?.toLowerCase() == 'complete'||match.matchlive?.[0]?.result?.toLowerCase() == 'abandon'));
+          const isNotUpdated = (!match.matchlive || !match.matchlive[0]?.result) || (currentDate > matchEndDate && !(match.matchlive?.[0]?.result?.toLowerCase() == 'complete' || match.matchlive?.[0]?.result?.toLowerCase() == 'abandon'));
           return isNotUpdated;
         }
         else {
@@ -167,11 +173,18 @@ function Matches() {
                 bgColor="info"
                 borderRadius="lg"
                 coloredShadow="info"
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
               >
                 <MDTypography variant="h6" color="white">
                   Matches Table
                 </MDTypography>
+                <Button variant="contained" color="secondary" onClick={() => setCreateOpen(true)}>
+                  Create Match
+                </Button>
               </MDBox>
+
               <MDBox display="flex" justifyContent="center" mb={2}>
                 <Button variant={selectedFilter === 'notUpdated' ? 'contained' : 'outlined'} onClick={() => filterMatches('notUpdated')} sx={{ mx: 1 }}>
                   Not Updated
@@ -236,6 +249,12 @@ function Matches() {
         onClose={() => setEditModalOpen(false)}
         onSave={handleUpdate}
       />
+      <AddMatch
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        getMatches={fetchMatches}
+      />
+
     </DashboardLayout>
   );
 }

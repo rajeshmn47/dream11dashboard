@@ -20,9 +20,6 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDBadge from "components/MDBadge";
 import moment from "moment";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import EditMatchModal from "components/Tables/EditMatch";
 
 export default function data({ columnData, navigate, onEdit }) {
   const handleWView = (ca) => {
