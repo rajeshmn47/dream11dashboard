@@ -56,6 +56,10 @@ import KYC from "layouts/kyc";
 import SuspiciousActivities from "layouts/suspiciousActivities";
 import Deposits from "layouts/deposits";
 import Configuration from "layouts/config";
+import SeriesList from "layouts/series";
+import SquadsPage from "layouts/squads";
+import PlayerTable from "layouts/playersTable";
+import TeamList from "layouts/teams";
 
 const routes = [
   {
@@ -89,6 +93,40 @@ const routes = [
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/contests",
     component: <Contests />,
+  },
+  // DO NOT import AddSeries
+
+  // Inside the routes array
+  {
+    type: "collapse",
+    name: "Series",
+    key: "series",
+    icon: <Icon fontSize="small">sports_cricket</Icon>,
+    route: "/series",
+    component: <SeriesList />,
+  },
+  {
+    type: "collapse",
+    name: "Squads",
+    key: "squads",
+    icon: <Icon fontSize="small">groups</Icon>,
+    route: "/squads",
+    component: <SquadsPage />,
+  },
+    {
+    type: "collapse",
+    name: "Players",
+    key: "players",
+    icon: <Icon fontSize="small">groups</Icon>,
+    route: "/players",
+    component: <PlayerTable />,
+  },  {
+    type: "collapse",
+    name: "Teams",
+    key: "teams",
+    icon: <Icon fontSize="small">groups</Icon>,
+    route: "/teams",
+    component: <TeamList />,
   },
   {
     type: "collapse",

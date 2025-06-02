@@ -59,6 +59,10 @@ const HighlightedButton = styled(Button)`
   color: white !important;
 `;
 
+const StatusButton = styled(Button)`
+  color: white !important;
+`;
+
 function Matches() {
   const navigate = useNavigate();
   const [allMatches, setAllMatches] = useState([]);
@@ -185,25 +189,25 @@ function Matches() {
                 </Button>
               </MDBox>
 
-              <MDBox display="flex" justifyContent="center" mb={2}>
-                <Button variant={selectedFilter === 'notUpdated' ? 'contained' : 'outlined'} onClick={() => filterMatches('notUpdated')} sx={{ mx: 1 }}>
+              <MDBox display="flex" justifyContent="center" style={{color:"#FFF !important"}} mb={2}>
+                <StatusButton variant={selectedFilter === 'notUpdated' ? 'contained' : 'outlined'} onClick={() => filterMatches('notUpdated')} sx={{ mx: 1 }}>
                   Not Updated
-                </Button>
-                <Button variant={selectedFilter === 'all' ? 'contained' : 'outlined'} onClick={() => filterMatches('all')} sx={{ mx: 1 }}>
+                </StatusButton>
+                <StatusButton variant={selectedFilter === 'all' ? 'contained' : 'outlined'} onClick={() => filterMatches('all')} sx={{ mx: 1 }}>
                   All Matches
-                </Button>
-                <Button variant={selectedFilter === 'ongoing' ? 'contained' : 'outlined'} onClick={() => filterMatches('ongoing')} sx={{ mx: 1 }}>
+                </StatusButton>
+                <StatusButton variant={selectedFilter === 'ongoing' ? 'contained' : 'outlined'} onClick={() => filterMatches('ongoing')} sx={{ mx: 1 }}>
                   Ongoing
-                </Button>
-                <Button variant={selectedFilter === 'upcoming' ? 'contained' : 'outlined'} onClick={() => filterMatches('upcoming')} sx={{ mx: 1 }}>
+                </StatusButton>
+                <StatusButton variant={selectedFilter === 'upcoming' ? 'contained' : 'outlined'} onClick={() => filterMatches('upcoming')} sx={{ mx: 1 }}>
                   Upcoming
-                </Button>
-                <Button variant={selectedFilter === 'completed' ? 'contained' : 'outlined'} onClick={() => filterMatches('completed')} sx={{ mx: 1 }}>
+                </StatusButton>
+                <StatusButton variant={selectedFilter === 'completed' ? 'contained' : 'outlined'} onClick={() => filterMatches('completed')} sx={{ mx: 1 }}>
                   Completed
-                </Button>
-                <Button variant={selectedFilter === 'delayedOrAbandoned' ? 'contained' : 'outlined'} onClick={() => filterMatches('delayedOrAbandoned')} sx={{ mx: 1 }}>
+                </StatusButton>
+                <StatusButton variant={selectedFilter === 'delayedOrAbandoned' ? 'contained' : 'outlined'} onClick={() => filterMatches('delayedOrAbandoned')} sx={{ mx: 1 }}>
                   Delayed or Abandoned
-                </Button>
+                </StatusButton>
               </MDBox>
               <MDBox pt={3}>
                 {loading ? (

@@ -13,6 +13,7 @@ import {
 import axios from "axios"; // Optional: Use your own API utility if needed
 import { URL } from "constants/userconstants";
 import { API } from "api";
+import { useEffect } from "react";
 
 // Set this in your .env file
 
@@ -35,13 +36,29 @@ const AddMatch = ({ open, onClose, getMatches }) => {
         type: "",
     });
 
+    const [seriesList, setSeriesList] = useState([]);
+
+    useEffect(() => {
+        const fetchSeries = async () => {
+            try {
+                const response = await API.get(`${URL}/api/match/series/all`);
+                setSeriesList(response.data); // Adjust based on your actual response structure
+            } catch (error) {
+                console.error("Error fetching series:", error);
+            }
+        };
+
+        fetchSeries();
+    }, []);
+
+
     const handleInputChange = (name, value) => {
         setNewMatch((prev) => ({ ...prev, [name]: value }));
     };
 
     const handleCreate = async () => {
         try {
-            await API.post(`${URL}/api/match/create`, newMatch);
+            await API.post(`${URL}/api/match/series/create`, newMatch);
             onClose();
             getMatches(); // Refresh match list
         } catch (error) {
@@ -69,6 +86,26 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                 <Typography variant="h6" gutterBottom>
                     Create Match
                 </Typography>
+
+                 <FormControl fullWidth sx={{ mt: 2 }}>
+                    <InputLabel>Series</InputLabel>
+                    <Select
+                        value={newMatch.seriesId}
+                        label="Series"
+                        onChange={(e) => handleInputChange("seriesId", e.target.value)}
+                        sx={{
+                            borderRadius: "5px",
+                            "& .MuiInputBase-root": { height: "50px" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                        }}
+                    >
+                        {seriesList.map((series) => (
+                            <MenuItem key={series._id} value={series._id}>
+                                {series.name} {/* Adjust based on your schema */}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
                 {[
                     { name: "matchId", label: "Match ID" },
@@ -112,6 +149,7 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                     value={newMatch.enddate}
                     onChange={(e) => handleInputChange("enddate", e.target.value)}
                 />
+
 
                 <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel>Format</InputLabel>

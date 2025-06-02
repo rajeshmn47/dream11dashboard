@@ -60,7 +60,6 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
 
             const updatedMatch = {
                 ...match,
-                ...liveMatch,
                 date: combinedDateTime.toISOString(),
                 enddate: combinedEndDateTime.toISOString()
             };
