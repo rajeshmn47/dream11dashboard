@@ -15,6 +15,7 @@ import IconButton from "@mui/material/IconButton";
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
 import AddSeriesModal from "components/series/AddSeriesModal";
 import EditSeriesModal from "components/series/EditSeriesModal";
+import DataTable from "examples/Tables/DataTable";
 
 function SeriesList() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -53,7 +54,7 @@ function SeriesList() {
 
   const handleEditSeries = async (series) => {         // open your EditSeries modal
     try {
-      await API.put(`${URL}/api/match/series/${selectedSeries?.seriesId}`,{...series});
+      await API.put(`${URL}/api/match/series/${selectedSeries?.seriesId}`, { ...series });
       fetchSeries(); // refresh list after deletion
     } catch (error) {
       console.error("Failed to delete series", error);
@@ -69,84 +70,99 @@ function SeriesList() {
     }
   };
 
+  const rows = seriesList.map((s, i) => ({
+    index: i + 1,
+    name: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {s.name}
+      </MDTypography>
+    ),
+    type: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {s.type}
+      </MDTypography>
+    ),
+    date: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {s.date}
+      </MDTypography>
+    ),
+    startDate: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {s.startDate ? new Date(s.startDate).toLocaleDateString() : "N/A"}
+      </MDTypography>
+    ),
+    endDate: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {s.endDate ? new Date(s.endDate).toLocaleDateString() : "N/A"}
+      </MDTypography>
+    ),
+    action: (
+      <MDBox display="flex" justifyContent="center" gap={1}>
+        <Button
+          variant="contained"
+          color="success"
+          size="small"
+          onClick={() => handleSelectSeries(s)}
+        >
+          Edit
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          size="small"
+          onClick={() => handleDeleteSeries(s.seriesId)}
+        >
+          Delete
+        </Button>
+      </MDBox>
+    ),
+  }));
+
+  const columns = [
+    { Header: "#", accessor: "index", align: "center" },
+    { Header: "Series Name", accessor: "name", align: "left" },
+    { Header: "Type", accessor: "type", align: "center" },
+    { Header: "Date", accessor: "date", align: "center" },
+    { Header: "Start Date", accessor: "startDate", align: "center" },
+    { Header: "End Date", accessor: "endDate", align: "center" },
+    { Header: "Action", accessor: "action", align: "center" },
+  ];
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox p={3}>
-        <MDTypography variant="h4" mb={2}>
-          Series
-        </MDTypography>
-
-        {/* Add Series Form */}
-        <MDBox component="form" onSubmit={handleAddSeries} display="flex" gap={2} mb={4}>
-
-          <Button variant="contained" style={{ float: "right" }} onClick={() => setCreateOpen(true)}>
-            Add Series
-          </Button>
-
-          <AddSeriesModal
-            open={createOpen}
-            onClose={() => setCreateOpen(false)}
-            getSeries={fetchSeries}
-          />
-          <EditSeriesModal
-            isOpen={editModalOpen}
-            onClose={() => setEditModalOpen(false)}
-            seriesData={selectedSeries}
-            onSave={handleEditSeries}
-          />
-        </MDBox>
-
-        {/* Series Table/List */}
-        {seriesList.length > 0 ? (
+        <MDBox>
           <MDBox>
-            <TableContainer sx={{ width: "100%", mb: 3 }} component={Paper}>
-              <Table sx={{ tableLayout: "fixed", width: "100%", color: "#FFF" }}>
-                <TableHead sx={{ width: "100vw" }}>
-                  <TableRow sx={{ width: "100%" }}>
-                    <TableCell sx={{ width: "40px" }}>#</TableCell>
-                    <TableCell sx={{ width: "30%" }}>Series Name</TableCell>
-                    <TableCell sx={{ width: "15%" }}>Type</TableCell>
-                    <TableCell sx={{ width: "10%" }}>Date</TableCell>
-                    <TableCell sx={{ width: "15%" }}>Start Date</TableCell>
-                    <TableCell sx={{ width: "15%" }}>End Date</TableCell>
-                    <TableCell sx={{ width: "100px" }}>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody style={{ color: "#fff" }}>
-                  {seriesList.map((s, i) => (
-                    <TableRow key={s.seriesId || i}>
-                      <TableCell>{i + 1}</TableCell>
-                      <TableCell>{s.name}</TableCell>
-                      <TableCell>{s.type}</TableCell>
-                      <TableCell>{s.date}</TableCell>
-                      <TableCell>{s.startDate ? new Date(s.startDate).toLocaleDateString() : "N/A"}</TableCell>
-                      <TableCell>{s.endDate ? new Date(s.endDate).toLocaleDateString() : "N/A"}</TableCell>
-                      <TableCell>
-                        <IconButton
-                          color="primary"
-                          onClick={() => handleSelectSeries(s)}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          onClick={() => handleDeleteSeries(s.seriesId)}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+              <MDTypography variant="h5">Series</MDTypography>
+              <MDButton variant="gradient" color="info" onClick={() => setCreateOpen(true)}>
+                Add Series
+              </MDButton>
+            </MDBox>
+            <MDBox pt={3}>
+              <DataTable
+                table={{ columns, rows }}
+                isSorted={false}
+                entriesPerPage={false}
+                showTotalEntries={false}
+                noEndBorder
+              />
+            </MDBox>
           </MDBox>
-        ) : (
-          <MDTypography variant="body2" color="text">
-            No series added yet.
-          </MDTypography>
-        )}
+        </MDBox>
+        <AddSeriesModal
+          open={createOpen}
+          onClose={() => setCreateOpen(false)}
+          getSeries={fetchSeries}
+        />
+        <EditSeriesModal
+          isOpen={editModalOpen}
+          onClose={() => setEditModalOpen(false)}
+          seriesData={selectedSeries}
+          onSave={handleEditSeries}
+        />
       </MDBox>
     </DashboardLayout>
   );
