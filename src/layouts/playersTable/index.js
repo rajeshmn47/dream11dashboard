@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, TableHead, TableRow, TableCell, TableBody } from "@mui/material";
+import { Button, Table, TableHead, TableRow, TableCell, TableBody, TextField, Box, CircularProgress } from "@mui/material";
 import AddPlayerModal from "components/players/AddPlayerModal";
 import EditPlayerModal from "components/players/EditPlayerModal";
 import axios from "axios";
@@ -16,35 +16,10 @@ const PlayerTable = () => {
     const [editOpen, setEditOpen] = useState(false);
     const [selectedPlayer, setSelectedPlayer] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState("");
+    const [filteredPlayers, setFilteredPlayers] = useState([]);
 
-    const fetchPlayers = async () => {
-        const res = await API.get(`${URL}/player/all`);
-        setPlayers(res.data);
-    };
-
-    const handleDelete = async (id) => {
-        await API.delete(`${URL}/player/delete/${id}`);
-        fetchPlayers();
-    };
-
-    useEffect(() => {
-        fetchPlayers();
-    }, []);
-
-    const columns = [
-        { Header: "Name", accessor: "user", align: "left" },
-        { Header: "Image", accessor: "image", align: "center" },
-        { Header: "Team", accessor: "document", align: "center" },
-        { Header: "Team Id", accessor: "teamId", align: "center" },
-        { Header: "Action", accessor: "action", align: "center" },
-    ];
-
-    const handleEdit = (player) => {
-        setSelectedPlayer(player)
-        setEditOpen(!editOpen)
-    }
-
-    const rows = players.map((data) => ({
+    const rows = filteredPlayers.map((data) => ({
         user: (
             <MDTypography variant="caption" color="text" fontWeight="medium">
                 {data.name}
@@ -89,27 +64,90 @@ const PlayerTable = () => {
         ),
     }));
 
+    useEffect(() => {
+        fetchPlayers();
+    }, []);
+
+    useEffect(() => {
+        if (!search && players.length > 0) {
+            setFilteredPlayers([...players]);
+        } else {
+            if (search && rows?.length > 0) {
+                const lower = search.toLowerCase();
+                const filtered = players.filter((row) => {
+                    console.log(Object.values(row), 'row')
+                    return Object.values(row).some(
+                        (value) => value && String(value).toLowerCase().includes(lower)
+                    )
+                }
+                );
+                setFilteredPlayers([...filtered]);
+            }
+        }
+    }, [search, players]);
+
+    const fetchPlayers = async () => {
+        setLoading(true);
+        const res = await API.get(`${URL}/player/all`);
+        setPlayers(res.data);
+        setLoading(false)
+    };
+
+    const handleDelete = async (id) => {
+        await API.delete(`${URL}/player/delete/${id}`);
+        fetchPlayers();
+    };
+
+    const columns = [
+        { Header: "Name", accessor: "user", align: "left" },
+        { Header: "Image", accessor: "image", align: "center" },
+        { Header: "Team", accessor: "document", align: "center" },
+        { Header: "Team Id", accessor: "teamId", align: "center" },
+        { Header: "Action", accessor: "action", align: "center" },
+    ];
+
+    const handleEdit = (player) => {
+        setSelectedPlayer(player)
+        setEditOpen(!editOpen)
+    }
+
     return (
         <>
             <DashboardLayout>
-                <Button variant="contained" onClick={() => setAddOpen(true)}>Add Player</Button>
-                <MDBox pt={3}>
-                    <DataTable
-                        table={{ columns, rows }}
-                        isSorted={false}
-                        entriesPerPage={false}
-                        showTotalEntries={false}
-                        noEndBorder
-                        loading={loading}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <TextField
+                        label="Search players"
+                        variant="outlined"
+                        size="small"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ marginBottom: 16 }}
                     />
+                    <Button variant="contained" onClick={() => setAddOpen(true)}>Add Player</Button>
+                </div>
+                <MDBox pt={3}>
+                    {loading ? (
+                        <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <DataTable
+                            table={{ columns, rows }}
+                            isSorted={false}
+                            entriesPerPage={false}
+                            showTotalEntries={false}
+                            noEndBorder
+                            loading={loading}
+                        />)}
                 </MDBox>
                 <AddPlayerModal open={addOpen} onClose={() => setAddOpen(false)} refresh={fetchPlayers} />
-                <EditPlayerModal
-                    open={editOpen}
-                    onClose={() => setEditOpen(false)}
-                    player={selectedPlayer}
-                    refresh={fetchPlayers}
-                />
+                {selectedPlayer &&
+                    <EditPlayerModal
+                        open={editOpen}
+                        onClose={() => setEditOpen(false)}
+                        player={selectedPlayer}
+                        refresh={fetchPlayers}
+                    />}
             </DashboardLayout>
         </>
     );

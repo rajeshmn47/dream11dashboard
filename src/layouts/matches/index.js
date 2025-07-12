@@ -112,7 +112,36 @@ function Matches() {
 
   const currentDate = new Date();
 
-  const filteredMatches = selectedFilter === 'all'
+  const filteredMatchess = selectedFilter === 'all'
+    ? allMatches
+    : allMatches.filter(match => {
+      const matchDate = new Date(match.date);
+      const matchEndDate = new Date(match.enddate);
+      if (selectedFilter === 'ongoing') {
+        return matchDate <= currentDate && matchEndDate >= currentDate;
+      } else if (selectedFilter === 'upcoming') {
+        return matchDate > currentDate;
+      } else if (selectedFilter === 'completed') {
+        return match?.matchlive[0]?.result?.toLowerCase() === 'complete';
+        //return matchEndDate < currentDate;
+      } else if (selectedFilter === 'delayedOrAbandoned') {
+        // Matches that are genuinely delayed or abandoned
+        const isDelayedOrAbandoned = match.matchlive?.[0]?.result === 'delayed' || match.matchlive?.[0]?.result?.toLowerCase() === 'abandon';
+        return isDelayedOrAbandoned;
+      } else if (selectedFilter === 'notUpdated') {
+        // Matches that are not updated due to Cricbuzz API key not working
+        if (currentDate > matchDate) {
+          const isNotUpdated = (!match.matchlive || !match.matchlive[0]?.result) || (currentDate > matchEndDate && !(match.matchlive?.[0]?.result?.toLowerCase() == 'complete' || match.matchlive?.[0]?.result?.toLowerCase() == 'abandon'));
+          return isNotUpdated;
+        }
+        else {
+          return false
+        }
+      }
+      return false;
+    });
+
+    const filteredMatches = selectedFilter === 'all'
     ? allMatches
     : allMatches.filter(match => {
       const matchDate = new Date(match.date);

@@ -54,7 +54,7 @@ export const CLEAR_ERRORS = "CLEAR_ERRORS";
 
 function geturl() {
   const current = process.env.REACT_APP_API;
-  if (current == "local") {
+  if (current == "locale") {
     return "http://localhost:9000";
     //return "https://apk.thepowerplay.co";
     //return "http://46.28.44.4:8000";
@@ -67,7 +67,8 @@ function geturl() {
   //return "https://dreamelevenclonebackend-7l34.onrender.com";
   //return "https://fantasycricket4u.com"
   //return "https://backend.dreambet11.io"
-  return "https://mangogames.fun/api"
+  //return "https://mangogames.fun/api"
+  return "https://dream11bet.duckdns.org"
 }
 
 function getfrontendurl() {
