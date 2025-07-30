@@ -9,6 +9,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DataTable from "examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
+import ConfirmDialog from "components/ConfirmDeteteDialog";
 
 const PlayerTable = () => {
     const [players, setPlayers] = useState([]);
@@ -18,6 +19,7 @@ const PlayerTable = () => {
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
     const [filteredPlayers, setFilteredPlayers] = useState([]);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const rows = filteredPlayers.map((data) => ({
         user: (
@@ -55,7 +57,7 @@ const PlayerTable = () => {
                     variant="contained"
                     color="error"
                     size="small"
-                    onClick={() => console.log("Approve", data._id)}
+                    onClick={() => handleDelete(data)}
                     disabled={data.status === "Rejected"}
                 >
                     Delete
@@ -93,7 +95,12 @@ const PlayerTable = () => {
         setLoading(false)
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = (player) => {
+        setSelectedPlayer(player);
+        setDeleteDialogOpen(true);
+    };
+
+    const confirmDelete = async (id) => {
         await API.delete(`${URL}/player/delete/${id}`);
         fetchPlayers();
     };
@@ -133,7 +140,7 @@ const PlayerTable = () => {
                     ) : (
                         <DataTable
                             table={{ columns, rows }}
-                            isSorted={false}
+                            isSorted={true}
                             entriesPerPage={false}
                             showTotalEntries={false}
                             noEndBorder
@@ -148,6 +155,13 @@ const PlayerTable = () => {
                         player={selectedPlayer}
                         refresh={fetchPlayers}
                     />}
+                <ConfirmDialog
+                    open={deleteDialogOpen}
+                    title="Delete User"
+                    content={`Are you sure you want to delete user ${selectedPlayer?.name}?`}
+                    onClose={() => setDeleteDialogOpen(false)}
+                    onConfirm={confirmDelete}
+                />
             </DashboardLayout>
         </>
     );

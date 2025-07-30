@@ -12,10 +12,12 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import IconButton from "@mui/material/IconButton";
-import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";
+import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TextField } from "@mui/material";
 import AddSeriesModal from "components/series/AddSeriesModal";
 import EditSeriesModal from "components/series/EditSeriesModal";
 import DataTable from "examples/Tables/DataTable";
+import ConfirmDialog from "components/ConfirmDeteteDialog";
+import SeriesScheduleModal from "components/series/SeriesScheduleModal";
 
 function SeriesList() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -23,6 +25,11 @@ function SeriesList() {
   const [seriesList, setSeriesList] = useState([]);
   const [selectedSeries, setSelectedSeries] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filteredSeries, setFilteredSeries] = useState([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+  const [scheduleSeries, setScheduleSeries] = useState(null);
 
   // Fetch all series on mount
   useEffect(() => {
@@ -37,6 +44,24 @@ function SeriesList() {
       console.error("Error fetching series:", err);
     }
   };
+
+  useEffect(() => {
+    if (!search && seriesList.length > 0) {
+      setFilteredSeries([...seriesList]);
+    } else {
+      if (search && rows?.length > 0) {
+        const lower = search.toLowerCase();
+        const filtered = seriesList.filter((row) => {
+          console.log(Object.values(row), 'row')
+          return Object.values(row).some(
+            (value) => value && String(value).toLowerCase().includes(lower)
+          )
+        }
+        );
+        setFilteredSeries([...filtered]);
+      }
+    }
+  }, [search, seriesList]);
 
   const handleAddSeries = (e) => {
     e.preventDefault();
@@ -61,16 +86,22 @@ function SeriesList() {
     }
   };
 
-  const handleDeleteSeries = async (seriesId) => {
+  const handleDelete = (series) => {
+    setSelectedSeries(series);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
     try {
-      await API.delete(`/api/match/series/${seriesId}`);
+      await API.delete(`${URL}/api/match/series/${selectedSeries?.seriesId}`);
       fetchSeries(); // refresh list after deletion
+      setDeleteDialogOpen(false);
     } catch (error) {
       console.error("Failed to delete series", error);
     }
   };
 
-  const rows = seriesList.map((s, i) => ({
+  const rows = filteredSeries.map((s, i) => ({
     index: i + 1,
     name: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
@@ -80,6 +111,11 @@ function SeriesList() {
     type: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
         {s.type}
+      </MDTypography>
+    ),
+    seriesId: (
+      <MDTypography variant="caption" color="text" fontWeight="medium">
+        {s.seriesId}
       </MDTypography>
     ),
     date: (
@@ -101,6 +137,14 @@ function SeriesList() {
       <MDBox display="flex" justifyContent="center" gap={1}>
         <Button
           variant="contained"
+          color="info"
+          size="small"
+          onClick={() => { setScheduleSeries(s); setScheduleModalOpen(true); }}
+        >
+          View Schedule
+        </Button>
+        <Button
+          variant="contained"
           color="success"
           size="small"
           onClick={() => handleSelectSeries(s)}
@@ -111,7 +155,7 @@ function SeriesList() {
           variant="contained"
           color="error"
           size="small"
-          onClick={() => handleDeleteSeries(s.seriesId)}
+          onClick={() => handleDelete(s)}
         >
           Delete
         </Button>
@@ -123,6 +167,7 @@ function SeriesList() {
     { Header: "#", accessor: "index", align: "center" },
     { Header: "Series Name", accessor: "name", align: "left" },
     { Header: "Type", accessor: "type", align: "center" },
+    { Header: "Series ID", accessor: "seriesId", align: "center" },
     { Header: "Date", accessor: "date", align: "center" },
     { Header: "Start Date", accessor: "startDate", align: "center" },
     { Header: "End Date", accessor: "endDate", align: "center" },
@@ -132,6 +177,16 @@ function SeriesList() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <TextField
+          label="Search series"
+          variant="outlined"
+          size="small"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ marginBottom: 16 }}
+        />
+      </div>
       <MDBox p={3}>
         <MDBox>
           <MDBox>
@@ -144,7 +199,7 @@ function SeriesList() {
             <MDBox pt={3}>
               <DataTable
                 table={{ columns, rows }}
-                isSorted={false}
+                isSorted={true}
                 entriesPerPage={false}
                 showTotalEntries={false}
                 noEndBorder
@@ -162,6 +217,18 @@ function SeriesList() {
           onClose={() => setEditModalOpen(false)}
           seriesData={selectedSeries}
           onSave={handleEditSeries}
+        />
+        <ConfirmDialog
+          open={deleteDialogOpen}
+          title="Delete Series"
+          content={`Are you sure you want to delete series ${selectedSeries?.name}?`}
+          onClose={() => setDeleteDialogOpen(false)}
+          onConfirm={confirmDelete}
+        />
+        <SeriesScheduleModal
+          open={scheduleModalOpen}
+          onClose={() => setScheduleModalOpen(false)}
+          series={scheduleSeries}
         />
       </MDBox>
     </DashboardLayout>

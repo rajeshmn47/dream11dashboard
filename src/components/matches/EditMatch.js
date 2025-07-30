@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import {
     Dialog, DialogTitle, DialogContent, DialogActions,
-    TextField, MenuItem, Grid, CircularProgress, Box
+    TextField, MenuItem, Grid, CircularProgress, Box,
+    FormControl,
+    InputLabel,
+    Select
 } from "@mui/material";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -130,7 +133,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                         />
                     ))}
 
-                    <Grid container spacing={2}>
+                    <Grid container spacing={2} sx={{ marginTop: "16px" }}>
                         <Grid item xs={6}>
                             <TextField
                                 label="Match Date"
@@ -139,7 +142,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                                 name="start_date"
                                 value={match?.start_date ? new Date(match.start_date).toISOString().split("T")[0] : match?.date ? new Date(match?.date)?.toISOString().split("T")[0] : ""}
                                 onChange={handleChange}
-                                sx={{ borderRadius: "5px" }}
+                                sx={{ borderRadius: "5px", marginBottom: "16px" }}
                             />
 
                         </Grid>
@@ -161,6 +164,29 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             />
                         </Grid>
                     </Grid>
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel>Is It Important?</InputLabel>
+                        <Select
+                            value={match?.important}
+                            label="Is It Important?"
+                            name="important"
+                            onChange={(e) => handleChange(e)}
+                            sx={{
+                                borderRadius: "5px",
+                                marginBottom: "16px",
+                                "& .MuiInputBase-root": { height: "50px !important" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
+                                "& .MuiOutlinedInput-root-MuiSelect-root": { height: "50px !important" }
+                            }}
+                        >
+                            <MenuItem key='yes' value={true}>
+                                Yes {/* Adjust based on your schema */}
+                            </MenuItem>
+                            <MenuItem key='no' value={false}>
+                                No {/* Adjust based on your schema */}
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
                     <Grid container spacing={2}>
                         <Grid item xs={6}>
                             <TextField
@@ -170,7 +196,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                                 name="end_date"
                                 value={match?.end_date ? new Date(match.end_date).toISOString().split("T")[0] : match?.enddate ? new Date(match?.enddate).toISOString().split("T")[0] : ""}
                                 onChange={handleChange}
-                                sx={{ borderRadius: "5px" }}
+                                sx={{ borderRadius: "5px", marginBottom: "16px" }}
                             />
                         </Grid>
                         <Grid item xs={6}>
@@ -205,7 +231,19 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             value={liveMatch?.status || ""}
                             onChange={handleLiveChange}
                             margin="normal"
-                            sx={{ borderRadius: "5px" }}
+                            sx={{
+                                backgroundColor: "",
+                                borderRadius: "5px",
+                                "& .MuiInputBase-root": {
+                                    height: "50px !important", // Increases height
+                                    display: "flex",
+                                    alignItems: "center",
+                                },
+                                "& .MuiSelect-select": {
+                                    padding: "14px",  // More padding for better touch experience
+                                    minHeight: "50px !important", // Ensures uniform height
+                                }
+                            }}
                         >
                             {["Scheduled", "Upcoming", "In Progress", "Complete", "Stumps", "Break"].map((status) => (
                                 <MenuItem key={status} value={status}>{status}</MenuItem>
@@ -220,7 +258,19 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             value={liveMatch?.isInPlay ?? ""}
                             onChange={handleLiveChange}
                             margin="normal"
-                            sx={{ borderRadius: "5px" }}
+                            sx={{
+                                backgroundColor: "",
+                                borderRadius: "5px",
+                                "& .MuiInputBase-root": {
+                                    height: "50px", // Increases height
+                                    display: "flex",
+                                    alignItems: "center",
+                                },
+                                "& .MuiSelect-select": {
+                                    padding: "14px",  // More padding for better touch experience
+                                    minHeight: "50px", // Ensures uniform height
+                                }
+                            }}
                         >
                             <MenuItem value="">Select...</MenuItem>
                             <MenuItem value={true}>Yes</MenuItem>

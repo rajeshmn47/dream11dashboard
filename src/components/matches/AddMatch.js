@@ -87,7 +87,7 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                     Create Match
                 </Typography>
 
-                 <FormControl fullWidth sx={{ mt: 2 }}>
+                <FormControl fullWidth sx={{ mt: 2 }}>
                     <InputLabel>Series</InputLabel>
                     <Select
                         value={newMatch.seriesId}

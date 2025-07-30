@@ -20,10 +20,13 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import MDBadge from "components/MDBadge";
 import moment from "moment";
+import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
 
-export default function data({ columnData, navigate, onEdit }) {
+export default function data({ columnData, navigate, onEdit, onDelete }) {
+  
   const handleWView = (ca) => {
-    navigate(`/matchDetails/${ca.matchId}`);
+    //navigate(`/matchDetails/${ca.matchId}`);
+    window.open(`/matchDetails/${ca.matchId}`, '_blank');
   };
 
   return {
@@ -64,11 +67,16 @@ export default function data({ columnData, navigate, onEdit }) {
       ),
       action: (
         <MDBox display="flex" justifyContent="center">
-          <MDBox ml={-1} onClick={() => handleWView(c)}>
-            <MDBadge badgeContent="view" color="success" variant="gradient" size="sm" />
+          <MDBox ml={-1} sx={{ cursor: 'pointer' }} onClick={() => handleWView(c)}>
+            <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              view <ArrowOutwardIcon style={{ fontSize: 18 }} />
+            </span>} color="success" variant="gradient" size="sm" />
           </MDBox>
-          <MDBox ml={1} onClick={() => onEdit(c)}>
+          <MDBox ml={1} onClick={() => onEdit(c)} sx={{ cursor: 'pointer' }}>
             <MDBadge badgeContent="edit" color="info" variant="gradient" size="sm" />
+          </MDBox>
+          <MDBox ml={1} onClick={() => onDelete(c)} sx={{ cursor: 'pointer' }}>
+            <MDBadge badgeContent="delete" color="error" variant="gradient" size="sm" />
           </MDBox>
         </MDBox>
       ),

@@ -8,6 +8,9 @@ import {
     MenuItem,
     Button,
     Stack,
+    FormControl,
+    InputLabel,
+    Select,
 } from "@mui/material";
 
 const typeOptions = ["international", "league", "domestic", "women"];
@@ -19,6 +22,7 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
         date: "",
         startDate: "",
         endDate: "",
+        important: false
     });
 
     useEffect(() => {
@@ -29,6 +33,7 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                 date: seriesData.date || "",
                 startDate: seriesData.startDate?.slice(0, 10) || "",
                 endDate: seriesData.endDate?.slice(0, 10) || "",
+                important: seriesData.important || false
             });
         }
     }, [seriesData]);
@@ -40,10 +45,10 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
     const handleSubmit = () => {
         if (!form.name || !form.type || !form.date || !form.startDate || !form.endDate) return;
         console.log("Form data before saving:", form);
-        console.log("Saving series data:",form,{seriesData, ...form });
-        const data={...seriesData, ...form };
+        console.log("Saving series data:", form, { seriesData, ...form });
+        const data = { ...seriesData, ...form };
         console.log("Data to be saved:", data);
-        onSave(form)
+        onSave(form);
         onClose();
     };
 
@@ -98,6 +103,28 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                         InputLabelProps={{ shrink: true }}
                         fullWidth
                     />
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel>Is It Important?</InputLabel>
+                        <Select
+                            value={form?.important}
+                            label="Is It Important?"
+                            name="important"
+                            onChange={(e) => handleChange(e)}
+                            sx={{
+                                borderRadius: "5px",
+                                marginBottom: "16px",
+                                "& .MuiInputBase-root": { height: "50px" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            }}
+                        >
+                            <MenuItem key='yes' value={true}>
+                                Yes {/* Adjust based on your schema */}
+                            </MenuItem>
+                            <MenuItem key='no' value={false}>
+                                No {/* Adjust based on your schema */}
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
                 </Stack>
             </DialogContent>
             <DialogActions sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>

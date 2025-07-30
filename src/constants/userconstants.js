@@ -69,6 +69,7 @@ function geturl() {
   //return "https://backend.dreambet11.io"
   //return "https://mangogames.fun/api"
   return "https://dream11bet.duckdns.org"
+  //return "http://localhost:9000";
 }
 
 function getfrontendurl() {

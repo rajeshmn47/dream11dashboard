@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, CircularProgress, Button, Card, Grid } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import matchesTableData from "layouts/tables/data/matchesTableData";
 import EditMatchModal from "components/matches/EditMatch";
 import AddMatch from "components/matches/AddMatch";
+import ConfirmDialog from "components/ConfirmDeteteDialog";
 
 const FlagImg = styled.img`
   width: 25px;
@@ -71,6 +72,7 @@ function Matches() {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [newMatch, setNewMatch] = useState({
     matchId: "",
     teamHomeName: "",
@@ -94,17 +96,17 @@ function Matches() {
     fetchMatches();
   }, []);
 
-   async function fetchMatches() {
-      setLoading(true);
-      try {
-        const response = await API.get(`${URL}/allmatches`);
-        setAllMatches(response.data.matches || []);
-      } catch (error) {
-        console.error("Error fetching matches:", error);
-      } finally {
-        setLoading(false);
-      }
+  async function fetchMatches() {
+    setLoading(true);
+    try {
+      const response = await API.get(`${URL}/allmatches`);
+      setAllMatches(response.data.matches || []);
+    } catch (error) {
+      console.error("Error fetching matches:", error);
+    } finally {
+      setLoading(false);
     }
+  }
 
   const filterMatches = (status) => {
     setSelectedFilter(status);
@@ -141,7 +143,7 @@ function Matches() {
       return false;
     });
 
-    const filteredMatches = selectedFilter === 'all'
+  const filteredMatches = selectedFilter === 'all'
     ? allMatches
     : allMatches.filter(match => {
       const matchDate = new Date(match.date);
@@ -187,7 +189,26 @@ function Matches() {
     }
   };
 
-  const { columns, rows } = matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit });
+  const handleDelete = async (match) => {
+    setSelectedMatch(match);
+    setDeleteDialogOpen(true)
+  }
+
+  const confirmDelete = async (match) => {
+    try {
+      await API.delete(`${URL}/api/match/deletematch/${selectedMatch?.matchId}`);
+      fetchMatches();
+      setDeleteDialogOpen(false)
+    } catch (error) {
+      console.error("Delete failed:", error);
+    }
+  };
+
+  //const tableData = matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit });
+
+  const tableData = useMemo(() => {
+    return matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit, onDelete: handleDelete });
+  }, [filteredMatches, navigate, handleEdit]);
 
   return (
     <DashboardLayout>
@@ -218,7 +239,7 @@ function Matches() {
                 </Button>
               </MDBox>
 
-              <MDBox display="flex" justifyContent="center" style={{color:"#FFF !important"}} mb={2}>
+              <MDBox display="flex" justifyContent="center" style={{ color: "#FFF !important" }} mb={2}>
                 <StatusButton variant={selectedFilter === 'notUpdated' ? 'contained' : 'outlined'} onClick={() => filterMatches('notUpdated')} sx={{ mx: 1 }}>
                   Not Updated
                 </StatusButton>
@@ -244,9 +265,9 @@ function Matches() {
                     <CircularProgress />
                   </Box>
                 ) : (
-                  rows.length > 0 ? (
+                  tableData?.rows.length > 0 ? (
                     <DataTable
-                      table={{ columns, rows }}
+                      table={tableData}
                       isSorted={true}
                       canSearch={true}
                       entriesPerPage="40"
@@ -287,7 +308,13 @@ function Matches() {
         onClose={() => setCreateOpen(false)}
         getMatches={fetchMatches}
       />
-
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        title="Delete Match"
+        content={`Are you sure you want to delete match ${selectedMatch?.matchId}?`}
+        onClose={() => setDeleteDialogOpen(false)}
+        onConfirm={confirmDelete}
+      />
     </DashboardLayout>
   );
 }
