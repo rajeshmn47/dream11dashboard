@@ -23,6 +23,7 @@ export default function EditUserModal({ open, onClose, userData, onUpdate }) {
           <Grid item xs={12}><TextField fullWidth name="name" label="Name" value={formData?.username || ""} onChange={handleChange} /></Grid>
           <Grid item xs={12}><TextField fullWidth name="email" label="Email" value={formData?.email || ""} onChange={handleChange} /></Grid>
           <Grid item xs={12}><TextField fullWidth name="role" label="Role" value={formData?.role || ""} onChange={handleChange} /></Grid>
+          <Grid item xs={12}><TextField fullWidth name="password" label="Password" value={formData?.password || ""} onChange={handleChange} /></Grid>
         </Grid>
       </DialogContent>
       <DialogActions sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>
