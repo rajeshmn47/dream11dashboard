@@ -90,7 +90,7 @@ function Matches() {
     matchTitle: "",
     seriesId: "",
   });
-
+  const [selectedIds, setSelectedIds] = useState([])
 
   useEffect(() => {
     fetchMatches();
@@ -204,10 +204,43 @@ function Matches() {
     }
   };
 
-  //const tableData = matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit });
+  const handleSelect = (id) => {
+    setSelectedIds(prev =>
+      prev.includes(id)
+        ? prev.filter(matchId => matchId !== id)
+        : [...prev, id]
+    );
+  };
+
+  const areAllSelected = filteredMatches.length > 0 && filteredMatches.every(m => selectedIds.includes(m.matchId));
+
+  const toggleSelectAll = () => {
+    if (areAllSelected) {
+      setSelectedIds([]);
+    } else {
+      const allIds = filteredMatches.map(m => m.matchId);
+      setSelectedIds(allIds);
+    }
+  };
+
+  const handleSelectedUpdate = async (e) => {
+    try {
+      setLoading(true);
+      e.preventDefault();
+      for (let i = 0; i < selectedIds?.length; i++) {
+        await API.get(`${URL}/api/match/update_to_live/${selectedIds[i]}`);
+        await API.get(`${URL}/api/match/update_live_scores/${selectedIds[i]}`);
+      }
+      setSelectedIds([]); // Clear selection
+      fetchMatches(); // Refresh data
+      setLoading(false)
+    } catch (err) {
+      console.error("Batch update failed", err);
+    }
+  };
 
   const tableData = useMemo(() => {
-    return matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit, onDelete: handleDelete });
+    return matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit, onDelete: handleDelete, selectedIds: selectedIds, handleSelect: handleSelect });
   }, [filteredMatches, navigate, handleEdit]);
 
   return (
@@ -259,36 +292,46 @@ function Matches() {
                   Delayed or Abandoned
                 </StatusButton>
               </MDBox>
+              <MDBox display="flex" justifyContent="space-between" alignItems="center" px={2} py={1}>
+                <MDTypography variant="button" color="text" fontWeight="medium">
+                  Matches found:{" "}
+                  <MDTypography component="span" variant="button" color="info" fontWeight="bold">
+                    ({filteredMatches?.length})
+                  </MDTypography>
+                </MDTypography>
+                {selectedIds?.length > 0 && selectedFilter == "notUpdated" && <StatusButton variant="contained" color="primary" fontWeight="medium" onClick={(e) => handleSelectedUpdate(e)}>
+                  Update All
+                </StatusButton>}
+              </MDBox>
               <MDBox pt={3}>
-                {loading ? (
+                {loading && (
                   <Box display="flex" justifyContent="center" alignItems="center" height="100%">
                     <CircularProgress />
-                  </Box>
+                  </Box>)}
+
+                {tableData?.rows.length > 0 ? (
+                  <DataTable
+                    table={tableData}
+                    isSorted={true}
+                    canSearch={true}
+                    entriesPerPage="40"
+                    showTotalEntries={true}
+                    noEndBorder
+                    sx={{
+                      '& .MuiTableCell-root': {
+                        borderBottom: 'none',
+                      },
+                      '& .MuiDataGrid-root': {
+                        border: 'none',
+                      },
+                    }}
+                  />
                 ) : (
-                  tableData?.rows.length > 0 ? (
-                    <DataTable
-                      table={tableData}
-                      isSorted={true}
-                      canSearch={true}
-                      entriesPerPage="40"
-                      showTotalEntries={true}
-                      noEndBorder
-                      sx={{
-                        '& .MuiTableCell-root': {
-                          borderBottom: 'none',
-                        },
-                        '& .MuiDataGrid-root': {
-                          border: 'none',
-                        },
-                      }}
-                    />
-                  ) : (
-                    <MDBox display="flex" justifyContent="center" alignItems="center" height="100%">
-                      <MDTypography variant="h6" color="textSecondary">
-                        No matches available
-                      </MDTypography>
-                    </MDBox>
-                  )
+                  <MDBox display="flex" justifyContent="center" alignItems="center" height="100%">
+                    <MDTypography variant="h6" color="textSecondary">
+                      No matches available
+                    </MDTypography>
+                  </MDBox>
                 )}
               </MDBox>
             </Card>

@@ -21,9 +21,10 @@ import MDTypography from "components/MDTypography";
 import MDBadge from "components/MDBadge";
 import moment from "moment";
 import ArrowOutwardIcon from '@mui/icons-material/ArrowOutward';
+import { Checkbox } from "@mui/material";
 
-export default function data({ columnData, navigate, onEdit, onDelete }) {
-  
+export default function data({ columnData, navigate, onEdit, onDelete, selectedIds, handleSelect }) {
+
   const handleWView = (ca) => {
     //navigate(`/matchDetails/${ca.matchId}`);
     window.open(`/matchDetails/${ca.matchId}`, '_blank');
@@ -31,6 +32,7 @@ export default function data({ columnData, navigate, onEdit, onDelete }) {
 
   return {
     columns: [
+      { Header: "Select", accessor: "select", align: "center" },
       { Header: "match title", accessor: "matchTitle", align: "center" },
       { Header: "format", accessor: "matchType", align: "center" },
       { Header: "status", accessor: "result", align: "center" },
@@ -40,6 +42,14 @@ export default function data({ columnData, navigate, onEdit, onDelete }) {
     ],
 
     rows: columnData.map((c) => ({
+      select: (
+        <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+          <Checkbox
+            checked={selectedIds.includes(c.matchId)}
+            onChange={() => handleSelect(c.matchId)}
+          />
+        </MDTypography>
+      ),
       matchTitle: (
         <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
           {c.matchTitle}
