@@ -37,6 +37,7 @@ const AddMatch = ({ open, onClose, getMatches }) => {
     });
 
     const [seriesList, setSeriesList] = useState([]);
+    const [teamsList, setTeamsList] = useState([]);
 
     useEffect(() => {
         const fetchSeries = async () => {
@@ -51,14 +52,37 @@ const AddMatch = ({ open, onClose, getMatches }) => {
         fetchSeries();
     }, []);
 
+    useEffect(() => {
+        const fetchTeams = async () => {
+            try {
+                const response = await API.get(`${URL}/api/match/team/all`);
+                setTeamsList(response.data); // Adjust based on your actual response structure
+            } catch (error) {
+                console.error("Error fetching series:", error);
+            }
+        };
+
+        fetchTeams();
+    }, []);
+
 
     const handleInputChange = (name, value) => {
         setNewMatch((prev) => ({ ...prev, [name]: value }));
     };
 
+    const handleTeamChange = (type, value) => {
+        let team = teamsList.find(t => t.id === value);
+        if (type == 'home') {
+            setNewMatch((prev) => ({ ...prev, teamHomeId: value, teamHomeName: team.teamName, teamHomeCode: team.shortName, teamHomeFlagUrl: team.flagUrl }));
+        }
+        else {
+            setNewMatch((prev) => ({ ...prev, teamAwayId: value, teamAwayName: team.teamName, teamAwayCode: team.shortName, teamAwayFlagUrl: team.flagUrl }));
+        }
+    };
+
     const handleCreate = async () => {
         try {
-            await API.post(`${URL}/api/match/series/create`, newMatch);
+            await API.post(`${URL}/api/match/create`, newMatch);
             onClose();
             getMatches(); // Refresh match list
         } catch (error) {
@@ -100,8 +124,46 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                         }}
                     >
                         {seriesList.map((series) => (
-                            <MenuItem key={series._id} value={series._id}>
+                            <MenuItem key={series.seriesId} value={series.seriesId}>
                                 {series.name} {/* Adjust based on your schema */}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                    <InputLabel>Home Team</InputLabel>
+                    <Select
+                        value={newMatch.teamHomeId}
+                        label="Home Team"
+                        onChange={(e) => handleTeamChange("home", e.target.value)}
+                        sx={{
+                            borderRadius: "5px",
+                            "& .MuiInputBase-root": { height: "50px" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                        }}
+                    >
+                        {teamsList.map((team) => (
+                            <MenuItem key={team.id} value={team.id}>
+                                {team.teamName} {/* Adjust based on your schema */}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                    <InputLabel>Away Team</InputLabel>
+                    <Select
+                        value={newMatch.teamAwayId}
+                        label="Away Team"
+                        onChange={(e) => handleTeamChange("away", e.target.value)}
+                        sx={{
+                            borderRadius: "5px",
+                            "& .MuiInputBase-root": { height: "50px" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                        }}
+                    >
+                        {teamsList.map((team) => (
+                            <MenuItem key={team.id} value={team.id}>
+                                {team.teamName} {/* Adjust based on your schema */}
                             </MenuItem>
                         ))}
                     </Select>

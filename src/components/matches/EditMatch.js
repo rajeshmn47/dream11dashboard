@@ -15,11 +15,39 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
     const [match, setMatch] = useState(null);
     const [liveMatch, setLiveMatch] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [seriesList, setSeriesList] = useState([]);
+    const [teamsList, setTeamsList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (matchId) getMatch(matchId);
     }, [matchId]);
+
+    useEffect(() => {
+        const fetchSeries = async () => {
+            try {
+                const response = await API.get(`${URL}/api/match/series/all`);
+                setSeriesList(response.data); // Adjust based on your actual response structure
+            } catch (error) {
+                console.error("Error fetching series:", error);
+            }
+        };
+
+        fetchSeries();
+    }, []);
+
+    useEffect(() => {
+        const fetchTeams = async () => {
+            try {
+                const response = await API.get(`${URL}/api/match/team/all`);
+                setTeamsList(response.data); // Adjust based on your actual response structure
+            } catch (error) {
+                console.error("Error fetching series:", error);
+            }
+        };
+
+        fetchTeams();
+    }, []);
 
     const getMatch = async (id) => {
         setLoading(true);
@@ -37,6 +65,17 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
     const handleChange = (e) => {
         const { name, value } = e.target;
         setMatch(prev => ({ ...prev, [name]: value }));
+    };
+
+
+    const handleTeamChange = (type, value) => {
+        let team = teamsList.find(t => t.id === value);
+        if (type == 'home') {
+            setMatch((prev) => ({ ...prev, teamHomeId: value, teamHomeName: team.teamName, teamHomeCode: team.shortName, teamHomeFlagUrl: team.flagUrl }));
+        }
+        else {
+            setMatch((prev) => ({ ...prev, teamAwayId: value, teamAwayName: team.teamName, teamAwayCode: team.shortName, teamAwayFlagUrl: team.flagUrl }));
+        }
     };
 
     const handleLiveChange = (e) => {
@@ -86,8 +125,6 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
         { name: "matchId", label: "Match ID" },
         { name: "matchTitle", label: "Match Title" },
         { name: "seriesId", label: "Series ID" },
-        { name: "teamHomeName", label: "Team Home Name" },
-        { name: "teamAwayName", label: "Team Away Name" },
         { name: "teamHomeCode", label: "Team Home Code" },
         { name: "teamAwayCode", label: "Team Away Code" },
         { name: "teamHomeId", label: "Team Home ID" },
@@ -119,6 +156,45 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
 
                 <Box mb={3}>
                     <h3>Upcoming Match Details</h3>
+
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel>Home Team</InputLabel>
+                        <Select
+                            value={match?.teamHomeId}
+                            label="Home Team"
+                            onChange={(e) => handleTeamChange("home", e.target.value)}
+                            sx={{
+                                borderRadius: "5px",
+                                "& .MuiInputBase-root": { height: "50px" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            }}
+                        >
+                            {teamsList.map((team) => (
+                                <MenuItem key={team.id} value={team.id}>
+                                    {team.teamName} {/* Adjust based on your schema */}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel>Away Team</InputLabel>
+                        <Select
+                            value={match?.teamAwayId}
+                            label="Away Team"
+                            onChange={(e) => handleTeamChange("away", e.target.value)}
+                            sx={{
+                                borderRadius: "5px",
+                                "& .MuiInputBase-root": { height: "50px" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            }}
+                        >
+                            {teamsList.map((team) => (
+                                <MenuItem key={team.id} value={team.id}>
+                                    {team.teamName} {/* Adjust based on your schema */}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
 
                     {upcomingFields.map(field => (
                         <TextField
@@ -169,6 +245,29 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                         <Select
                             value={match?.important}
                             label="Is It Important?"
+                            name="important"
+                            onChange={(e) => handleChange(e)}
+                            sx={{
+                                borderRadius: "5px",
+                                marginBottom: "16px",
+                                "& .MuiInputBase-root": { height: "50px !important" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
+                                "& .MuiOutlinedInput-root-MuiSelect-root": { height: "50px !important" }
+                            }}
+                        >
+                            <MenuItem key='yes' value={true}>
+                                Yes {/* Adjust based on your schema */}
+                            </MenuItem>
+                            <MenuItem key='no' value={false}>
+                                No {/* Adjust based on your schema */}
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+                     <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel>Is It Un Important?</InputLabel>
+                        <Select
+                            value={match?.unImportant}
+                            label="Is It Unimportant?"
                             name="important"
                             onChange={(e) => handleChange(e)}
                             sx={{

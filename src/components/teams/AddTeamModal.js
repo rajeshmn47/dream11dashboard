@@ -13,6 +13,8 @@ import {
   FormControl,
   Grid,
 } from "@mui/material";
+import { URL } from "constants/userconstants";
+import { API } from "api";
 
 export default function TeamModal({ isOpen, onClose, onSuccess, editData }) {
   const [form, setForm] = useState({
@@ -53,7 +55,7 @@ export default function TeamModal({ isOpen, onClose, onSuccess, editData }) {
       if (editData) {
         await axios.put(`/api/teams/${editData._id}`, form);
       } else {
-        await axios.post("/api/teams", form);
+        await API.post(`${URL}/api/match/team/create`, form);
       }
       onSuccess();
       onClose();

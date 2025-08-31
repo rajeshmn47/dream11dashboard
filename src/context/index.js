@@ -65,6 +65,9 @@ function reducer(state, action) {
     case "LOGGED_IN": {
       return { ...state, loggedIn: action.value };
     }
+    case "APP_NAME": {
+      return { ...state, appName: action.value };
+    }
     default: {
       throw new Error(`Unhandled action type: ${action.type}`);
     }
@@ -84,7 +87,8 @@ function MaterialUIControllerProvider({ children }) {
     direction: "ltr",
     layout: "dashboard",
     darkMode: true,
-    loggedIn: false
+    loggedIn: false,
+    appName: ""
   };
 
   const [controller, dispatch] = useReducer(reducer, initialState);
@@ -124,6 +128,7 @@ const setDirection = (dispatch, value) => dispatch({ type: "DIRECTION", value })
 const setLayout = (dispatch, value) => dispatch({ type: "LAYOUT", value });
 const setDarkMode = (dispatch, value) => dispatch({ type: "DARKMODE", value });
 const setLoggedIn = (dispatch, value) => dispatch({ type: "LOGGED_IN", value });
+const setAppName = (dispatch, value) => dispatch({ type: "APP_NAME", value });
 
 export {
   MaterialUIControllerProvider,
@@ -138,5 +143,6 @@ export {
   setDirection,
   setLayout,
   setDarkMode,
-  setLoggedIn
+  setLoggedIn,
+  setAppName
 };

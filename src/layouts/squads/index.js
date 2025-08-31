@@ -46,9 +46,22 @@ export default function SquadsPage() {
     { Header: "Action", accessor: "action", align: "center" },
   ];
 
-  const handleEdit=()=>{
+  const handleEdit = (data) => {
+    setSelectedSquad(data);
     setEditOpen(!editOpen)
   }
+
+  const handleSaveSquad = async (squadData) => {
+    await API.post(`${URL}/api/match/squad/create`, squadData);
+    fetchSquads();
+    setCreateOpen(false);
+  };
+
+  const handleUpdateSquad = async (squadData) => {
+    await API.put(`${URL}/api/match/squads/${squadData?._id}`, squadData);
+    fetchSquads();
+    setCreateOpen(false);
+  };
 
   const rows = squads.map((data) => ({
     teamName: (
@@ -66,7 +79,7 @@ export default function SquadsPage() {
         {data.teamId}
       </MDTypography>
     ),
-      players: (
+    players: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
         {data.players.map((p) => p.playerName).join(", ")}
       </MDTypography>
@@ -117,8 +130,8 @@ export default function SquadsPage() {
           />
         </MDBox>
         {/* Modals */}
-        <AddSquadModal open={createOpen} onClose={() => setCreateOpen(false)} onSave={fetchSquads} />
-        <EditSquadModal open={editOpen} onClose={() => setEditOpen(false)} squad={selectedSquad} onSave={fetchSquads} />
+        <AddSquadModal open={createOpen} onClose={() => setCreateOpen(false)} onSave={handleSaveSquad} />
+        <EditSquadModal open={editOpen} onClose={() => setEditOpen(false)} squadData={selectedSquad} onUpdate={handleUpdateSquad} />
       </MDBox>
     </DashboardLayout>
   );

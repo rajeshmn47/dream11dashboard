@@ -62,6 +62,7 @@ const HighlightedButton = styled(Button)`
 
 const StatusButton = styled(Button)`
   color: white !important;
+  margin: 5px !important;
 `;
 
 function Matches() {
@@ -227,6 +228,7 @@ function Matches() {
     try {
       setLoading(true);
       e.preventDefault();
+      console.log(selectedIds,'selected ids')
       for (let i = 0; i < selectedIds?.length; i++) {
         await API.get(`${URL}/api/match/update_to_live/${selectedIds[i]}`);
         await API.get(`${URL}/api/match/update_live_scores/${selectedIds[i]}`);
@@ -238,6 +240,8 @@ function Matches() {
       console.error("Batch update failed", err);
     }
   };
+
+  console.log(allMatches, 'allmatches')
 
   const tableData = useMemo(() => {
     return matchesTableData({ columnData: filteredMatches, navigate, onEdit: handleEdit, onDelete: handleDelete, selectedIds: selectedIds, handleSelect: handleSelect });
@@ -272,7 +276,7 @@ function Matches() {
                 </Button>
               </MDBox>
 
-              <MDBox display="flex" justifyContent="center" style={{ color: "#FFF !important" }} mb={2}>
+              <MDBox display="flex" justifyContent="center" gap="2" flexWrap="wrap" style={{ color: "#FFF !important" }} mb={2}>
                 <StatusButton variant={selectedFilter === 'notUpdated' ? 'contained' : 'outlined'} onClick={() => filterMatches('notUpdated')} sx={{ mx: 1 }}>
                   Not Updated
                 </StatusButton>

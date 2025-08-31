@@ -78,7 +78,7 @@ function UsersList() {
   );
 
   const rows = filteredUsers.map((u, i) => ({
-    index: i + 1,
+    index: i+1,
     name: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
         {u.username}

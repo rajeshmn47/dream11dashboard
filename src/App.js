@@ -53,6 +53,9 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 import { setLoggedIn } from "context";
+import { API } from "api";
+import { URL } from "constants/userconstants";
+import { setAppName } from "context";
 
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
@@ -65,6 +68,7 @@ export default function App() {
     transparentSidenav,
     whiteSidenav,
     darkMode,
+    appName
   } = controller;
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
@@ -83,6 +87,10 @@ export default function App() {
 
   useEffect(() => {
     checkUserToken()
+  }, [])
+
+  useEffect(() => {
+    getAppName()
   }, [])
 
   // Open sidenav when mouse enter on mini sidenav
@@ -119,6 +127,17 @@ export default function App() {
       setLoggedIn(dispatch, false);
     }
   };
+
+  const getAppName = async () => {
+    try {
+      const { data } = await API.get(`${URL}/api/config`)
+      if (data?.config?.name) {
+        setAppName(dispatch, data?.config?.name);
+      }
+    } catch (error) {
+      console.log("Error fetching app name:", error);
+    }
+  }
 
   // Change the openConfigurator state
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
@@ -204,7 +223,7 @@ export default function App() {
           <Sidenav
             color={sidenavColor}
             brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-            brandName="Material Dashboard 2"
+            brandName={appName || "Material Dashboard 2"}
             routes={routes}
             onMouseEnter={handleOnMouseEnter}
             onMouseLeave={handleOnMouseLeave}

@@ -25,13 +25,12 @@ function Configuration() {
     useEffect(() => {
         async function getConfig() {
             const { data } = await API.get(`${URL}/api/config`)
-            if (data?.configs?.length > 0) {
-                setConfig(data?.configs?.[0])
+            if (data?.config) {
+                setConfig(data?.config)
             }
         }
         getConfig()
-    }
-        , [])
+    }, [])
 
     const handleChange = (e) => {
         setConfig({ ...config, [e.target.name]: e.target.value });
@@ -40,7 +39,7 @@ function Configuration() {
     const handleSave = async () => {
         setLoading(true);
         try {
-            const response = await API.post(`${URL}/api/config`, {
+            const response = await API.put(`${URL}/api/config`, {
                 ...config
             }, {
                 headers: {

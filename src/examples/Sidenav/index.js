@@ -49,7 +49,7 @@ import {
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
-  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor, loggedIn } = controller;
+  const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor, loggedIn, appName } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
 
@@ -168,7 +168,7 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
             <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {brandName}
+              {appName}
             </MDTypography>
           </MDBox>
         </MDBox>

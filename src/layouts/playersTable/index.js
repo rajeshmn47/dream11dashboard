@@ -29,7 +29,7 @@ const PlayerTable = () => {
         ),
         image: (
             <MDTypography variant="caption" color="text" fontWeight="medium">
-                <img src={`https://static.cricbuzz.com/a/img/v1/24x18/i1/c${data.image}/ida.jpg`} target="_blank" rel="noopener noreferrer" />
+                <img src={`https://firebasestorage.googleapis.com/v0/b/dreamelevenclone.appspot.com/o/images%2F${data.id}.png?alt=media&token=4644f151-3dfd-4883-9398-4191bed34854`} width={20} target="_blank" rel="noopener noreferrer" />
             </MDTypography>
         ),
         document: (
