@@ -170,7 +170,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             }}
                         >
                             {teamsList.map((team) => (
-                                <MenuItem key={team.id} value={team.id}>
+                                <MenuItem key={team.id} value={team.id.toString()}>
                                     {team.teamName} {/* Adjust based on your schema */}
                                 </MenuItem>
                             ))}
@@ -266,9 +266,9 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                      <FormControl fullWidth sx={{ mt: 2 }}>
                         <InputLabel>Is It Un Important?</InputLabel>
                         <Select
-                            value={match?.unImportant}
-                            label="Is It Unimportant?"
-                            name="important"
+                            value={match?.notImportant}
+                            label="Is It Not Important?"
+                            name="notImportant"
                             onChange={(e) => handleChange(e)}
                             sx={{
                                 borderRadius: "5px",

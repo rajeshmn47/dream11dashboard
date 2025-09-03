@@ -33,6 +33,7 @@ function ApiKeyManagement() {
     ODI: 5,
     T20: 5,
     Important: 5,
+    NotImportant: 5
   });
   const frequencyOptions = [
     { label: "Every 1 min", value: "*/1 * * * *" },
@@ -45,6 +46,7 @@ function ApiKeyManagement() {
     ODI: "*/5 * * * *",
     T20: "*/5 * * * *",
     Important: "*/5 * * * *",
+    NotImportant: "*/5 * * * *"
   })
 
   useEffect(() => {

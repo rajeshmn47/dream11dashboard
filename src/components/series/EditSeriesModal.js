@@ -22,7 +22,8 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
         date: "",
         startDate: "",
         endDate: "",
-        important: false
+        important: false,
+        notImportant: false
     });
 
     useEffect(() => {
@@ -33,7 +34,8 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                 date: seriesData.date || "",
                 startDate: seriesData.startDate?.slice(0, 10) || "",
                 endDate: seriesData.endDate?.slice(0, 10) || "",
-                important: seriesData.important || false
+                important: seriesData.important || false,
+                notImportant: seriesData.notImportant || false
             });
         }
     }, [seriesData]);
@@ -109,6 +111,28 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                             value={form?.important}
                             label="Is It Important?"
                             name="important"
+                            onChange={(e) => handleChange(e)}
+                            sx={{
+                                borderRadius: "5px",
+                                marginBottom: "16px",
+                                "& .MuiInputBase-root": { height: "50px" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            }}
+                        >
+                            <MenuItem key='yes' value={true}>
+                                Yes {/* Adjust based on your schema */}
+                            </MenuItem>
+                            <MenuItem key='no' value={false}>
+                                No {/* Adjust based on your schema */}
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
+                    <FormControl fullWidth sx={{ mt: 2 }}>
+                        <InputLabel>Is It notimportant?</InputLabel>
+                        <Select
+                            value={form?.notImportant}
+                            label="Is It Important?"
+                            name="notImportant"
                             onChange={(e) => handleChange(e)}
                             sx={{
                                 borderRadius: "5px",

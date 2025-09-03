@@ -195,7 +195,7 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
-                icon="store"
+                icon="attach_money"
                 title="Revenue"
                 count={Math.floor(allusers.reduce((a, b) => b.wallet + a, 0))}
                 percentage={{
@@ -227,7 +227,7 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="dark"
-                icon="weekend"
+                icon="badge"
                 title="Pending KYC"
                 count={todaysdata(allteams).length}
                 percentage={{
@@ -241,7 +241,7 @@ function Dashboard() {
           <Grid item xs={12} md={6} lg={3}>
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
-                icon="leaderboard"
+                icon="account_balance_wallet"
                 title="Withdrawal requests"
                 count={wcolumnData?.length}
                 percentage={{
@@ -256,7 +256,7 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="success"
-                icon="store"
+                icon="arrow_circle_down_icon"
                 title="Total Deposits"
                 count={Math.floor(allusers.reduce((a, b) => b.wallet + a, 0))}
                 percentage={{
@@ -271,7 +271,7 @@ function Dashboard() {
             <MDBox mb={1.5}>
               <ComplexStatisticsCard
                 color="primary"
-                icon="person_add"
+                icon="event"
                 title="Upcoming Matches"
                 count={(recentMatches.filter((m) => ((new Date(m.date)?.getDate() == new Date()?.getDate())))).length}
                 percentage={{

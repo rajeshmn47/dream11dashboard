@@ -13,6 +13,7 @@ import TeamModal from "components/teams/AddTeamModal";
 
 export default function TeamList() {
     const [teams, setTeams] = useState([]);
+    const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [editTeam, setEditTeam] = useState(null);
@@ -38,6 +39,13 @@ export default function TeamList() {
         }
     };
 
+    const filteredTeams = teams.filter(
+        (u) =>
+            u.teamName?.toLowerCase().includes(search.toLowerCase()) ||
+            u.shortName?.toLowerCase().includes(search.toLowerCase()) ||
+            u.role?.toLowerCase().includes(search.toLowerCase())
+    );
+
     const columns = [
         { Header: "Name", accessor: "teamName", align: "left" },
         { Header: "Team", accessor: "shortName", align: "center" },
@@ -46,7 +54,7 @@ export default function TeamList() {
         { Header: "Action", accessor: "action", align: "center" },
     ];
 
-    const rows = teams.map((data) => ({
+    const rows = filteredTeams.map((data) => ({
         teamName: (
             <MDTypography variant="caption" color="text" fontWeight="medium">
                 {data.teamName}
@@ -103,6 +111,17 @@ export default function TeamList() {
                 >
                     + Add Team
                 </Button>
+            </MDBox>
+            <MDBox mb={2}>
+                <MDBox display="flex" justifyContent="flex-end">
+                    <input
+                        type="text"
+                        placeholder="Search by name, email, or role"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ padding: 8, borderRadius: 4, border: '1px solid #ccc', minWidth: 220 }}
+                    />
+                </MDBox>
             </MDBox>
             <MDBox pt={3}>
                 <DataTable
