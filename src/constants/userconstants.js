@@ -67,9 +67,9 @@ function geturl() {
   //return "https://dreamelevenclonebackend-7l34.onrender.com";
   //return "https://fantasycricket4u.com"
   //return "https://backend.dreambet11.io"
-  //return "https://mangogames.fun/api"
+  return "https://mangogames.fun/api"
   //return "https://dream11bet.duckdns.org"
-  return "http://localhost:8000";
+  //return "http://localhost:8000";
 }
 
 function getfrontendurl() {
