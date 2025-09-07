@@ -10,6 +10,7 @@ import DataTable from "examples/Tables/DataTable";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import ConfirmDialog from "components/ConfirmDeteteDialog";
+import useNotification from "hooks/useComponent";
 
 const PlayerTable = () => {
     const [players, setPlayers] = useState([]);
@@ -20,6 +21,7 @@ const PlayerTable = () => {
     const [search, setSearch] = useState("");
     const [filteredPlayers, setFilteredPlayers] = useState([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const { showNotification, NotificationComponent } = useNotification();
 
     const rows = filteredPlayers.map((data) => ({
         user: (
@@ -103,6 +105,11 @@ const PlayerTable = () => {
     const confirmDelete = async (id) => {
         await API.delete(`${URL}/player/delete/${id}`);
         fetchPlayers();
+        showNotification({
+            color: "success",
+            icon: "check",
+            title: "player deleted successfully!"
+        });
     };
 
     const columns = [
@@ -113,8 +120,34 @@ const PlayerTable = () => {
         { Header: "Action", accessor: "action", align: "center" },
     ];
 
-    const handleEdit = (player) => {
-        setSelectedPlayer(player)
+    const handleCreate = (player) => {
+        try {
+            showNotification({
+                color: "success",
+                icon: "check",
+                title: "Match Updated"
+            });
+        } catch (error) {
+            console.error("Update failed:", error);
+
+        }
+    }
+
+    const handleUpdate = async (data) => {
+        try {
+            showNotification({
+                color: "success",
+                icon: "check",
+                title: "Match Updated"
+            });
+        } catch (error) {
+            console.error("Update failed:", error);
+
+        }
+    };
+
+    const handleEdit = (data) => {
+        setSelectedPlayer(data);
         setEditOpen(!editOpen)
     }
 
@@ -147,12 +180,17 @@ const PlayerTable = () => {
                             loading={loading}
                         />)}
                 </MDBox>
-                <AddPlayerModal open={addOpen} onClose={() => setAddOpen(false)} refresh={fetchPlayers} />
+                <AddPlayerModal
+                    open={addOpen} onClose={() => setAddOpen(false)}
+                    refresh={fetchPlayers}
+                    onCreate={handleCreate}
+                />
                 {selectedPlayer &&
                     <EditPlayerModal
                         open={editOpen}
                         onClose={() => setEditOpen(false)}
                         player={selectedPlayer}
+                        onUpdate={handleUpdate}
                         refresh={fetchPlayers}
                     />}
                 <ConfirmDialog
@@ -162,6 +200,7 @@ const PlayerTable = () => {
                     onClose={() => setDeleteDialogOpen(false)}
                     onConfirm={confirmDelete}
                 />
+                <NotificationComponent />
             </DashboardLayout>
         </>
     );

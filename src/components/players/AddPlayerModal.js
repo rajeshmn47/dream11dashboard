@@ -8,7 +8,7 @@ import { storage } from "./../../firebase";
 import { UploadFile } from "@mui/icons-material";
 
 
-const AddPlayerModal = ({ open, onClose, refresh }) => {
+const AddPlayerModal = ({ open, onClose, onCreate, refresh }) => {
   const [form, setForm] = useState({
     id: "",
     name: "",
@@ -74,7 +74,6 @@ const AddPlayerModal = ({ open, onClose, refresh }) => {
       const storageRef = ref(storage, `images/${fileName}`);
 
       await uploadBytes(storageRef, file);
-
       // You don't need to save the URL, just return the ID
       return { id };
     } catch (error) {
@@ -91,8 +90,9 @@ const AddPlayerModal = ({ open, onClose, refresh }) => {
         form.image = id
       }
       await API.post(`${URL}/player/create`, form);
-      refresh();
+      await refresh();
       onClose();
+      onCreate();
     } catch (err) {
       alert("Error creating player");
     }

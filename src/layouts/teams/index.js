@@ -10,6 +10,7 @@ import MDBox from "components/MDBox";
 import { Button } from "@mui/material";
 import MDTypography from "components/MDTypography";
 import TeamModal from "components/teams/AddTeamModal";
+import useNotification from "hooks/useComponent";
 
 export default function TeamList() {
     const [teams, setTeams] = useState([]);
@@ -17,6 +18,7 @@ export default function TeamList() {
     const [loading, setLoading] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [editTeam, setEditTeam] = useState(null);
+    const { showNotification, NotificationComponent } = useNotification();
 
     const handleEdit = (team) => {
         setEditTeam(team);
@@ -35,6 +37,11 @@ export default function TeamList() {
     const handleDelete = async (id) => {
         if (window.confirm("Delete this team?")) {
             await API.delete(`${URL}/api/match/team/${id}`);
+            showNotification({
+                color: "error",
+                icon: "cross",
+                title: "User deleted successfully!"
+            });
             fetchTeams();
         }
     };

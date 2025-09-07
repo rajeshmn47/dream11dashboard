@@ -14,6 +14,9 @@ import matchesTableData from "layouts/tables/data/matchesTableData";
 import EditMatchModal from "components/matches/EditMatch";
 import AddMatch from "components/matches/AddMatch";
 import ConfirmDialog from "components/ConfirmDeteteDialog";
+import NotificationItem from "examples/Items/NotificationItem";
+import MDSnackbar from "components/MDSnackbar";
+import useNotification from "hooks/useComponent";
 
 const FlagImg = styled.img`
   width: 25px;
@@ -91,7 +94,46 @@ function Matches() {
     matchTitle: "",
     seriesId: "",
   });
-  const [selectedIds, setSelectedIds] = useState([])
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [seriesList, setSeriesList] = useState([]);
+  const [teamsList, setTeamsList] = useState([]);
+  const [successSB, setSuccessSB] = useState(false);
+  const { showNotification, NotificationComponent } = useNotification();
+
+  const openSuccessSB = () => {
+    setSuccessSB(true)
+    setTimeout(() => {
+      setSuccessSB(false);
+    }, 4000);
+  }
+
+  const closeSuccessSB = () => setSuccessSB(false);
+
+  useEffect(() => {
+    const fetchSeries = async () => {
+      try {
+        const response = await API.get(`${URL}/api/match/series/all`);
+        setSeriesList(response.data); // Adjust based on your actual response structure
+      } catch (error) {
+        console.error("Error fetching series:", error);
+      }
+    };
+
+    fetchSeries();
+  }, []);
+
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await API.get(`${URL}/api/match/team/all`);
+        setTeamsList(response.data); // Adjust based on your actual response structure
+      } catch (error) {
+        console.error("Error fetching series:", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
 
   useEffect(() => {
     fetchMatches();
@@ -170,6 +212,14 @@ function Matches() {
           return false
         }
       }
+      else if (selectedFilter === 'important') {
+        // Matches that are genuinely delayed or abandoned
+        console.log('important')
+        return match?.important;
+      }
+      else if (selectedFilter === 'notImportant') {
+        return match?.notImportant;
+      }
       return false;
     });
 
@@ -185,8 +235,14 @@ function Matches() {
       // Optionally, you can refresh the match details after the update
       const matchData = await API.get(`${URL}/getmatch/${selectedMatch.matchId}`);
       setSelectedMatch(matchData?.data?.match);
+      showNotification({
+        color: "success",
+        icon: "check",
+        title: "Match Updated"
+      });
     } catch (error) {
       console.error("Update failed:", error);
+
     }
   };
 
@@ -224,11 +280,13 @@ function Matches() {
     }
   };
 
+  console.log(allMatches, 'allmatches')
+
   const handleSelectedUpdate = async (e) => {
     try {
       setLoading(true);
       e.preventDefault();
-      console.log(selectedIds,'selected ids')
+      console.log(selectedIds, 'selected ids')
       for (let i = 0; i < selectedIds?.length; i++) {
         await API.get(`${URL}/api/match/update_to_live/${selectedIds[i]}`);
         await API.get(`${URL}/api/match/update_live_scores/${selectedIds[i]}`);
@@ -295,6 +353,12 @@ function Matches() {
                 <StatusButton variant={selectedFilter === 'delayedOrAbandoned' ? 'contained' : 'outlined'} onClick={() => filterMatches('delayedOrAbandoned')} sx={{ mx: 1 }}>
                   Delayed or Abandoned
                 </StatusButton>
+                <StatusButton variant={selectedFilter === 'important' ? 'contained' : 'outlined'} onClick={() => filterMatches('important')} sx={{ mx: 1 }}>
+                  Important
+                </StatusButton>
+                <StatusButton variant={selectedFilter === 'notImportant' ? 'contained' : 'outlined'} onClick={() => filterMatches('notImportant')} sx={{ mx: 1 }}>
+                  Un Important
+                </StatusButton>
               </MDBox>
               <MDBox display="flex" justifyContent="space-between" alignItems="center" px={2} py={1}>
                 <MDTypography variant="button" color="text" fontWeight="medium">
@@ -346,6 +410,8 @@ function Matches() {
       <EditMatchModal
         matchId={selectedMatch?.matchId}
         matchdata={selectedMatch}
+        teamsList={teamsList}
+        seriesList={seriesList}
         isOpen={editModalOpen}
         onClose={() => setEditModalOpen(false)}
         onSave={handleUpdate}
@@ -362,6 +428,7 @@ function Matches() {
         onClose={() => setDeleteDialogOpen(false)}
         onConfirm={confirmDelete}
       />
+      <NotificationComponent />
     </DashboardLayout>
   );
 }

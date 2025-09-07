@@ -18,6 +18,7 @@ import { URL } from "constants/userconstants";
 import { DashboardCustomizeTwoTone } from "@mui/icons-material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DataTable from "examples/Tables/DataTable";
+import useNotification from "hooks/useComponent";
 
 export default function SquadsPage() {
   const [squads, setSquads] = useState([]);
@@ -25,6 +26,7 @@ export default function SquadsPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [selectedSquad, setSelectedSquad] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { showNotification, NotificationComponent } = useNotification
 
   const fetchSquads = async () => {
     try {
@@ -53,6 +55,11 @@ export default function SquadsPage() {
 
   const handleSaveSquad = async (squadData) => {
     await API.post(`${URL}/api/match/squad/create`, squadData);
+    showNotification({
+      color: "success",
+      icon: "check",
+      title: "squad created successfully!"
+    });
     fetchSquads();
     setCreateOpen(false);
   };
@@ -61,6 +68,11 @@ export default function SquadsPage() {
     await API.put(`${URL}/api/match/squads/${squadData?._id}`, squadData);
     fetchSquads();
     setCreateOpen(false);
+      showNotification({
+      color: "success",
+      icon: "check",
+      title: "squad updated successfully!"
+    });
   };
 
   const rows = squads.map((data) => ({

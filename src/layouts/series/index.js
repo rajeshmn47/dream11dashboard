@@ -18,6 +18,7 @@ import EditSeriesModal from "components/series/EditSeriesModal";
 import DataTable from "examples/Tables/DataTable";
 import ConfirmDialog from "components/ConfirmDeteteDialog";
 import SeriesScheduleModal from "components/series/SeriesScheduleModal";
+import useNotification from "hooks/useComponent";
 
 function SeriesList() {
   const [createOpen, setCreateOpen] = useState(false);
@@ -30,6 +31,7 @@ function SeriesList() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
   const [scheduleSeries, setScheduleSeries] = useState(null);
+  const { showNotification, NotificationComponent } = useNotification();
 
   // Fetch all series on mount
   useEffect(() => {
@@ -81,6 +83,11 @@ function SeriesList() {
     try {
       await API.put(`${URL}/api/match/series/${selectedSeries?.seriesId}`, { ...series });
       fetchSeries(); // refresh list after deletion
+       showNotification({
+        color: "success",
+        icon: "check",
+        title: "Series Updated successfully!"
+      });
     } catch (error) {
       console.error("Failed to delete series", error);
     }
@@ -96,6 +103,11 @@ function SeriesList() {
       await API.delete(`${URL}/api/match/series/${selectedSeries?.seriesId}`);
       fetchSeries(); // refresh list after deletion
       setDeleteDialogOpen(false);
+       showNotification({
+        color: "success",
+        icon: "check",
+        title: "Series deleted successfully!"
+      });
     } catch (error) {
       console.error("Failed to delete series", error);
     }
@@ -231,6 +243,7 @@ function SeriesList() {
           series={scheduleSeries}
         />
       </MDBox>
+      <NotificationComponent />
     </DashboardLayout>
   );
 }

@@ -6,10 +6,12 @@ import DataTable from "examples/Tables/DataTable";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
+import useNotification from "hooks/useComponent";
 
 function SuspiciousActivities() {
   const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(false);
+    const { showNotification, NotificationComponent } = useNotification();
 
   // Mock data for suspicious activities
   const mockActivities = [

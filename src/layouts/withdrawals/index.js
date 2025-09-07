@@ -13,6 +13,7 @@ import { API } from "api";
 import { URL } from "constants/userconstants";
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
+import useNotification from "hooks/useComponent";
 
 const ApproveButton = styled(Button)`
   background: linear-gradient(195deg, #66BB6A, #43A047) !important;
@@ -39,6 +40,7 @@ function Withdrawals() {
     const [wcolumnData, setWColumnData] = useState([]);
     const [selected, setSelected] = useState({ open: false, data: null });
     const [loading, setLoading] = useState(false);
+    const { showNotification, NotificationComponent } = useNotification();
 
     useEffect(() => {
         async function fetchWithdrawals() {
@@ -59,6 +61,11 @@ function Withdrawals() {
         setSelected({ ...selected, open: false });
         const response = await API.get(`${URL}/payment/withdrawData`);
         setWColumnData(response.data.withdrawals);
+        showNotification({
+            color: "success",
+            icon: "check",
+            title: "withdrawal approved successfully!"
+        });
     };
 
     const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });

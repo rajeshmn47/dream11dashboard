@@ -6,7 +6,7 @@ import { CloudUpload } from "@mui/icons-material";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "./../../firebase";
 
-const EditPlayerModal = ({ open, onClose, player, refresh }) => {
+const EditPlayerModal = ({ open, onClose, onUpdate, player, refresh }) => {
   const [form, setForm] = useState(player);
   const [selectedFile, setSelectedFile] = useState(null);
   const existingImageUrl = player?.id ? `https://firebasestorage.googleapis.com/v0/b/dreamelevenclone.appspot.com/o/images%2F${player.id}.png?alt=media&token=4644f151-3dfd-4883-9398-4191bed34854` : null;
@@ -47,8 +47,9 @@ const EditPlayerModal = ({ open, onClose, player, refresh }) => {
         await uploadImageToFirebase(selectedFile);
       }
       await axios.put(`${URL}/player/update/${player.id}`, form);
-      refresh();
+      await refresh();
       onClose();
+      onUpdate();
     } catch (err) {
       alert("Error updating player");
     }

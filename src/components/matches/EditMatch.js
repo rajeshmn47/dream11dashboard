@@ -4,50 +4,24 @@ import {
     TextField, MenuItem, Grid, CircularProgress, Box,
     FormControl,
     InputLabel,
-    Select
+    Select,
+    Autocomplete
 } from "@mui/material";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { URL } from "constants/userconstants";
 import { API } from "api";
+import UniformSelect from "components/ui/UniformSelect";
 
-export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, onSave }) {
+export default function EditMatchModal({ matchId, matchdata, teamsList, seriesList, isOpen, onClose, onSave }) {
     const [match, setMatch] = useState(null);
     const [liveMatch, setLiveMatch] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [seriesList, setSeriesList] = useState([]);
-    const [teamsList, setTeamsList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         if (matchId) getMatch(matchId);
-    }, [matchId]);
-
-    useEffect(() => {
-        const fetchSeries = async () => {
-            try {
-                const response = await API.get(`${URL}/api/match/series/all`);
-                setSeriesList(response.data); // Adjust based on your actual response structure
-            } catch (error) {
-                console.error("Error fetching series:", error);
-            }
-        };
-
-        fetchSeries();
-    }, []);
-
-    useEffect(() => {
-        const fetchTeams = async () => {
-            try {
-                const response = await API.get(`${URL}/api/match/team/all`);
-                setTeamsList(response.data); // Adjust based on your actual response structure
-            } catch (error) {
-                console.error("Error fetching series:", error);
-            }
-        };
-
-        fetchTeams();
-    }, []);
+    }, [matchId, teamsList, seriesList]);
 
     const getMatch = async (id) => {
         setLoading(true);
@@ -69,7 +43,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
 
 
     const handleTeamChange = (type, value) => {
-        let team = teamsList.find(t => t.id === value);
+        let team = teamsList.find(t => t.id.toString() === value);
         if (type == 'home') {
             setMatch((prev) => ({ ...prev, teamHomeId: value, teamHomeName: team.teamName, teamHomeCode: team.shortName, teamHomeFlagUrl: team.flagUrl }));
         }
@@ -158,42 +132,44 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                     <h3>Upcoming Match Details</h3>
 
                     <FormControl fullWidth sx={{ mt: 2 }}>
-                        <InputLabel>Home Team</InputLabel>
-                        <Select
-                            value={match?.teamHomeId}
-                            label="Home Team"
-                            onChange={(e) => handleTeamChange("home", e.target.value)}
-                            sx={{
-                                borderRadius: "5px",
-                                "& .MuiInputBase-root": { height: "50px" },
-                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                        <Autocomplete
+                            fullWidth
+                            options={teamsList} // full list of teams
+                            getOptionLabel={(team) => team.teamName} // show team name
+                            value={teamsList.find((t) => t.id.toString() === match?.teamHomeId?.toString()) || null}
+                            onChange={(e, newValue) => {
+                                if (newValue) {
+                                    handleTeamChange("home", newValue.id.toString());
+                                }
                             }}
-                        >
-                            {teamsList.map((team) => (
-                                <MenuItem key={team.id} value={team.id.toString()}>
-                                    {team.teamName} {/* Adjust based on your schema */}
-                                </MenuItem>
-                            ))}
-                        </Select>
+                            renderInput={(params) => (
+                                <TextField {...params} label="Home Team" />
+                            )}
+                            sx={{
+                                mt: 2,
+                                "& .MuiInputBase-root": { borderRadius: "5px", height: "3em" },
+                            }}
+                        />
                     </FormControl>
                     <FormControl fullWidth sx={{ mt: 2 }}>
-                        <InputLabel>Away Team</InputLabel>
-                        <Select
-                            value={match?.teamAwayId}
-                            label="Away Team"
-                            onChange={(e) => handleTeamChange("away", e.target.value)}
-                            sx={{
-                                borderRadius: "5px",
-                                "& .MuiInputBase-root": { height: "50px" },
-                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                        <Autocomplete
+                            fullWidth
+                            options={teamsList} // full list of teams
+                            getOptionLabel={(team) => team.teamName} // show team name
+                            value={teamsList.find((t) => t.id.toString() === match?.teamAwayId?.toString()) || null}
+                            onChange={(e, newValue) => {
+                                if (newValue) {
+                                    handleTeamChange("away", newValue.id.toString());
+                                }
                             }}
-                        >
-                            {teamsList.map((team) => (
-                                <MenuItem key={team.id} value={team.id}>
-                                    {team.teamName} {/* Adjust based on your schema */}
-                                </MenuItem>
-                            ))}
-                        </Select>
+                            renderInput={(params) => (
+                                <TextField {...params} label="Away Team" />
+                            )}
+                            sx={{
+                                mt: 2,
+                                "& .MuiInputBase-root": { borderRadius: "5px", height: "3em" },
+                            }}
+                        />
                     </FormControl>
 
                     {upcomingFields.map(field => (
@@ -263,7 +239,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             </MenuItem>
                         </Select>
                     </FormControl>
-                     <FormControl fullWidth sx={{ mt: 2 }}>
+                    <FormControl fullWidth sx={{ mt: 2 }}>
                         <InputLabel>Is It Un Important?</InputLabel>
                         <Select
                             value={match?.notImportant}
@@ -322,7 +298,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                     <Box>
                         <h3>Live Match Details</h3>
 
-                        <TextField
+                        <UniformSelect
                             select
                             label="Match Status"
                             fullWidth
@@ -347,9 +323,9 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             {["Scheduled", "Upcoming", "In Progress", "Complete", "Stumps", "Break"].map((status) => (
                                 <MenuItem key={status} value={status}>{status}</MenuItem>
                             ))}
-                        </TextField>
+                        </UniformSelect>
 
-                        <TextField
+                        <UniformSelect
                             select
                             label="Is In Play"
                             fullWidth
@@ -374,7 +350,7 @@ export default function EditMatchModal({ matchId, matchdata, isOpen, onClose, on
                             <MenuItem value="">Select...</MenuItem>
                             <MenuItem value={true}>Yes</MenuItem>
                             <MenuItem value={false}>No</MenuItem>
-                        </TextField>
+                        </UniformSelect>
 
                         {liveFields.map(field => (
                             <TextField

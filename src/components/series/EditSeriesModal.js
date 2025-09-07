@@ -73,6 +73,11 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                         onChange={handleChange}
                         fullWidth
                         select
+                        sx={{
+                            borderRadius: "5px",
+                            "& .MuiInputBase-root": { height: "3em !important" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                        }}
                     >
                         {typeOptions.map((type) => (
                             <MenuItem key={type} value={type}>
@@ -136,8 +141,7 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                             onChange={(e) => handleChange(e)}
                             sx={{
                                 borderRadius: "5px",
-                                marginBottom: "16px",
-                                "& .MuiInputBase-root": { height: "50px" },
+                                "& .MuiInputBase-root": { height: "2.8em !important" },
                                 "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
                             }}
                         >

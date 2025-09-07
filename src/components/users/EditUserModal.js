@@ -1,4 +1,5 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Grid } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Grid, MenuItem } from "@mui/material";
+import UniformSelect from "components/ui/UniformSelect";
 import { useEffect, useState } from "react";
 
 export default function EditUserModal({ open, onClose, userData, onUpdate }) {
@@ -22,7 +23,19 @@ export default function EditUserModal({ open, onClose, userData, onUpdate }) {
         <Grid container spacing={2} mt={1}>
           <Grid item xs={12}><TextField fullWidth name="name" label="Name" value={formData?.username || ""} onChange={handleChange} /></Grid>
           <Grid item xs={12}><TextField fullWidth name="email" label="Email" value={formData?.email || ""} onChange={handleChange} /></Grid>
-          <Grid item xs={12}><TextField fullWidth name="role" label="Role" value={formData?.role || ""} onChange={handleChange} /></Grid>
+          <Grid item xs={12}>
+            <UniformSelect
+              select
+              fullWidth
+              name="role"
+              label="Role"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <MenuItem value="user">User</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </UniformSelect>
+          </Grid>
           <Grid item xs={12}><TextField fullWidth name="password" label="Password" value={formData?.password || ""} onChange={handleChange} /></Grid>
         </Grid>
       </DialogContent>

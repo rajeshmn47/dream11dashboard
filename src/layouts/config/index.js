@@ -14,6 +14,7 @@ import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import { API } from "api";
 import { URL } from "constants/userconstants";
+import UniformSelect from "components/ui/UniformSelect";
 
 function Configuration() {
     const [config, setConfig] = useState({
@@ -93,7 +94,7 @@ function Configuration() {
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={6}>
-                                        <TextField
+                                        <UniformSelect
                                             select
                                             fullWidth
                                             label="API Usage Tier"
@@ -104,7 +105,7 @@ function Configuration() {
                                             <MenuItem value="Free">Free</MenuItem>
                                             <MenuItem value="Pro">Pro</MenuItem>
                                             <MenuItem value="Enterprise">Enterprise</MenuItem>
-                                        </TextField>
+                                        </UniformSelect>
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Button

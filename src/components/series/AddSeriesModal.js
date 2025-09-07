@@ -85,6 +85,11 @@ const AddSeriesModal = ({ open, onClose, getSeries }) => {
                     value={form.type}
                     onChange={handleChange("type")}
                     margin="normal"
+                    sx={{
+                        borderRadius: "5px",
+                        "& .MuiInputBase-root": { height: "2.8em !important" },
+                        "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                    }}
                 >
                     <MenuItem value="international">International</MenuItem>
                     <MenuItem value="league">League</MenuItem>

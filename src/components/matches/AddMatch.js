@@ -119,8 +119,8 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                         onChange={(e) => handleInputChange("seriesId", e.target.value)}
                         sx={{
                             borderRadius: "5px",
-                            "& .MuiInputBase-root": { height: "50px" },
-                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            "& .MuiInputBase-root": { height: "2.8em !important" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
                         }}
                     >
                         {seriesList.map((series) => (
@@ -138,8 +138,8 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                         onChange={(e) => handleTeamChange("home", e.target.value)}
                         sx={{
                             borderRadius: "5px",
-                            "& .MuiInputBase-root": { height: "50px" },
-                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            "& .MuiInputBase-root": { height: "2.8em !important" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
                         }}
                     >
                         {teamsList.map((team) => (
@@ -157,8 +157,8 @@ const AddMatch = ({ open, onClose, getMatches }) => {
                         onChange={(e) => handleTeamChange("away", e.target.value)}
                         sx={{
                             borderRadius: "5px",
-                            "& .MuiInputBase-root": { height: "50px" },
-                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                            "& .MuiInputBase-root": { height: "2.8em !important" },
+                            "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
                         }}
                     >
                         {teamsList.map((team) => (

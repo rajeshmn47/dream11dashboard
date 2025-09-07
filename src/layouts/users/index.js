@@ -10,6 +10,7 @@ import DataTable from "examples/Tables/DataTable";
 import AddUserModal from "components/users/AddUserModal";
 import EditUserModal from "components/users/EditUserModal";
 import ConfirmDialog from "components/ConfirmDeteteDialog";
+import useNotification from "hooks/useComponent";
 
 function UsersList() {
   const [users, setUsers] = useState([]);
@@ -18,6 +19,7 @@ function UsersList() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { showNotification, NotificationComponent } = useNotification();
 
   useEffect(() => {
     fetchUsers();
@@ -42,9 +44,15 @@ function UsersList() {
     setDeleteDialogOpen(true);
   }
 
-  const confirmDelete = async (userId) => {
+  const confirmDelete = async () => {
     try {
-      await API.delete(`${URL}/admin/users/${userId}`);
+      await API.delete(`${URL}/admin/users/${selectedUser}`);
+      setDeleteDialogOpen(!deleteDialogOpen);
+      showNotification({
+        color: "error",
+        icon: "check",
+        title: "User deleted successfully!"
+      });
       fetchUsers();
     } catch (error) {
       console.error("Failed to delete user", error);
@@ -54,8 +62,18 @@ function UsersList() {
   const handleAddUser = async (user) => {
     try {
       await API.post(`${URL}/admin/users`, user);
+      showNotification({
+        color: "success",
+        icon: "check",
+        title: "user added successfully!"
+      });
       fetchUsers();
     } catch (error) {
+      showNotification({
+        color: "success",
+        icon: "check",
+        title: "user adding failed!"
+      });
       console.error("Failed to add user", error);
     }
   };
@@ -63,6 +81,11 @@ function UsersList() {
   const handleEditUser = async (user) => {
     try {
       await API.put(`${URL}/admin/users/${user._id}`, user);
+      showNotification({
+        color: "success",
+        icon: "check",
+        title: "User Updated successfull!"
+      });
       fetchUsers();
     } catch (error) {
       console.error("Failed to update user", error);
@@ -78,7 +101,7 @@ function UsersList() {
   );
 
   const rows = filteredUsers.map((u, i) => ({
-    index: i+1,
+    index: i + 1,
     name: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
         {u.username}
@@ -179,6 +202,7 @@ function UsersList() {
           onConfirm={confirmDelete}
         />
       </MDBox>
+      <NotificationComponent />
     </DashboardLayout>
   );
 }

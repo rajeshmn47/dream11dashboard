@@ -1,19 +1,20 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Grid, MenuItem } from "@mui/material";
+import UniformSelect from "components/ui/UniformSelect";
 import { useState } from "react";
 
 export default function AddUserModal({ open, onClose, onSave }) {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    role: "",
+    role: "user",
     password: "",
     phonenumber: ""
   });
 
   const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const handleSubmit = () => {
-    onSave(formData);
+  const handleSubmit = async () => {
+    await onSave(formData);
     onClose();
     setFormData({ name: "", email: "", role: "", password: "", phonenumber: "" });
   };
@@ -30,7 +31,7 @@ export default function AddUserModal({ open, onClose, onSave }) {
             <TextField fullWidth name="email" label="Email" value={formData.email} onChange={handleChange} />
           </Grid>
           <Grid item xs={12}>
-            <TextField
+            <UniformSelect
               select
               fullWidth
               name="role"
@@ -40,7 +41,7 @@ export default function AddUserModal({ open, onClose, onSave }) {
             >
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
-            </TextField>
+            </UniformSelect>
           </Grid>
           <Grid item xs={12}>
             <TextField fullWidth name="phonenumber" label="Phone Number" value={formData.phonenumber} onChange={handleChange} />
