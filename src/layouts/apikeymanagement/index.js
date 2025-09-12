@@ -14,6 +14,7 @@ import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
 import { setchartdata } from "utils/chartdata";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import { setbarchartdata } from "utils/chartdata";
+import ApiKeyCard from "components/apikeys/ApiKeyCard";
 
 function ApiKeyManagement() {
   const [apiKeys, setApiKeys] = useState([]);
@@ -33,7 +34,7 @@ function ApiKeyManagement() {
   const [editCronJobName, setEditCronJobName] = useState("");
   const [editCronJobSchedule, setEditCronJobSchedule] = useState("");
   const [chartData, setChartData] = useState([]);
-  const [barChartData,setBarChartData] = useState([]);
+  const [barChartData, setBarChartData] = useState([]);
   const [type, setType] = useState('day')
   const matchTypes = ["Test", "ODI", "T20", "Important"];
   const [frequencies, setFrequencies] = useState({
@@ -87,7 +88,7 @@ function ApiKeyManagement() {
   useEffect(() => {
     if (history.length > 0) {
       setChartData(setchartdata(history, type, 'requests'));
-      setBarChartData(setbarchartdata(history,type,'requests'))
+      setBarChartData(setbarchartdata(history, type, 'requests'))
     }
   }, [type, history]);
 
@@ -595,6 +596,11 @@ function ApiKeyManagement() {
                   <Grid container spacing={2} mt={3}>
                     {apiKeys.map((apiKey) => (
                       <Grid item xs={12} md={6} key={apiKey._id}>
+                        <ApiKeyCard
+                          apiKey={apiKey}
+                          isEditing={editApiKey === apiKey._id}
+                          editApiKeyValue={editApiKeyValue}
+                        />
                       </Grid>
                     ))}
                   </Grid>
