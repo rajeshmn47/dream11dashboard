@@ -43,8 +43,8 @@ export default function ApiKeyCard({ apiKey, onEdit, onDelete }) {
                         size="small"
                     />
                     <Typography variant="caption" color="#FFF">
-                        {new Date(apiKey.lastUsed).toLocaleDateString()}
-                          {moment(apiKey.lastUsed).format("DD MMM YYYY, hh:mm A")}
+                        {new Date(apiKey.updatedAt).toLocaleDateString()}
+                          {moment(apiKey.updatedAt).format("DD MMM YYYY, hh:mm A")}
                     </Typography>
                 </Box>
 
