@@ -414,14 +414,17 @@ function ApiKeyManagement() {
                     </Button>
                   </ButtonGroup>
                 </Box>
-                <Box sx={{ width: "100%", p: 2 }}>
-                  {loading ? <CircularProgress /> : <ReportsLineChart
-                    color="info"
-                    title="today's requests"
-                    description="Last Campaign Performance"
-                    date="campaign sent 2 days ago"
-                    chart={chartData}
-                  />}
+                <Box sx={{ width: "100%", p: 2, display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  {loading ? <CircularProgress /> :
+                    <Box sx={{ width: "100%" }}>
+                      <ReportsLineChart
+                        color="info"
+                        title="today's requests"
+                        description="Last Campaign Performance"
+                        date="campaign sent 2 days ago"
+                        chart={chartData}
+                      />
+                    </Box>}
                 </Box>
                 <Box sx={{ width: "100%", p: 2 }}>
                   <MDBox mb={3}>
