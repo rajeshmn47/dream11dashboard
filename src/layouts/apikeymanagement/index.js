@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, CircularProgress, Button, Card, Grid, TextField, IconButton, Switch, FormControlLabel, MenuItem, Typography, CardContent } from "@mui/material";
+import { Box, CircularProgress, Button, Card, Grid, TextField, IconButton, Switch, FormControlLabel, MenuItem, Typography, CardContent, ButtonGroup } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -9,6 +9,11 @@ import { API } from "api";
 import { URL } from "constants/userconstants";
 import { Delete, Edit, CheckSharp } from "@mui/icons-material";
 import axios from "axios";
+import { Line } from "react-chartjs-2";
+import ReportsLineChart from "examples/Charts/LineCharts/ReportsLineChart";
+import { setchartdata } from "utils/chartdata";
+import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
+import { setbarchartdata } from "utils/chartdata";
 
 function ApiKeyManagement() {
   const [apiKeys, setApiKeys] = useState([]);
@@ -27,6 +32,9 @@ function ApiKeyManagement() {
   const [editCronJob, setEditCronJob] = useState(null);
   const [editCronJobName, setEditCronJobName] = useState("");
   const [editCronJobSchedule, setEditCronJobSchedule] = useState("");
+  const [chartData, setChartData] = useState([]);
+  const [barChartData,setBarChartData] = useState([]);
+  const [type, setType] = useState('day')
   const matchTypes = ["Test", "ODI", "T20", "Important"];
   const [frequencies, setFrequencies] = useState({
     Test: 5,
@@ -49,13 +57,47 @@ function ApiKeyManagement() {
     NotImportant: "*/5 * * * *"
   })
 
+  const [history, setHistory] = useState([]);
+
+  useEffect(() => {
+    const fetchUsageHistory = async () => {
+      try {
+        setLoading(true);
+        const today = new Date();
+        const last7Days = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const res = await API.get(`${URL}/apikeys/usage_history`, {
+          params: {
+            startDate: last7Days.toISOString(),
+            endDate: today.toISOString(),
+          },
+        });
+        setHistory([...res.data.history]);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching API usage:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchUsageHistory();
+  }, []);
+
+  console.log(history, 'history')
+
+  useEffect(() => {
+    if (history.length > 0) {
+      setChartData(setchartdata(history, type, 'requests'));
+      setBarChartData(setbarchartdata(history,type,'requests'))
+    }
+  }, [type, history]);
+
   useEffect(() => {
     fetchApiKeys();
     fetchUsageCount();
   }, []);
 
   useEffect(() => {
-     fetchTier();
+    fetchTier();
   }, []);
 
   useEffect(() => {
@@ -301,6 +343,8 @@ function ApiKeyManagement() {
     }
   }
 
+  console.log(chartData, 'chart data')
+
   return (
     <DashboardLayout>
       <DashboardNavbar />
@@ -323,7 +367,74 @@ function ApiKeyManagement() {
                   API Key Management
                 </MDTypography>
               </MDBox>
+
               <MDBox p={3}>
+                <Box sx={{ width: "100%", p: 2 }}>
+                  <ButtonGroup
+                    variant="contained"
+                    aria-label="outlined primary button group"
+                    style={{ color: "#FFFFFF !important" }}
+                  >
+                    <Button
+                      onClick={() => setType("1min")}
+                      className={type == "1min" ? "selected" : "notselected"}
+                    >
+                      1 min
+                    </Button>
+                    <Button
+                      onClick={() => setType("5min")}
+                      className={type == "5min" ? "selected" : "notselected"}
+                    >
+                      5 min
+                    </Button>
+                    <Button
+                      onClick={() => setType("hour")}
+                      className={type == "hour" ? "selected" : "notselected"}
+                    >
+                      hour
+                    </Button>
+                    <Button
+                      onClick={() => setType("day")}
+                      className={type == "day" ? "selected" : "notselected"}
+                    >
+                      day
+                    </Button>
+                    <Button
+                      onClick={() => setType("week")}
+                      className={type == "week" ? "selected" : "notselected"}
+                    >
+                      week
+                    </Button>
+                    <Button
+                      onClick={() => setType("month")}
+                      className={type == "month" ? "selected" : "notselected"}
+                    >
+                      month
+                    </Button>
+                  </ButtonGroup>
+                </Box>
+                <Box sx={{ width: "100%", p: 2 }}>
+                  {loading ? <CircularProgress /> : <ReportsLineChart
+                    color="info"
+                    title="today's requests"
+                    description="Last Campaign Performance"
+                    date="campaign sent 2 days ago"
+                    chart={chartData}
+                  />}
+                </Box>
+                <Box sx={{ width: "100%", p: 2 }}>
+                  <MDBox mb={3}>
+                    {barChartData && (
+                      <ReportsBarChart
+                        color="info"
+                        title="today's teams"
+                        description="Last Campaign Performance"
+                        date="campaign sent 2 days ago"
+                        chart={barChartData}
+                      />
+                    )}
+                  </MDBox>
+                </Box>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
                     <TextField
