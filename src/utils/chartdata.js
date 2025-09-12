@@ -475,7 +475,7 @@ export function setbarchartdata(teams, type, l) {
 
     let slotsdata = [];
     for (let i = 0; i < labels.length; i++) {
-      let a = teams.filter((s) => s.matchId == labels[i]);
+      let a = teams.filter((s) => s.matchdetails?.matchTitle == labels[i]);
       slotsdata.push(a.length);
     }
 
@@ -551,7 +551,7 @@ export function setbarchartdata(teams, type, l) {
     // Count how many teams fall into each slot
     let slotsdata = [];
     for (let i = 0; i < labels.length; i++) {
-      let a = teams.filter((s) => s.matchId == labels[i]);
+      let a = teams.filter((s) => s.matchdetails?.matchTitle == labels[i]);
       slotsdata.push(a.length);
     }
     data.labels = Object.keys(groups); // use dynamic slot labels
@@ -574,7 +574,7 @@ export function setbarchartdata(teams, type, l) {
     }
     let slotsdata = [];
     for (let i = 0; i < labels.length; i++) {
-      let a = teams.filter((s) => s.matchId == labels[i]);
+      let a = teams.filter((s) => s.matchdetails?.matchTitle == labels[i]);
       slotsdata.push(a.length);
     }
     data.labels = Object.keys(groups);
@@ -600,7 +600,7 @@ export function setbarchartdata(teams, type, l) {
     }
     let weeklydata = [];
     for (let i = 0; i < labels.length; i++) {
-      let a = teams.filter((s) => s.matchId == labels[i]);
+      let a = teams.filter((s) => s.matchdetails?.matchTitle == labels[i]);
       weeklydata.push(a.length);
     }
     data.labels = labels
@@ -627,7 +627,7 @@ export function setbarchartdata(teams, type, l) {
     }
     let monthlydata = [];
     for (let i = 0; i < labels.length; i++) {
-      let a = teams.filter((s) => s.matchId == labels[i]);
+      let a = teams.filter((s) => s.matchdetails?.matchTitle == labels[i]);
       monthlydata.push(a.length);
     }
     data.labels = labels
