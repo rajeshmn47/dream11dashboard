@@ -87,6 +87,10 @@ function configs(labels, datasets) {
               style: "normal",
               lineHeight: 2,
             },
+            callback: function (val, index, ticks) {
+              let label = this.getLabelForValue(val);
+              return label.length > 8 ? label.substring(0, 8) + "…" : label;
+            },
           },
         },
       },
