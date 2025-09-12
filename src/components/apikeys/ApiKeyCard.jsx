@@ -3,6 +3,7 @@ import { Edit, Delete, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import ProgressLineChart from "examples/Charts/LineCharts/ProgressLineChart";
 import MDProgress from "components/MDProgress";
+import moment from "moment";
 
 export default function ApiKeyCard({ apiKey, onEdit, onDelete }) {
     const [showKey, setShowKey] = useState(false);
@@ -42,8 +43,8 @@ export default function ApiKeyCard({ apiKey, onEdit, onDelete }) {
                         size="small"
                     />
                     <Typography variant="caption" color="#FFF">
-                        Used {apiKey.usageCount} times • Last used:{" "}
                         {new Date(apiKey.lastUsed).toLocaleDateString()}
+                          {moment(apiKey.lastUsed).format("DD MMM YYYY, hh:mm A")}
                     </Typography>
                 </Box>
 
