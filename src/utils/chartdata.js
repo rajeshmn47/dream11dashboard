@@ -442,6 +442,7 @@ export function setbarchartdata(teams, type, l) {
   }
   let labels = Object.keys(groups);
   if (type == "1min") {
+    teams = teams.filter((t) => (new Date() - new Date(t.createdAt)) < 60 * 60 * 1000)
     let data = {
       labels: [],
       datasets: { label: "Requests", data: [] },
@@ -449,7 +450,7 @@ export function setbarchartdata(teams, type, l) {
 
     let groups = {}
     for (let i = 0; i < teams?.length; i++) {
-      groups[teams[i].matchId] = teams[i]
+      groups[teams[i].matchdetails?.matchTitle] = teams[i]?.matchdetails?.matchTitle
     }
 
     // Generate slots dynamically
@@ -484,6 +485,7 @@ export function setbarchartdata(teams, type, l) {
     return data;
   }
   else if (type == "5min") {
+    teams = teams.filter((t) => new Date() - new Date(t.createdAt) < 60 * 60 * 4 * 1000)
     let data = {
       labels: [],
       datasets: { label: "Requests", data: [] },
@@ -522,6 +524,7 @@ export function setbarchartdata(teams, type, l) {
     return data;
   }
   else if (type == "hour") {
+    teams = teams.filter((t) => new Date() - new Date(t.createdAt) < 60 * 60 * 24 * 1000)
     let data = {
       labels: labels,
       datasets: { label: "Requests", data: [] },
@@ -559,6 +562,7 @@ export function setbarchartdata(teams, type, l) {
     return data;
   }
   else if (type == "day") {
+    teams = teams.filter((t) => new Date() - new Date(t.createdAt) < 60 * 60 * 24 * 7 * 1000)
     let data = {
       labels: ["M", "T", "W", "T", "F", "S", "S"],
       datasets: { label: "Requests", data: [50, 20, 10, 22, 50, 10, 40] },
@@ -582,6 +586,7 @@ export function setbarchartdata(teams, type, l) {
     data.datasets.data = slotsdata;
     return data;
   } else if (type == "week") {
+    teams = teams.filter((t) => new Date() - new Date(t.createdAt) < 60 * 60 * 24 * 30 * 1000)
     let weeks = [0, 1, 2, 3, 4, 5, 6];
     let data = {
       labels: ["M", "T", "W", "T", "F", "S", "S"],

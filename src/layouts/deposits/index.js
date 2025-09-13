@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Card } from "@mui/material";
+import { Grid, Card, Button, Chip } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
@@ -11,41 +11,45 @@ import { URL } from "constants/userconstants";
 import useNotification from "hooks/useComponent";
 import MDBadge from "components/MDBadge";
 import { ArrowOutward } from "@mui/icons-material";
+import DepositModal from "components/deposits/DepositModal";
 
 function Deposits() {
   const [depositsData, setDepositsData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [balance, setBalance] = useState(0);
   const { showNotification, NotificationComponent } = useNotification();
+  const [allUsersList, setAllUsersList] = useState([]);
 
   useEffect(() => {
-    async function fetchDeposits() {
-      setLoading(true);
-      try {
-        const response = await API.get(`${URL}/payment/depositData`);
-        setDepositsData(response.data.deposits || []);
-      } catch (error) {
-        console.error("Error fetching deposits data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    fetchUsers()
+  }, [])
+
+  useEffect(() => {
     fetchDeposits();
   }, []);
 
-  const handleApprove = async (deposit) => {
+  async function fetchDeposits() {
+    setLoading(true);
     try {
-      await API.get(`${URL}/payment/approve?depositId=${deposit._id}&userId=${deposit?.user?._id}`, { verified: true }); // Update to your actual endpoint   
+      const response = await API.get(`${URL}/payment/depositData`);
+      setDepositsData(response.data.deposits || []);
+    } catch (error) {
+      console.error("Error fetching deposits data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const onUpdate = async (deposit) => {
+    try {
       showNotification({
         color: "success",
         icon: "check",
         title: "Deposit approved successfully!"
       });
       // Refresh deposits data
-      setDepositsData((prevData) =>
-        prevData.map((d) =>
-          d._id === deposit._id ? { ...d, verified: true } : d
-        )
-      );
+      fetchDeposits()
     } catch (error) {
       console.error("Error approving deposit:", error);
     }
@@ -71,6 +75,21 @@ function Deposits() {
     }
   };
 
+  const fetchUsers = async () => {
+    try {
+      const res = await API.get(`${URL}/admin/users`); // Update endpoint as needed
+      setAllUsersList(res.data.users);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
+
+  const handleApprove = async (deposit) => {
+    await API.get(`${URL}/payment/approve?depositId=${deposit._id}`);
+    let w = await API.get(`${URL}/payment/depositData`);
+    fetchDeposits()
+  }
+
   const columns = [
     { Header: "User", accessor: "user", align: "left" },
     { Header: "Amount", accessor: "amount", align: "center" },
@@ -91,9 +110,11 @@ function Deposits() {
       </MDTypography>
     ),
     status: (
-      <MDTypography variant="caption" color="text" fontWeight="medium">
-        {deposit.verified ? 'verified' : 'pending'}
-      </MDTypography>
+      <MDBox ml={-1} sx={{ cursor: 'pointer' }} onClick={() => handleApprove(deposit)}>
+        <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          {deposit.verified ? "Verified" : "Pending"}
+        </span>} color={deposit.verified ? "success" : "warning"} variant="gradient" size="sm" />
+      </MDBox>
     ),
     timestamp: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
@@ -104,12 +125,12 @@ function Deposits() {
       <MDBox display="flex" justifyContent="center">
         <MDBox ml={-1} sx={{ cursor: 'pointer' }} onClick={() => handleApprove(deposit)}>
           <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            approve <ArrowOutward style={{ fontSize: 18 }} />
+            approve
           </span>} color="success" variant="gradient" size="sm" />
         </MDBox>
         <MDBox ml={1} sx={{ cursor: 'pointer' }} onClick={() => handleDecline(deposit)}>
           <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            decline <ArrowOutward style={{ fontSize: 18 }} />
+            decline
           </span>} color="error" variant="gradient" size="sm" />
         </MDBox>
       </MDBox>
@@ -119,6 +140,13 @@ function Deposits() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
+      <Button
+        variant="contained"
+        sx={{ mt: 2, float: "right", mr: 2 }}
+        onClick={() => setOpen(true)}
+      >
+        Add Deposit
+      </Button>
       <MDBox py={3}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
@@ -140,7 +168,7 @@ function Deposits() {
               <MDBox pt={3}>
                 <DataTable
                   table={{ columns, rows }}
-                  isSorted={false}
+                  isSorted={true}
                   entriesPerPage={false}
                   showTotalEntries={false}
                   noEndBorder
@@ -150,6 +178,12 @@ function Deposits() {
             </Card>
           </Grid>
         </Grid>
+        <DepositModal
+          open={open}
+          onClose={() => setOpen(false)}
+          onDeposit={onUpdate}
+          allUsersList={allUsersList}
+        />
       </MDBox>
       <Footer />
     </DashboardLayout>

@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
   Table, TableHead, TableBody, TableRow, TableCell,
   Paper, TableContainer, IconButton,
-  Button
+  Button,
+  TextField
 } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -26,7 +27,27 @@ export default function SquadsPage() {
   const [editOpen, setEditOpen] = useState(false);
   const [selectedSquad, setSelectedSquad] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
   const { showNotification, NotificationComponent } = useNotification
+  const [filteredSquads, setFilteredSquads] = useState([])
+
+  useEffect(() => {
+    if (!search && squads.length > 0) {
+      setFilteredSquads([...squads]);
+    } else {
+      if (search && rows?.length > 0) {
+        const lower = search.toLowerCase();
+        const filtered = squads.filter((row) => {
+          console.log(Object.values(row), 'row')
+          return Object.values(row).some(
+            (value) => value && String(value).toLowerCase().includes(lower)
+          )
+        }
+        );
+        setFilteredSquads([...filtered]);
+      }
+    }
+  }, [search, squads]);
 
   const fetchSquads = async () => {
     try {
@@ -68,14 +89,14 @@ export default function SquadsPage() {
     await API.put(`${URL}/api/match/squads/${squadData?._id}`, squadData);
     fetchSquads();
     setCreateOpen(false);
-      showNotification({
+    showNotification({
       color: "success",
       icon: "check",
       title: "squad updated successfully!"
     });
   };
 
-  const rows = squads.map((data) => ({
+  const rows = filteredSquads.map((data) => ({
     teamName: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
         {data.teamName}
@@ -124,6 +145,16 @@ export default function SquadsPage() {
 
   return (
     <DashboardLayout>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <TextField
+          label="Search squads"
+          variant="outlined"
+          size="small"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ marginBottom: 16 }}
+        />
+      </div>
       <MDBox>
         <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
           <MDTypography variant="h5">Squads</MDTypography>

@@ -11,11 +11,13 @@ import AddUserModal from "components/users/AddUserModal";
 import EditUserModal from "components/users/EditUserModal";
 import ConfirmDialog from "components/ConfirmDeteteDialog";
 import useNotification from "hooks/useComponent";
+import ViewUserModal from "components/users/ViewUserModal";
 
 function UsersList() {
   const [users, setUsers] = useState([]);
   const [createOpen, setCreateOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [search, setSearch] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -43,6 +45,11 @@ function UsersList() {
     setSelectedUser(user);
     setDeleteDialogOpen(true);
   }
+
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setViewModalOpen(true);
+  };
 
   const confirmDelete = async () => {
     try {
@@ -126,6 +133,14 @@ function UsersList() {
       <MDBox display="flex" justifyContent="center" gap={1}>
         <MDButton
           variant="contained"
+          color="secondary"
+          size="small"
+          onClick={() => handleViewUser(u)}
+        >
+          View
+        </MDButton>
+        <MDButton
+          variant="contained"
           color="success"
           size="small"
           onClick={() => handleSelectUser(u)}
@@ -193,6 +208,11 @@ function UsersList() {
           onClose={() => setEditModalOpen(false)}
           userData={selectedUser}
           onUpdate={handleEditUser}
+        />
+        <ViewUserModal
+          open={viewModalOpen}
+          onClose={() => setViewModalOpen(false)}
+          userData={selectedUser}
         />
         <ConfirmDialog
           open={deleteDialogOpen}

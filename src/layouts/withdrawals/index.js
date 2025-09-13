@@ -14,6 +14,7 @@ import { URL } from "constants/userconstants";
 import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import useNotification from "hooks/useComponent";
+import WithdrawalModal from "components/withdrawals/WithdrawalModal";
 
 const ApproveButton = styled(Button)`
   background: linear-gradient(195deg, #66BB6A, #43A047) !important;
@@ -41,20 +42,36 @@ function Withdrawals() {
     const [selected, setSelected] = useState({ open: false, data: null });
     const [loading, setLoading] = useState(false);
     const { showNotification, NotificationComponent } = useNotification();
+    const [open, setOpen] = useState(false);
+    const [allUsersList, setAllUsersList] = useState([]);
 
     useEffect(() => {
-        async function fetchWithdrawals() {
-            setLoading(true);
-            const response = await API.get(`${URL}/payment/withdrawData`);
-            setWColumnData(response.data.withdrawals);
-            setLoading(false);
-        }
         fetchWithdrawals();
     }, []);
+
+    useEffect(() => {
+        fetchUsers()
+    }, []);
+
+    const fetchUsers = async () => {
+        try {
+            const res = await API.get(`${URL}/admin/users`); // Update endpoint as needed
+            setAllUsersList(res.data.users);
+        } catch (err) {
+            console.error("Error fetching users:", err);
+        }
+    };
 
     const handleWView = (data) => {
         setSelected({ open: true, data });
     };
+
+    async function fetchWithdrawals() {
+        setLoading(true);
+        const response = await API.get(`${URL}/payment/withdrawData`);
+        setWColumnData(response.data.withdrawals);
+        setLoading(false);
+    }
 
     const handleApprove = async () => {
         await API.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
@@ -68,11 +85,32 @@ function Withdrawals() {
         });
     };
 
+    const onUpdate = async (deposit) => {
+        try {
+            showNotification({
+                color: "success",
+                icon: "check",
+                title: "Deposit approved successfully!"
+            });
+            // Refresh deposits data
+            fetchWithdrawals()
+        } catch (error) {
+            console.error("Error approving deposit:", error);
+        }
+    };
+
     const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
 
     return (
         <DashboardLayout>
             <DashboardNavbar />
+            <Button
+                variant="contained"
+                sx={{ mt: 2, float: "right", mr: 2 }}
+                onClick={() => setOpen(true)}
+            >
+                Add Withdraw
+            </Button>
             <MDBox py={3}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>
@@ -94,7 +132,7 @@ function Withdrawals() {
                             <MDBox pt={3}>
                                 <DataTable
                                     table={{ columns: wcolumns, rows: wrows }}
-                                    isSorted={false}
+                                    isSorted={true}
                                     entriesPerPage={false}
                                     showTotalEntries={false}
                                     noEndBorder
@@ -104,6 +142,12 @@ function Withdrawals() {
                     </Grid>
                 </Grid>
             </MDBox>
+            <WithdrawalModal
+                open={open}
+                onClose={() => setOpen(false)}
+                onDeposit={onUpdate}
+                allUsersList={allUsersList}
+            />
             <Drawer anchor="top" open={selected.open} onClose={() => setSelected({ ...selected, open: false })}>
                 <DeatilTop>
                     <p>Amount</p>

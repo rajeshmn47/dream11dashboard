@@ -104,6 +104,8 @@ export default function TeamList() {
         ),
     }));
 
+    console.log(teams, 'teams')
+
     return (
         <DashboardLayout>
             <MDBox display="flex" justifyContent="space-between" alignItems="center" mb={2}>
@@ -133,8 +135,8 @@ export default function TeamList() {
             <MDBox pt={3}>
                 <DataTable
                     table={{ columns, rows }}
-                    isSorted={false}
-                    entriesPerPage={false}
+                    isSorted={true}
+                    entriesPerPage={6}
                     showTotalEntries={false}
                     noEndBorder
                     loading={loading}

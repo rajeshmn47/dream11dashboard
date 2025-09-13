@@ -15,6 +15,7 @@ import { setchartdata } from "utils/chartdata";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import { setbarchartdata } from "utils/chartdata";
 import ApiKeyCard from "components/apikeys/ApiKeyCard";
+import useNotification from "hooks/useComponent";
 
 function ApiKeyManagement() {
   const [apiKeys, setApiKeys] = useState([]);
@@ -26,6 +27,7 @@ function ApiKeyManagement() {
   const [editApiKeyValue, setEditApiKeyValue] = useState("");
   const [multipleKeysMode, setMultipleKeysMode] = useState(true);
   const [usageTier, setUsageTier] = useState("medium");
+  const { showNotification, NotificationComponent } = useNotification();
   // -------------------- State --------------------
   const [cronJobs, setCronJobs] = useState([]);
   const [newCronJobName, setNewCronJobName] = useState("");
@@ -344,6 +346,23 @@ function ApiKeyManagement() {
     }
   }
 
+  const onSave = async (key) => {
+    await API.post(`${URL}/api/config/key/update`, key)
+    setEditApiKey(null)
+    showNotification({
+      color: "success",
+      icon: "check",
+      title: "key updated successfully!"
+    });
+    fetchApiKeys()
+  }
+
+  const handleEdit = (key) => {
+    console.log(key, 'key')
+    setEditApiKey(key?._id)
+    setApiKeys(apiKeys.map(k => k._id === key._id ? key : k))
+  }
+
   console.log(chartData, 'chart data')
 
   return (
@@ -596,17 +615,44 @@ function ApiKeyManagement() {
                     <CircularProgress />
                   </Box>
                 ) : (
-                  <Grid container spacing={2} mt={3}>
-                    {apiKeys.map((apiKey) => (
-                      <Grid item xs={12} md={6} key={apiKey._id}>
-                        <ApiKeyCard
-                          apiKey={apiKey}
-                          isEditing={editApiKey === apiKey._id}
-                          editApiKeyValue={editApiKeyValue}
-                        />
+                  <Box>
+                    <Box>
+                      <Typography variant="h5" gutterBottom>
+                        Score API Keys
+                      </Typography>
+                      <Grid container spacing={2} mt={3}>
+                        {apiKeys.filter((l) => l.type == 'scores').map((apiKey) => (
+                          <Grid item xs={12} md={6} key={apiKey._id}>
+                            <ApiKeyCard
+                              apiKey={apiKey}
+                              isEditing={editApiKey === apiKey._id}
+                              editApiKeyValue={editApiKeyValue}
+                              onEdit={(key) => { handleEdit(key) }}
+                              onSave={(key) => { onSave(key) }}
+                            />
+                          </Grid>
+                        ))}
                       </Grid>
-                    ))}
-                  </Grid>
+                    </Box>
+                    <Box>
+                      <Typography variant="h5" gutterBottom>
+                        Lineups API Keys
+                      </Typography>
+                      <Grid container spacing={2} mt={3}>
+                        {apiKeys.filter((l) => l.type == 'lineups').map((apiKey) => (
+                          <Grid item xs={12} md={6} key={apiKey._id}>
+                            <ApiKeyCard
+                              apiKey={apiKey}
+                              isEditing={editApiKey === apiKey._id}
+                              editApiKeyValue={editApiKeyValue}
+                              onEdit={(key) => { handleEdit(key) }}
+                              onSave={(key) => { onSave(key) }}
+                            />
+                          </Grid>
+                        ))}
+                      </Grid>
+                    </Box>
+                  </Box>
                 )}
               </MDBox>
             </Card>
@@ -650,6 +696,7 @@ function ApiKeyManagement() {
         </Grid>
       </MDBox>
       <Footer />
+      <NotificationComponent />
     </DashboardLayout>
   );
 }

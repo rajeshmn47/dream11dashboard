@@ -56,6 +56,7 @@ ChartJS.register(
 );
 
 function ReportsLineChart({ color, title, description, date, chart }) {
+  console.log(chart,'data')
   const { data, options } = configs(chart.labels || [], chart.datasets || {});
 
   return (

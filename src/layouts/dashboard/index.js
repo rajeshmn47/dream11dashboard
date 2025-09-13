@@ -85,6 +85,7 @@ function Dashboard() {
   const [columnData, setColumnData] = useState([]);
   const [wcolumnData, setWColumnData] = useState([]);
   const [selected, setSelected] = useState({ open: false, selected: null, type: 'd' });
+  const [selectedWithdraw, setSelectedWithdraw] = useState({ open: false, selected: null })
   const [loading, setLoading] = useState(false);
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
@@ -116,7 +117,7 @@ function Dashboard() {
       setLoading(true);
       let allteamsdata = await API.get(`${URL}/getallteams`);
       setTeams(allteamsdata.data.teams);
-      setAllTeams([...allteamsdata.data.teams.map((team)=>({...team.team[0]}))])
+      setAllTeams([...allteamsdata.data.teams.map((team) => ({ ...team.team[0] }))])
       let alluserdata = await API.get(`${URL}/auth/getallusers`);
       setAllUsers(alluserdata.data.users);
       let allmatchesdata = await API.get(`${URL}/allmatches`);
@@ -146,13 +147,19 @@ function Dashboard() {
     setSelected({ open: true, data: s })
   }
   const handleWView = (s) => {
-    setSelected({ open: true, data: s, type: 'w' })
+    setSelectedWithdraw({ open: true, data: s, type: 'w' })
   }
   const handleApprove = async () => {
     await API.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
     setSelected({ ...selected, open: false });
     let w = await API.get(`${URL}/payment/withdrawData`);
     setWColumnData(w.data.withdrawals);
+  }
+  const handleApproveDeposit = async () => {
+    await API.get(`${URL}/payment/approve?depositId=${selected.data._id}`);
+    setSelected({ ...selected, open: false });
+    let w = await API.get(`${URL}/payment/depositData`);
+    setColumnData(w.data.deposits);
   }
   const { columns, rows } = depositsTableData({ columnData, handleView });
   const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
@@ -432,19 +439,6 @@ function Dashboard() {
             </Grid>
           </Grid>
         </MDBox>
-        <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={12} lg={12}>
-              <Users users={allusers} />
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-              <Team teams={teams} />
-            </Grid>
-            <Grid item xs={12} md={12} lg={12}>
-              <Contests />
-            </Grid>
-          </Grid>
-        </MDBox>
       </MDBox>
       <Drawer anchor="top" open={selected.open} onClose={() => setSelected({ ...selected, open: false })}>
         <DeatilTop>
@@ -453,11 +447,32 @@ function Dashboard() {
         </DeatilTop>
         <DeatilTop>
           <p>user</p>
-          <h5>{selected?.data?.user[0]?.username}</h5>
+          <h5>{selected?.data?.user?.username}</h5>
+        </DeatilTop>
+        <DeatilTop>
+          <p>utr</p>
+          <h5>{selected?.data?.utr}</h5>
+        </DeatilTop>
+        <DeatilTop>
+          <p>account details</p>
+          <h5>{selected?.data?.user[0]?.accountNumber}</h5>
+          <h5>{selected?.data?.user[0]?.ifsc}</h5>
+        </DeatilTop>
+        <ApproveButton color="success" onClick={() =>
+          handleApproveDeposit()}>approve</ApproveButton>
+      </Drawer>
+      <Drawer anchor="top" open={selectedWithdraw.open} onClose={() => setSelectedWithdraw({ ...selected, open: false })}>
+        <DeatilTop>
+          <p>amount</p>
+          <h5>₹{selected?.data && selected?.data.amount}</h5>
+        </DeatilTop>
+        <DeatilTop>
+          <p>user</p>
+          <h5>{selected?.data?.user?.username}</h5>
         </DeatilTop>
         <DeatilTop>
           <p>upi ID</p>
-          <h5>{selected?.data?.user[0]?.upiId}</h5>
+          <h5>{selected?.data?.user?.upiId}</h5>
         </DeatilTop>
         <DeatilTop>
           <p>account details</p>
