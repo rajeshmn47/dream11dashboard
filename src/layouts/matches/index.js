@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Box, CircularProgress, Button, Card, Grid } from "@mui/material";
+import { Box, CircularProgress, Button, Card, Grid, FormControl, InputLabel, Select, MenuItem, Menu, Tooltip } from "@mui/material";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
@@ -17,6 +17,7 @@ import ConfirmDialog from "components/ConfirmDeteteDialog";
 import NotificationItem from "examples/Items/NotificationItem";
 import MDSnackbar from "components/MDSnackbar";
 import useNotification from "hooks/useComponent";
+import { ArrowDropDown } from "@mui/icons-material";
 
 const FlagImg = styled.img`
   width: 25px;
@@ -65,7 +66,6 @@ const HighlightedButton = styled(Button)`
 
 const StatusButton = styled(Button)`
   color: white !important;
-  margin: 5px !important;
 `;
 
 function Matches() {
@@ -99,6 +99,23 @@ function Matches() {
   const [teamsList, setTeamsList] = useState([]);
   const [successSB, setSuccessSB] = useState(false);
   const { showNotification, NotificationComponent } = useNotification();
+  const [importanceFilter, setImportanceFilter] = useState('all');
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [statusAnchorEl, setStatusAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const statusOpen = Boolean(statusAnchorEl)
+  const statusOptions = [
+    { value: 'all', label: 'All Matches' },
+    { value: 'notUpdated', label: 'Not Updated' },
+    { value: 'ongoing', label: 'Ongoing' },
+    { value: 'upcoming', label: 'Upcoming' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'delayedOrAbandoned', label: 'Delayed or Abandoned' },
+  ];
+
+  const handleClick = (event) => setAnchorEl(event.currentTarget);
+  const handleStatusClick = (event) => setStatusAnchorEl(event.currentTarget)
+  const handleClose = () => setAnchorEl(null);
 
   const openSuccessSB = () => {
     setSuccessSB(true)
@@ -186,7 +203,7 @@ function Matches() {
       return false;
     });
 
-  const filteredMatches = selectedFilter === 'all'
+  const filteredMatchres = selectedFilter === 'all'
     ? allMatches
     : allMatches.filter(match => {
       const matchDate = new Date(match.date);
@@ -222,6 +239,46 @@ function Matches() {
       }
       return false;
     });
+
+  const filteredMatches = allMatches.filter(match => {
+    const matchDate = new Date(match.date);
+    const matchEndDate = new Date(match.enddate);
+
+    // 1️⃣ Status filter
+    let statusPass = false;
+    if (selectedFilter === 'all') {
+      statusPass = true;
+    } else if (selectedFilter === 'ongoing') {
+      statusPass = matchDate <= currentDate && matchEndDate >= currentDate;
+    } else if (selectedFilter === 'upcoming') {
+      statusPass = matchDate > currentDate;
+    } else if (selectedFilter === 'completed') {
+      statusPass = match?.matchlive?.[0]?.result?.toLowerCase() === 'complete';
+    } else if (selectedFilter === 'delayedOrAbandoned') {
+      const result = match.matchlive?.[0]?.result?.toLowerCase();
+      statusPass = result === 'delayed' || result === 'abandon';
+    } else if (selectedFilter === 'notUpdated') {
+      if (currentDate > matchDate) {
+        const result = match.matchlive?.[0]?.result?.toLowerCase();
+        statusPass = (
+          !match.matchlive ||
+          !result ||
+          (currentDate > matchEndDate && !(result === 'complete' || result === 'abandon'))
+        );
+      }
+    }
+
+    // 2️⃣ Importance filter
+    let importancePass = false;
+    if (importanceFilter === 'all') {
+      importancePass = true;
+    } else {
+      importancePass = match?.importance === importanceFilter;
+    }
+
+    // ✅ Must satisfy BOTH
+    return statusPass && importancePass;
+  });
 
   const handleEdit = (match) => {
     setSelectedMatch(match);
@@ -267,6 +324,20 @@ function Matches() {
         ? prev.filter(matchId => matchId !== id)
         : [...prev, id]
     );
+  };
+
+  const handleSelectImportance = (value) => {
+    setImportanceFilter(value);
+    handleClose();
+  };
+
+  const handleStatusClose = () => {
+    setStatusAnchorEl(null);
+  }
+
+  const handleStatusSelect = (value) => {
+    setSelectedFilter(value)
+    handleClose();
   };
 
   const areAllSelected = filteredMatches.length > 0 && filteredMatches.every(m => selectedIds.includes(m.matchId));
@@ -315,7 +386,7 @@ function Matches() {
                 mx={2}
                 mt={-3}
                 mb={4}
-                py={3}
+                py={1}
                 px={2}
                 variant="gradient"
                 bgColor="info"
@@ -332,45 +403,70 @@ function Matches() {
                   Create Match
                 </Button>
               </MDBox>
-
-              <MDBox display="flex" justifyContent="center" gap="2" flexWrap="wrap" style={{ color: "#FFF !important" }} mb={2}>
-                <StatusButton variant={selectedFilter === 'notUpdated' ? 'contained' : 'outlined'} onClick={() => filterMatches('notUpdated')} sx={{ mx: 1 }}>
-                  Not Updated
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'all' ? 'contained' : 'outlined'} onClick={() => filterMatches('all')} sx={{ mx: 1 }}>
-                  All Matches
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'ongoing' ? 'contained' : 'outlined'} onClick={() => filterMatches('ongoing')} sx={{ mx: 1 }}>
-                  Ongoing
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'upcoming' ? 'contained' : 'outlined'} onClick={() => filterMatches('upcoming')} sx={{ mx: 1 }}>
-                  Upcoming
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'completed' ? 'contained' : 'outlined'} onClick={() => filterMatches('completed')} sx={{ mx: 1 }}>
-                  Completed
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'delayedOrAbandoned' ? 'contained' : 'outlined'} onClick={() => filterMatches('delayedOrAbandoned')} sx={{ mx: 1 }}>
-                  Delayed or Abandoned
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'important' ? 'contained' : 'outlined'} onClick={() => filterMatches('important')} sx={{ mx: 1 }}>
-                  Important
-                </StatusButton>
-                <StatusButton variant={selectedFilter === 'notImportant' ? 'contained' : 'outlined'} onClick={() => filterMatches('notImportant')} sx={{ mx: 1 }}>
-                  Un Important
-                </StatusButton>
-              </MDBox>
-              <MDBox display="flex" justifyContent="space-between" alignItems="center" px={2} py={1}>
-                <MDTypography variant="button" color="text" fontWeight="medium">
-                  Matches found:{" "}
-                  <MDTypography component="span" variant="button" color="info" fontWeight="bold">
-                    ({filteredMatches?.length})
+              <MDBox display="flex" justifyContent="space-between" alignItems="center" gap="2" p={2} flexWrap="wrap">
+                <MDBox display="flex" justifyContent="start" alignItems="center" py={1}>
+                  <MDTypography variant="button" color="text" fontWeight="medium">
+                    Matches found:{" "}
+                    <MDTypography component="span" variant="button" color="info" fontWeight="bold">
+                      ({filteredMatches?.length})
+                    </MDTypography>
                   </MDTypography>
-                </MDTypography>
-                {selectedIds?.length > 0 && selectedFilter == "notUpdated" && <StatusButton variant="contained" color="primary" fontWeight="medium" onClick={(e) => handleSelectedUpdate(e)}>
-                  Update All
-                </StatusButton>}
+                </MDBox>
+                <MDBox display="flex" gap={2}>
+                  <MDBox>
+                    <Tooltip title="Filter matches by status">
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={handleStatusClick}
+                        endIcon={<ArrowDropDown />}
+                        sx={{ textTransform: "none", minWidth: 180, fontWeight: "medium",color: "#FFF !important" }}
+                      >
+                        Status: {statusOptions.find(o => o.value === selectedFilter)?.label || 'All Matches'}
+                      </Button>
+                    </Tooltip>
+
+                    <Menu anchorEl={statusAnchorEl} open={statusOpen} onClose={handleStatusClose}>
+                      {statusOptions.map(option => (
+                        <MenuItem
+                          key={option.value}
+                          selected={selectedFilter === option.value}
+                          onClick={() => {
+                            handleStatusSelect(option.value);
+                            handleStatusClose();
+                          }}
+                        >
+                          {option.label}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </MDBox>
+                  <MDBox>
+                    <Tooltip title="Filter by importance">
+                      <Button
+                        variant="outlined"
+                        onClick={handleClick}
+                        endIcon={<ArrowDropDown />}
+                        sx={{ textTransform: "none", minWidth: 160, fontWeight: "medium", color: "#FFF !important" }}
+                      >
+                        Importance: {(importanceFilter || "all") === "all" ? "All" : (importanceFilter || "").replace("_", " ").toUpperCase()}
+                      </Button>
+                    </Tooltip>
+                    <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                      {["all", "very_high", "high", "medium", "low"].map((level) => (
+                        <MenuItem key={level} onClick={() => handleSelectImportance(level)}>
+                          {level === "all" ? "All" : level.replace("_", " ").toUpperCase()}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </MDBox>
+                  {selectedIds?.length > 0 && selectedFilter == "notUpdated" &&
+                    <StatusButton sx={{ m: "0 !important" }} variant="contained" color="primary" fontWeight="medium" onClick={(e) => handleSelectedUpdate(e)}>
+                      Update All
+                    </StatusButton>}
+                </MDBox>
               </MDBox>
-              <MDBox pt={3}>
+              <MDBox>
                 {loading && (
                   <Box display="flex" justifyContent="center" alignItems="center" height="100%">
                     <CircularProgress />

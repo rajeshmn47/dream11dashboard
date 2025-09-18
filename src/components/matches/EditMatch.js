@@ -217,49 +217,24 @@ export default function EditMatchModal({ matchId, matchdata, teamsList, seriesLi
                         </Grid>
                     </Grid>
                     <FormControl fullWidth sx={{ mt: 2 }}>
-                        <InputLabel>Is It Important?</InputLabel>
+                        <InputLabel>Importance</InputLabel>
                         <Select
-                            value={match?.important}
-                            label="Is It Important?"
-                            name="important"
-                            onChange={(e) => handleChange(e)}
+                            value={match?.importance ?? ""}
+                            label="Importance"
+                            name="importance"
+                            onChange={handleChange}
                             sx={{
                                 borderRadius: "5px",
                                 marginBottom: "16px",
                                 "& .MuiInputBase-root": { height: "50px !important" },
                                 "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
-                                "& .MuiOutlinedInput-root-MuiSelect-root": { height: "50px !important" }
                             }}
                         >
-                            <MenuItem key='yes' value={true}>
-                                Yes {/* Adjust based on your schema */}
-                            </MenuItem>
-                            <MenuItem key='no' value={false}>
-                                No {/* Adjust based on your schema */}
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth sx={{ mt: 2 }}>
-                        <InputLabel>Is It Un Important?</InputLabel>
-                        <Select
-                            value={match?.notImportant}
-                            label="Is It Not Important?"
-                            name="notImportant"
-                            onChange={(e) => handleChange(e)}
-                            sx={{
-                                borderRadius: "5px",
-                                marginBottom: "16px",
-                                "& .MuiInputBase-root": { height: "50px !important" },
-                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
-                                "& .MuiOutlinedInput-root-MuiSelect-root": { height: "50px !important" }
-                            }}
-                        >
-                            <MenuItem key='yes' value={true}>
-                                Yes {/* Adjust based on your schema */}
-                            </MenuItem>
-                            <MenuItem key='no' value={false}>
-                                No {/* Adjust based on your schema */}
-                            </MenuItem>
+                            <MenuItem value="">Select...</MenuItem>
+                            <MenuItem value="very_high">Very High</MenuItem>
+                            <MenuItem value="high">High</MenuItem>
+                            <MenuItem value="medium">Medium</MenuItem>
+                            <MenuItem value="low">Low</MenuItem>
                         </Select>
                     </FormControl>
                     <Grid container spacing={2}>

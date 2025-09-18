@@ -23,7 +23,8 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
         startDate: "",
         endDate: "",
         important: false,
-        notImportant: false
+        notImportant: false,
+        importance: "medium"
     });
 
     useEffect(() => {
@@ -35,7 +36,8 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                 startDate: seriesData.startDate?.slice(0, 10) || "",
                 endDate: seriesData.endDate?.slice(0, 10) || "",
                 important: seriesData.important || false,
-                notImportant: seriesData.notImportant || false
+                notImportant: seriesData.notImportant || false,
+                importance: seriesData.importance || "medium"
             });
         }
     }, [seriesData]);
@@ -111,46 +113,24 @@ const EditSeriesModal = ({ isOpen, onClose, seriesData, onSave }) => {
                         fullWidth
                     />
                     <FormControl fullWidth sx={{ mt: 2 }}>
-                        <InputLabel>Is It Important?</InputLabel>
+                        <InputLabel>Importance</InputLabel>
                         <Select
-                            value={form?.important}
-                            label="Is It Important?"
-                            name="important"
-                            onChange={(e) => handleChange(e)}
+                            value={form?.importance ?? ""}
+                            label="Importance"
+                            name="importance"
+                            onChange={handleChange}
                             sx={{
                                 borderRadius: "5px",
                                 marginBottom: "16px",
-                                "& .MuiInputBase-root": { height: "50px" },
-                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
+                                "& .MuiInputBase-root": { height: "50px !important" },
+                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px !important" },
                             }}
                         >
-                            <MenuItem key='yes' value={true}>
-                                Yes {/* Adjust based on your schema */}
-                            </MenuItem>
-                            <MenuItem key='no' value={false}>
-                                No {/* Adjust based on your schema */}
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
-                    <FormControl fullWidth sx={{ mt: 2 }}>
-                        <InputLabel>Is It notimportant?</InputLabel>
-                        <Select
-                            value={form?.notImportant}
-                            label="Is It Important?"
-                            name="notImportant"
-                            onChange={(e) => handleChange(e)}
-                            sx={{
-                                borderRadius: "5px",
-                                "& .MuiInputBase-root": { height: "2.8em !important" },
-                                "& .MuiSelect-select": { padding: "14px", minHeight: "50px" },
-                            }}
-                        >
-                            <MenuItem key='yes' value={true}>
-                                Yes {/* Adjust based on your schema */}
-                            </MenuItem>
-                            <MenuItem key='no' value={false}>
-                                No {/* Adjust based on your schema */}
-                            </MenuItem>
+                            <MenuItem value="">Select...</MenuItem>
+                            <MenuItem value="very_high">Very High</MenuItem>
+                            <MenuItem value="high">High</MenuItem>
+                            <MenuItem value="medium">Medium</MenuItem>
+                            <MenuItem value="low">Low</MenuItem>
                         </Select>
                     </FormControl>
                 </Stack>
