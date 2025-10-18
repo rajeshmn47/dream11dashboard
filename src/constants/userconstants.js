@@ -68,7 +68,7 @@ function geturl() {
   //return "https://fantasycricket4u.com"
   //return "https://backend.dreambet11.io"
   // return "https://mangogames.fun/api"
-  return "https://fango11.duckdns.org"
+  return "https://gclteam.duckdns.org"
   //return "http://localhost:8000";
 }
 
