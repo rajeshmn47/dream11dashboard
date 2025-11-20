@@ -55,10 +55,10 @@ export const CLEAR_ERRORS = "CLEAR_ERRORS";
 function geturl() {
   const current = process.env.REACT_APP_API;
   if (current == "locale") {
-    return "https://dream11.insenc.in";
+    return "https://dream11-api.insenc.in";
 
   }
-  return "https://dream11.insenc.in";
+  return "https://dream11-api.insenc.in";
 }
 
 function getfrontendurl() {
