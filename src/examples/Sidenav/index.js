@@ -13,7 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 // react-router-dom components
 import { useLocation, NavLink } from "react-router-dom";
@@ -46,9 +46,12 @@ import {
   setTransparentSidenav,
   setWhiteSidenav,
 } from "context";
+import { URL } from "constants/userconstants";
+import { API } from "api";
 
 function Sidenav({ color, brand, brandName, routes, ...rest }) {
   const [controller, dispatch] = useMaterialUIController();
+  const [sidebarData, setSidebarData] = useState([])
   const { miniSidenav, transparentSidenav, whiteSidenav, darkMode, sidenavColor, loggedIn, appName } = controller;
   const location = useLocation();
   const collapseName = location.pathname.replace("/", "");
@@ -62,6 +65,10 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   }
 
   const closeSidenav = () => setMiniSidenav(dispatch, true);
+
+  useEffect(() => {
+    fetchSidebarData()
+  }, [])
 
   useEffect(() => {
     // A function that sets the mini state of the sidenav.
@@ -83,10 +90,20 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
     return () => window.removeEventListener("resize", handleMiniSidenav);
   }, [dispatch, location]);
 
-  // Render all the routes from the routes.js (All the visible items on the Sidenav)
-  const renderRoutes = routes.filter((r) => ((!loggedIn) || !((r.key == 'sign-in') || (r.key == 'sign-up')))).map(({ type, name, icon, title, noCollapse, key, href, route }) => {
-    let returnValue;
+  const fetchSidebarData = async () => {
+    try {
+      const res = await API.get(`${URL}/admin/sidebar-data`); // Update endpoint as needed
+      setSidebarData(res.data.data);
+    } catch (err) {
+      console.error("Error fetching users:", err);
+    }
+  };
 
+  // Render all the routes from the routes.js (All the visible items on the Sidenav)
+  const renderRoutes = routes.filter((r) => ((!loggedIn) || !((r.key == 'sign-in') || (r.key == 'sign-up')))).map(({ type, name, icon, title, noCollapse, key, href, route, badge }) => {
+    let returnValue;
+    let badgeData = sidebarData[badge] ? `(${sidebarData[badge]})` : ''
+    name = `${name}  ${badgeData}`
     if (type === "collapse") {
       returnValue = href ? (
         <Link
@@ -162,14 +179,11 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
           </MDTypography>
         </MDBox>
         <MDBox component={NavLink} to="/" display="flex" alignItems="center">
-          {brand && <MDBox component="img" src={brand} alt="Brand" width="2rem" />}
+          {brand && <MDBox component="img" src={brand} alt="Brand" width="100%" />}
           <MDBox
             width={!brandName && "100%"}
             sx={(theme) => sidenavLogoLabel(theme, { miniSidenav })}
           >
-            <MDTypography component="h6" variant="button" fontWeight="medium" color={textColor}>
-              {appName}
-            </MDTypography>
           </MDBox>
         </MDBox>
       </MDBox>
@@ -180,19 +194,6 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
-      <MDBox p={2} mt="auto">
-        <MDButton
-          component="a"
-          href="https://www.creative-tim.com/product/material-dashboard-pro-react"
-          target="_blank"
-          rel="noreferrer"
-          variant="gradient"
-          color={sidenavColor}
-          fullWidth
-        >
-          upgrade to pro
-        </MDButton>
-      </MDBox>
     </SidenavRoot>
   );
 }

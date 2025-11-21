@@ -103,13 +103,16 @@ const PlayerTable = () => {
     };
 
     const confirmDelete = async (id) => {
-        await API.delete(`${URL}/player/delete/${id}`);
+        console.log(id,'id id')
+        await API.delete(`${URL}/player/delete/${selectedPlayer?._id}`);
         fetchPlayers();
         showNotification({
             color: "success",
             icon: "check",
             title: "player deleted successfully!"
         });
+        setSelectedPlayer(null)
+        setDeleteDialogOpen(false)
     };
 
     const columns = [

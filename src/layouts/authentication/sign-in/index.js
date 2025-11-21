@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState } from "react";
 
 // react-router-dom components
@@ -47,84 +32,95 @@ import { useMaterialUIController } from "context";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
+  const [data, setData] = useState({ email: "", password: "" });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const [controller, dispatch] = useMaterialUIController();
-  const [data, setData] = useState({ email: '', password: '' });
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setData({ ...data, [name]: value })
-  }
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const responseData = await axios.post(`${URL}/auth/logine`, {
-      myform: { ...data }
-    });
-    console.log(responseData, 'response')
-    localStorage.setItem("token", JSON.stringify(responseData.data.token));
-    localStorage.setItem("user", JSON.stringify(responseData.data.user));
-    setLoggedIn(dispatch, true);
-    navigate('/dashboard')
-  }
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axios.post(`${URL}/auth/logine`, { myform: data });
+      const { token, user } = response.data;
+
+      localStorage.setItem("token", JSON.stringify(token));
+      localStorage.setItem("user", JSON.stringify(user));
+      setLoggedIn(dispatch, true);
+
+      // Optionally, persist only if "remember me" checked
+      if (rememberMe) {
+        localStorage.setItem("rememberMe", true);
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.response?.data?.error || "Something went wrong");
+      console.log(err, "login error");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <BasicLayout image={bgImage}>
       <Card>
-        <MDBox
-          variant="gradient"
-          bgColor="info"
-          borderRadius="lg"
-          coloredShadow="info"
-          mx={2}
-          p={2}
-          mb={1}
-          textAlign="center"
-        >
-          <MDTypography variant="h5" fontWeight="medium" color="white" mt={1}>
-            Sign in
-          </MDTypography>
-        </MDBox>
         <MDBox pt={4} pb={3} px={3}>
-          <MDBox component="form" role="form">
+          <MDBox component="form" role="form" onSubmit={handleSubmit}>
             <MDBox mb={2}>
-              <MDInput type="email" label="Email" fullWidth name="email" value={data.email} onChange={(e) => handleChange(e)} />
+              <MDInput
+                type="email"
+                label="Email"
+                fullWidth
+                name="email"
+                value={data.email}
+                onChange={handleChange}
+                required
+              />
             </MDBox>
+
             <MDBox mb={2}>
-              <MDInput type="password" label="Password" fullWidth name="password" value={data.password} onChange={(e) => handleChange(e)} />
+              <MDInput
+                type="password"
+                label="Password"
+                fullWidth
+                name="password"
+                value={data.password}
+                onChange={handleChange}
+                required
+              />
             </MDBox>
+
             <MDBox display="flex" alignItems="center" ml={-1}>
-              <Switch checked={rememberMe} onChange={handleSetRememberMe} />
+              <Switch checked={rememberMe} onChange={() => setRememberMe(!rememberMe)} />
               <MDTypography
                 variant="button"
                 fontWeight="regular"
                 color="text"
-                onClick={handleSetRememberMe}
+                onClick={() => setRememberMe(!rememberMe)}
                 sx={{ cursor: "pointer", userSelect: "none", ml: -1 }}
               >
                 &nbsp;&nbsp;Remember me
               </MDTypography>
             </MDBox>
-            <MDBox mt={4} mb={1} onClick={(e) => handleSubmit(e)}>
-              <MDButton variant="gradient" color="info" fullWidth>
-                sign in
-              </MDButton>
-            </MDBox>
-            <MDBox mt={3} mb={1} textAlign="center">
-              <MDTypography variant="button" color="text">
-                Don&apos;t have an account?{" "}
-                <MDTypography
-                  component={Link}
-                  to="/authentication/sign-up"
-                  variant="button"
-                  color="info"
-                  fontWeight="medium"
-                  textGradient
-                >
-                  Sign up
-                </MDTypography>
+
+            {error && (
+              <MDTypography variant="caption" color="error" mt={1}>
+                {error}
               </MDTypography>
+            )}
+
+            <MDBox mt={4} mb={1}>
+              <MDButton type="submit" variant="gradient" color="info" fullWidth disabled={loading}>
+                {loading ? "Signing in..." : "Sign in"}
+              </MDButton>
             </MDBox>
           </MDBox>
         </MDBox>

@@ -427,6 +427,9 @@ export function getpercentage(arr) {
   let a = thisweekdata(arr).length;
   let b = lastweekdata(arr).length;
   let z = ((a / b) * 100) - 100;
+  if (b == 0) {
+    return 0;
+  }
   if (z > 0) {
     return Math.floor(z);
   }
@@ -562,7 +565,7 @@ export function setbarchartdata(teams, type, l) {
     return data;
   }
   else if (type == "day") {
-    teams = teams.filter((t) => new Date() - new Date(t.createdAt) < 60 * 60 * 24 * 7 * 1000)
+    teams = teams.filter((t) => new Date() - new Date(t.createdAt) < 60 * 60 * 24 * 1000)
     let data = {
       labels: ["M", "T", "W", "T", "F", "S", "S"],
       datasets: { label: "Requests", data: [50, 20, 10, 22, 50, 10, 40] },

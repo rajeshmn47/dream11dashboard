@@ -293,6 +293,7 @@ function SeriesList() {
                   <TextField
                     label="Search series"
                     variant="outlined"
+                    fullWidth
                     size="small"
                     sx={{ borderColor: "#344767" }}
                     value={search}
