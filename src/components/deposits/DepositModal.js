@@ -51,7 +51,7 @@ export default function DepositModal({ open, onClose, userId, onDeposit, allUser
       <DialogContent sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>
         <Box display="flex" flexDirection="column" gap={2} mt={1}>
           <Typography variant="body2" color="text.secondary">
-            Enter the amount you want to deposit into your wallet.
+            Enter the amount you want to deposit into user's wallet.
           </Typography>
           <TextField
             type="number"
@@ -68,7 +68,7 @@ export default function DepositModal({ open, onClose, userId, onDeposit, allUser
               onChange={(e, newValue) => {
                 if (newValue) setUser(newValue);
               }}
-              renderInput={(params) => <TextField {...params} label="Player Name" fullWidth />}
+              renderInput={(params) => <TextField {...params} label="User Name" fullWidth />}
             />
           </Grid>
         </Box>

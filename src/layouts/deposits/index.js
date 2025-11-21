@@ -112,7 +112,7 @@ function Deposits() {
     status: (
       <MDBox ml={-1} sx={{ cursor: 'pointer' }} onClick={() => handleApprove(deposit)}>
         <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-          {deposit.verified ? "Verified" : "Pending"}
+          {deposit.status}
         </span>} color={deposit.verified ? "success" : "warning"} variant="gradient" size="sm" />
       </MDBox>
     ),
@@ -123,16 +123,18 @@ function Deposits() {
     ),
     actions: (
       <MDBox display="flex" justifyContent="center">
-        <MDBox ml={-1} sx={{ cursor: 'pointer' }} onClick={() => handleApprove(deposit)}>
-          <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            approve
-          </span>} color="success" variant="gradient" size="sm" />
-        </MDBox>
-        <MDBox ml={1} sx={{ cursor: 'pointer' }} onClick={() => handleDecline(deposit)}>
-          <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            decline
-          </span>} color="error" variant="gradient" size="sm" />
-        </MDBox>
+        {deposit.status == "pending" ?
+          <>
+            <MDBox ml={-1} sx={{ cursor: 'pointer' }} onClick={() => handleApprove(deposit)}>
+              <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                approve
+              </span>} color="success" variant="gradient" size="sm" />
+            </MDBox>
+            <MDBox ml={1} sx={{ cursor: 'pointer' }} onClick={() => handleDecline(deposit)}>
+              <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                decline
+              </span>} color="error" variant="gradient" size="sm" />
+            </MDBox></> : <MDBox ml={1}>—</MDBox>}
       </MDBox>
     ),
   }));

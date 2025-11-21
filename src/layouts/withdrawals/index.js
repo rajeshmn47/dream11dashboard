@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Grid, Card } from "@mui/material";
+import { Drawer, Grid, Card, Tooltip, Menu, MenuItem } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
@@ -15,6 +15,7 @@ import styled from "@emotion/styled";
 import { Button } from "@mui/material";
 import useNotification from "hooks/useComponent";
 import WithdrawalModal from "components/withdrawals/WithdrawalModal";
+import { ArrowDropDown } from "@mui/icons-material";
 
 const ApproveButton = styled(Button)`
   background: linear-gradient(195deg, #66BB6A, #43A047) !important;
@@ -39,11 +40,21 @@ const DeatilTop = styled.div`
 
 function Withdrawals() {
     const [wcolumnData, setWColumnData] = useState([]);
+    const [withdrawals, setWithdrawals] = useState([]);
     const [selected, setSelected] = useState({ open: false, data: null });
     const [loading, setLoading] = useState(false);
     const { showNotification, NotificationComponent } = useNotification();
     const [open, setOpen] = useState(false);
     const [allUsersList, setAllUsersList] = useState([]);
+    const [statusFilter, setStatusFilter] = useState('pending');
+    const [statusAnchorEl, setStatusAnchorEl] = useState(null);
+    const statusOpen = Boolean(statusAnchorEl)
+    const statusOptions = [
+        { value: 'all', label: 'All Withdrawals' },
+        { value: 'pending', label: 'Pending' },
+        { value: 'approved', label: 'Approved' },
+        { value: 'rejected', label: 'Rejected' },
+    ];
 
     useEffect(() => {
         fetchWithdrawals();
@@ -53,6 +64,17 @@ function Withdrawals() {
         fetchUsers()
     }, []);
 
+    useEffect(() => {
+        if (statusFilter == "all") {
+            console.log(wcolumnData, statusFilter, 'all column data')
+            setWithdrawals([...wcolumnData])
+        }
+        else {
+            let w = wcolumnData.filter((w) => w.status == statusFilter)
+            setWithdrawals([...w])
+        }
+    }, [statusFilter])
+
     const fetchUsers = async () => {
         try {
             const res = await API.get(`${URL}/admin/users`); // Update endpoint as needed
@@ -61,6 +83,18 @@ function Withdrawals() {
             console.error("Error fetching users:", err);
         }
     };
+
+    const handleStatusSelect = (value) => {
+        setStatusFilter(value)
+        handleClose();
+    };
+
+    const handleStatusClose = () => {
+        setStatusAnchorEl(null);
+    }
+
+    const handleStatusClick = (event) => setStatusAnchorEl(event.currentTarget)
+    const handleClose = () => setStatusAnchorEl(null);
 
     const handleWView = (data) => {
         setSelected({ open: true, data });
@@ -99,18 +133,50 @@ function Withdrawals() {
         }
     };
 
-    const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
+    console.log(wcolumnData, statusFilter, withdrawals, 'column data')
+
+    const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData: wcolumnData, handleWView, handleApprove });
 
     return (
         <DashboardLayout>
             <DashboardNavbar />
-            <Button
-                variant="contained"
-                sx={{ mt: 2, float: "right", mr: 2 }}
-                onClick={() => setOpen(true)}
-            >
-                Add Withdraw
-            </Button>
+            <MDBox display="flex" justifyContent="space-between">
+                <MDBox>
+                    <Tooltip title="Filter matches by status">
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            onClick={handleStatusClick}
+                            endIcon={<ArrowDropDown />}
+                            sx={{ textTransform: "none", minWidth: 180, fontWeight: "medium", color: "#FFF !important" }}
+                        >
+                            Status: {statusOptions.find(o => o.value === statusFilter)?.label || 'All Matches'}
+                        </Button>
+                    </Tooltip>
+
+                    <Menu anchorEl={statusAnchorEl} open={statusOpen} onClose={handleStatusClose}>
+                        {statusOptions.map(option => (
+                            <MenuItem
+                                key={option.value}
+                                selected={statusFilter === option.value}
+                                onClick={() => {
+                                    handleStatusSelect(option.value);
+                                    handleStatusClose();
+                                }}
+                            >
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </MDBox>
+                <Button
+                    variant="contained"
+                    sx={{}}
+                    onClick={() => setOpen(true)}
+                >
+                    Add Withdraw
+                </Button>
+            </MDBox>
             <MDBox py={3}>
                 <Grid container spacing={3}>
                     <Grid item xs={12}>

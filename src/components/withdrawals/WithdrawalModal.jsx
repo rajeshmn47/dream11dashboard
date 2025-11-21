@@ -47,11 +47,11 @@ export default function WithdrawalModal({ open, onClose, userId, onDeposit, allU
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>Deposit Money</DialogTitle>
+      <DialogTitle sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>Withdraw Money</DialogTitle>
       <DialogContent sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>
         <Box display="flex" flexDirection="column" gap={2} mt={1}>
           <Typography variant="body2" color="text.secondary">
-            Enter the amount you want to deposit into your wallet.
+            Enter the amount you want to withdraw from user's wallet.
           </Typography>
           <TextField
             type="number"
@@ -68,7 +68,7 @@ export default function WithdrawalModal({ open, onClose, userId, onDeposit, allU
               onChange={(e, newValue) => {
                 if (newValue) setUser(newValue);
               }}
-              renderInput={(params) => <TextField {...params} label="Player Name" fullWidth />}
+              renderInput={(params) => <TextField {...params} label="User Name" fullWidth />}
             />
           </Grid>
         </Box>

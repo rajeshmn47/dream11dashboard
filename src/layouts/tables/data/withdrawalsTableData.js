@@ -27,7 +27,7 @@ import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
 import "./../../dashboard.css";
 
-export default function data({ wcolumnData, handleWView }) {
+export default function data({ wcolumnData, handleWView, handleApprove, handleDecline }) {
   console.log(wcolumnData, 'columndata');
   const Author = ({ image, name, email }) => (
     <MDBox display="flex" alignItems="center" lineHeight={1}>
@@ -56,29 +56,53 @@ export default function data({ wcolumnData, handleWView }) {
     wcolumns: [
       { Header: "user", accessor: "author", width: "45%", align: "left" },
       { Header: "upi id", accessor: "function", align: "left" },
-      { Header: "amount", accessor: "status", align: "center" },
+      { Header: "amount", accessor: "amount", align: "center" },
+      { Header: "status", accessor: "status", align: "center" },
       { Header: "action", accessor: "action", align: "center" },
     ],
 
-    wrows: [...wcolumnData.map((c) => {
+    wrows: wcolumnData?.length > 0 ? [...wcolumnData?.map((c) => {
       return {
-        author: <Author image={team2} name={c?.user[0]?.username} email={c?.user[0]?.email} />,
+        author: <Author image={c?.user?.[0]?.image} name={c?.user[0]?.username} email={c?.user[0]?.email} />,
         function: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             {c.upiId}
           </MDTypography>
         ),
-        status: (
+        amount: (
           <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
             {c.amount}
           </MDTypography>
         ),
+        status: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            <MDBox><MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {c.status}
+            </span>} color="success" variant="gradient" size="sm" />
+            </MDBox>
+          </MDTypography >
+        ),
         action: (
-          <MDBox ml={-1} onClick={() => handleWView(c)} className="mdbox">
-            <MDBadge badgeContent="view" color="success" variant="gradient" size="sm" />
+          <MDBox display="flex" justifyContent="center">
+            {c.status == "pending" ?
+              <><MDBox ml={1} sx={{ cursor: 'pointer' }} onClick={() => handleWView(c)}>
+                <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  approve
+                </span>} color="success" variant="gradient" size="sm" />
+              </MDBox>
+                <MDBox ml={1} sx={{ cursor: 'pointer' }} onClick={() => handleWView(c)}>
+                  <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    decline
+                  </span>} color="error" variant="gradient" size="sm" />
+                </MDBox>
+                <MDBox ml={1} onClick={() => handleWView(c)} className="mdbox">
+                  <MDBadge badgeContent="view" color="success" variant="gradient" size="sm" />
+                </MDBox>
+              </>
+              : <MDBox ml={1}>—</MDBox>}
           </MDBox>
         ),
       }
-    })]
+    })] : []
   };
 }
