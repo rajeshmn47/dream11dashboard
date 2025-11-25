@@ -53,7 +53,7 @@ export default function TeamModal({ isOpen, onClose, onSuccess, editData }) {
     e.preventDefault();
     try {
       if (editData) {
-        await axios.put(`/api/teams/${editData._id}`, form);
+        await API.put(`${URL}/api/match/team/${editData._id}`, form);
       } else {
         await API.post(`${URL}/api/match/team/create`, form);
       }
