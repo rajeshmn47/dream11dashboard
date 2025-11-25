@@ -73,15 +73,34 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Withdrawals(24)",
+    name: "Withdrawals",
     key: "withdrawals",
     icon: <Icon fontSize="small">account_balance_wallet</Icon>,
     route: "/withdrawals",
     component: <Withdrawals />,
+    badge: "pendingWithdrawals",
   },
   {
     type: "collapse",
-    name: "KYC(5)",
+    name: "Deposits",
+    key: "deposits",
+    icon: <Icon fontSize="small">arrow_circle_down_icon</Icon>,
+    route: "/deposits",
+    component: <Deposits />,
+    badge: "pendingDeposits",
+  },
+  {
+    type: "collapse",
+    name: "Matches",
+    key: "matches",
+    icon: <Icon fontSize="small">sports_score</Icon>,
+    route: "/matches",
+    component: <Matches />,
+    badge: "pendingMatches",
+  },
+  {
+    type: "collapse",
+    name: "KYC",
     key: "kyc",
     icon: <Icon fontSize="small">badge</Icon>,
     route: "/kyc",
@@ -89,11 +108,12 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Contests(24)",
+    name: "Contests",
     key: "contests",
     icon: <Icon fontSize="small">emoji_events</Icon>,
     route: "/contests",
     component: <Contests />,
+    badge: "contests",
   },
   // DO NOT import AddSeries
 
@@ -106,13 +126,14 @@ const routes = [
     route: "/series",
     component: <SeriesList />,
   },
- {
+  {
     type: "collapse",
     name: "Users",
     key: "users",
     icon: <Icon fontSize="small">group</Icon>,
     route: "/users",
     component: <UsersList />,
+    badge: "pendingUsers",
   },
   {
     type: "collapse",
@@ -122,36 +143,20 @@ const routes = [
     route: "/squads",
     component: <SquadsPage />,
   },
-    {
+  {
     type: "collapse",
     name: "Players",
     key: "players",
     icon: <Icon fontSize="small">sports_soccer</Icon>,
     route: "/players",
     component: <PlayerTable />,
-  },  {
+  }, {
     type: "collapse",
     name: "Teams",
     key: "teams",
     icon: <Icon fontSize="small">groups_3</Icon>,
     route: "/teams",
     component: <TeamList />,
-  },
-  {
-    type: "collapse",
-    name: "Matches(24)",
-    key: "matches",
-    icon: <Icon fontSize="small">sports_score</Icon>,
-    route: "/matches",
-    component: <Matches />,
-  },
-  {
-    type: "collapse",
-    name: "Deposits(24)",
-    key: "deposits",
-    icon: <Icon fontSize="small">arrow_circle_down_icon</Icon>,
-    route: "/deposits",
-    component: <Deposits />,
   },
   {
     type: "collapsed",
@@ -163,7 +168,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Suspicious Activities(4)",
+    name: "Suspicious Activities",
     key: "suspicious",
     icon: <Icon fontSize="small">report_problem</Icon>,
     route: "/suspicious",
@@ -187,7 +192,7 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Configuration(24)",
+    name: "Configuration",
     key: "configuration",
     icon: <Icon fontSize="small">settings</Icon>,
     route: "/configuration",
