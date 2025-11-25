@@ -86,7 +86,7 @@ export default function TeamList() {
                     variant="contained"
                     color="success"
                     size="small"
-                    onClick={() => console.log("Approve", data._id)}
+                    onClick={() => handleEdit(data)}
                     disabled={data.status === "Approved"}
                 >
                     Edit

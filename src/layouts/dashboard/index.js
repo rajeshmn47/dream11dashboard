@@ -161,6 +161,18 @@ function Dashboard() {
     let w = await API.get(`${URL}/payment/depositData`);
     setColumnData(w.data.deposits);
   }
+  const getTitle = (base) => {
+    switch (type) {
+      case "day":
+        return `Today's ${base}`;
+      case "week":
+        return `This Week's ${base}`;
+      case "month":
+        return `This Month's ${base}`;
+      default:
+        return base;
+    }
+  };
   const { columns, rows } = depositsTableData({ columnData, handleView });
   const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData, handleWView });
   console.log(allteams, "allmatches");
@@ -178,7 +190,7 @@ function Dashboard() {
                 count={todaysdata(allteams).length}
                 percentage={{
                   color: getpercentage(allteams) > 0 ? "success" : "error",
-                  amount: getpercentage(allteams) > 0 ? "+" + getpercentage(allteams) + "%" : getpercentage(allteams) + "%",
+                  amount: getpercentage(allteams) > 0 ? "+" + getpercentage(allteams) + "%" : (isNaN(getpercentage(allteams)) ? 0 : getpercentage(allteams)) + "%",
                   label: "than lask week",
                 }}
               />
@@ -192,7 +204,7 @@ function Dashboard() {
                 count={todaysdata(allusers).length}
                 percentage={{
                   color: getpercentage(allusers) > 0 ? "success" : "error",
-                  amount: getpercentage(allusers) > 0 ? "+" + getpercentage(allusers) + "%" : getpercentage(allusers) + "%",
+                  amount: getpercentage(allusers) > 0 ? "+" + getpercentage(allusers) + "%" : (isNaN(getpercentage(allusers)) ? 0 : getpercentage(allusers)) + "%",
                   label: "than last week",
                 }}
               />
@@ -321,7 +333,7 @@ function Dashboard() {
                 {chartData && (
                   <ReportsBarChart
                     color="info"
-                    title="today's teams"
+                    title={getTitle("teams")}
                     description="Last Campaign Performance"
                     date="campaign sent 2 days ago"
                     chart={chartData}
@@ -333,7 +345,7 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="success"
-                  title="Todays's users"
+                  title={getTitle("users")}
                   description={
                     <>
                       (<strong>+15%</strong>) increase in today sales.
@@ -348,7 +360,7 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="dark"
-                  title="Today's matches"
+                  title={getTitle('matches')}
                   description="Last Campaign Performance"
                   date="just updated"
                   chart={matchesChart}
@@ -359,7 +371,7 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="primary"
-                  title="Today's transactions"
+                  title={getTitle('transactions')}
                   description="Last Campaign Performance"
                   date="just updated"
                   chart={transactionsChart}
