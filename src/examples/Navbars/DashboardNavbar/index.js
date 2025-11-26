@@ -53,6 +53,8 @@ import {
   setOpenConfigurator,
 } from "context";
 import { setLoggedIn } from "context";
+import { URL } from "constants/userconstants";
+import { API } from "api";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const navigate = useNavigate();
@@ -61,6 +63,7 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode, loggedIn } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const [openAccountMenu, setOpenAccountMenu] = useState(false);
+  const [notifications, setNotifications] = useState()
   const route = useLocation().pathname.split("/").slice(1);
 
   useEffect(() => {
@@ -89,6 +92,26 @@ function DashboardNavbar({ absolute, light, isMini }) {
     return () => window.removeEventListener("scroll", handleTransparentNavbar);
   }, [dispatch, fixedNavbar]);
 
+  useEffect(() => {
+    const getNotifications = async () => {
+      try {
+        const { data } = await API.get(`${URL}/notifications/all?unreadOnly=true`);
+        setNotifications(data);   // save notifications to state
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    getNotifications();
+  }, []);
+
+  const notificationIcons = {
+    kyc: "verified_user",
+    deposit: "arrow_downward",      // money added
+    withdraw: "arrow_upward",       // money removed
+    general: "notifications",       // default
+  };
+
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
   const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
@@ -116,9 +139,21 @@ function DashboardNavbar({ absolute, light, isMini }) {
       onClose={handleCloseMenu}
       sx={{ mt: 2 }}
     >
-      <NotificationItem icon={<Icon>email</Icon>} title="Check new messages" />
-      <NotificationItem icon={<Icon>podcasts</Icon>} title="Manage Podcast sessions" />
-      <NotificationItem icon={<Icon>shopping_cart</Icon>} title="Payment successfully completed" />
+      {(!notifications?.length > 0) ? (
+        <NotificationItem
+          icon={<Icon>notifications_off</Icon>}
+          title="No notifications"
+        />
+      ) : (
+        <>{notifications.map((n) => (
+          <NotificationItem
+            key={n._id}
+            icon={<Icon>{notificationIcons[n.type] || "notifications"}</Icon>}
+            title={n.title}
+          />
+        ))}
+        </>
+      )}
     </Menu>
   );
 
