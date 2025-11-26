@@ -25,7 +25,7 @@ function Profile() {
       setLoading(true);
       try {
         const response = await API.get(`${URL}/admin/profile`);
-        setProfileData(response.data.profile || {});
+        setProfileData(response.data.user || {});
       } catch (error) {
         console.error("Error fetching profile data:", error);
       } finally {
@@ -88,16 +88,10 @@ function Profile() {
                   label="Name"
                   name="name"
                   fullWidth
-                  value={profileData.name}
+                  value={profileData.username}
                   onChange={handleInputChange}
-                  disabled={!editMode}
+                  
                   margin="normal"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "5px",
-                    },
-                  }}
                 />
                 <TextField
                   label="Email"
@@ -105,43 +99,24 @@ function Profile() {
                   fullWidth
                   value={profileData.email}
                   onChange={handleInputChange}
-                  disabled={!editMode}
+                  
                   margin="normal"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "5px",
-                    },
-                  }}
                 />
                 <TextField
                   label="Role"
                   name="role"
                   fullWidth
                   value={profileData.role}
-                  disabled
                   margin="normal"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "5px",
-                    },
-                  }}
                 />
                 <TextField
                   label="Contact"
                   name="contact"
                   fullWidth
-                  value={profileData.contact}
+                  value={profileData.phonenumber}
                   onChange={handleInputChange}
-                  disabled={!editMode}
+                  
                   margin="normal"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "5px",
-                    },
-                  }}
                 />
               </MDBox>
             </Card>
@@ -158,16 +133,10 @@ function Profile() {
                   label="App Name"
                   name="appName"
                   fullWidth
-                  value={profileData.appName}
+                  value="Dreamcricket11"
                   onChange={handleInputChange}
-                  disabled={!editMode}
+                  
                   margin="normal"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "5px",
-                    },
-                  }}
                 />
                 <TextField
                   select
@@ -176,14 +145,8 @@ function Profile() {
                   fullWidth
                   value={profileData.usageTier}
                   onChange={handleInputChange}
-                  disabled={!editMode}
+                  
                   margin="normal"
-                  sx={{
-                    "& .MuiInputBase-root": {
-                      backgroundColor: "#f5f5f5",
-                      borderRadius: "5px",
-                    },
-                  }}
                 >
                   <MenuItem value="slow">Slow</MenuItem>
                   <MenuItem value="medium">Medium</MenuItem>

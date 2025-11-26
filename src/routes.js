@@ -130,22 +130,6 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Suspicious Activities",
-    key: "suspicious",
-    icon: <Icon fontSize="small">report_problem</Icon>,
-    route: "/suspicious",
-    component: <SuspiciousActivities />,
-  },
-  {
-    type: "collapse",
-    name: "Notifications",
-    key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
-  },
-  {
-    type: "collapse",
     name: "Profile",
     key: "profile",
     icon: <Icon fontSize="small">person</Icon>,

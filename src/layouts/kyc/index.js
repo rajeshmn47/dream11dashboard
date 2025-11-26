@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Card, Button } from "@mui/material";
+import { Grid, Card, Button, Modal, Box } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
@@ -7,89 +7,95 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import useNotification from "hooks/useComponent";
+import { URL } from "constants/userconstants";
+import { API } from "api";
 
 function KYC() {
   const [kycData, setKycData] = useState([]);
   const [loading, setLoading] = useState(false);
-    const { showNotification, NotificationComponent } = useNotification();
+  const [openModal, setOpenModal] = useState(false);
+  const [modalDocs, setModalDocs] = useState([]);
+  const { showNotification, NotificationComponent } = useNotification();
 
-  // Mock data for KYC requests
-  const mockKYCData = [
-    {
-      _id: "1",
-      user: { username: "JohnDoe" },
-      documentType: "Passport",
-      documentUrl: "https://example.com/document1.pdf",
-      status: "Pending",
-    },
-    {
-      _id: "2",
-      user: { username: "JaneSmith" },
-      documentType: "Driver's License",
-      documentUrl: "https://example.com/document2.pdf",
-      status: "Pending",
-    },
-    {
-      _id: "3",
-      user: { username: "AliceBrown" },
-      documentType: "Aadhar Card",
-      documentUrl: "https://example.com/document3.pdf",
-      status: "Approved",
-    },
-  ];
+  const fetchKycData = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get(`${URL}/kyc/all`);
+      setKycData([...res.data]);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      showNotification("Failed to fetch KYC data", "error");
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simulate fetching data
-    setLoading(true);
-    setTimeout(() => {
-      setKycData(mockKYCData);
-      setLoading(false);
-    }, 1000);
+    fetchKycData();
   }, []);
 
-  const handleApprove = (id) => {
-    setKycData((prevData) =>
-      prevData.map((data) =>
-        data._id === id ? { ...data, status: "Approved" } : data
-      )
-    );
+  const updateStatus = async (id, status) => {
+    try {
+      const res = await API.put(`${URL}/kyc/verify/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setKycData((prevData) =>
+          prevData.map((item) =>
+            item._id === id ? { ...item, status: data.kyc.status } : item
+          )
+        );
+        showNotification(`KYC ${status}`, "success");
+      } else {
+        showNotification(data.message || "Failed to update", "error");
+      }
+    } catch (err) {
+      console.error(err);
+      showNotification("Server error", "error");
+    }
   };
 
-  const handleReject = (id) => {
-    setKycData((prevData) =>
-      prevData.map((data) =>
-        data._id === id ? { ...data, status: "Rejected" } : data
-      )
-    );
+  const handleApprove = (id) => updateStatus(id, "approved");
+  const handleReject = (id) => updateStatus(id, "rejected");
+
+  const handleOpenModal = (docs) => {
+    setModalDocs(docs);
+    setOpenModal(true);
   };
 
+  const handleCloseModal = () => setOpenModal(false);
+
+  // Table columns
   const columns = [
     { Header: "User", accessor: "user", align: "left" },
-    { Header: "Document Type", accessor: "documentType", align: "center" },
-    { Header: "Document", accessor: "document", align: "center" },
+    { Header: "Documents", accessor: "docs", align: "center" },
     { Header: "Status", accessor: "status", align: "center" },
     { Header: "Action", accessor: "action", align: "center" },
   ];
 
-  const rows = kycData.map((data) => ({
+  const rows = kycData.map((item) => ({
     user: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
-        {data.user.username}
+        {item.userId?.email || "Unknown"}
       </MDTypography>
     ),
-    documentType: (
-      <MDTypography variant="caption" color="text" fontWeight="medium">
-        {data.documentType}
-      </MDTypography>
-    ),
-    document: (
-      <a href={data.documentUrl} target="_blank" rel="noopener noreferrer">
-        View Document
-      </a>
+    docs: (
+      <MDBox display="flex" flexDirection="column" gap={0.5}>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => handleOpenModal(item.docs)}
+        >
+          View Documents ({item.docs.length})
+        </Button>
+      </MDBox>
     ),
     status: (
       <MDTypography variant="caption" color="text" fontWeight="medium">
-        {data.status}
+        {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
       </MDTypography>
     ),
     action: (
@@ -98,8 +104,8 @@ function KYC() {
           variant="contained"
           color="success"
           size="small"
-          onClick={() => handleApprove(data._id)}
-          disabled={data.status === "Approved"}
+          onClick={() => handleApprove(item._id)}
+          disabled={item.status === "approved"}
         >
           Approve
         </Button>
@@ -107,8 +113,8 @@ function KYC() {
           variant="contained"
           color="error"
           size="small"
-          onClick={() => handleReject(data._id)}
-          disabled={data.status === "Rejected"}
+          onClick={() => handleReject(item._id)}
+          disabled={item.status === "rejected"}
         >
           Reject
         </Button>
@@ -151,7 +157,49 @@ function KYC() {
           </Grid>
         </Grid>
       </MDBox>
+
+      {/* Modal for viewing documents */}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 500,
+            bgcolor: "background.paper",
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <MDTypography variant="h6" mb={2}>
+            Documents
+          </MDTypography>
+          {modalDocs.map((url, idx) => (
+            <a
+              key={idx}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "block", marginBottom: "10px", wordBreak: "break-all" }}
+            >
+              Document {idx + 1}
+            </a>
+          ))}
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={handleCloseModal}
+            sx={{ mt: 2 }}
+          >
+            Close
+          </Button>
+        </Box>
+      </Modal>
+
       <Footer />
+      <NotificationComponent />
     </DashboardLayout>
   );
 }
