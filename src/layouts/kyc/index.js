@@ -36,25 +36,24 @@ function KYC() {
 
   const updateStatus = async (id, status) => {
     try {
-      const res = await API.put(`${URL}/kyc/verify/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
+      const res = await API.put(`${URL}/kyc/verify/${id}`, { status: status });
+      setKycData((prevData) =>
+        prevData.map((item) =>
+          item._id == id ? { ...item, status: res.data.kyc.status } : item
+        )
+      );
+      showNotification({
+        color: "success",
+        icon: "check",
+        title: `KYC ${status} successfully!`
       });
-      const data = await res.json();
-      if (res.ok) {
-        setKycData((prevData) =>
-          prevData.map((item) =>
-            item._id === id ? { ...item, status: data.kyc.status } : item
-          )
-        );
-        showNotification(`KYC ${status}`, "success");
-      } else {
-        showNotification(data.message || "Failed to update", "error");
-      }
     } catch (err) {
       console.error(err);
-      showNotification("Server error", "error");
+      showNotification({
+        color: "error",
+        icon: "check",
+        title: "Failed to update"
+      });
     }
   };
 
@@ -104,7 +103,7 @@ function KYC() {
           variant="contained"
           color="success"
           size="small"
-          onClick={() => handleApprove(item._id)}
+          onClick={() => handleApprove(item._id, "approved")}
           disabled={item.status === "approved"}
         >
           Approve
@@ -113,7 +112,7 @@ function KYC() {
           variant="contained"
           color="error"
           size="small"
-          onClick={() => handleReject(item._id)}
+          onClick={() => handleReject(item._id, "rejected")}
           disabled={item.status === "rejected"}
         >
           Reject
