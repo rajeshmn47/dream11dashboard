@@ -92,7 +92,7 @@ export default function data({ wcolumnData, handleWView, handleApprove, handleDe
               </MDBox>
                 <MDBox ml={1} sx={{ cursor: 'pointer' }} onClick={() => handleWView(c)}>
                   <MDBadge badgeContent={<span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    decline
+                    reject
                   </span>} color="error" variant="gradient" size="sm" />
                 </MDBox>
                 <MDBox ml={1} onClick={() => handleWView(c)} className="mdbox">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Drawer, Grid, Card, Tooltip, Menu, MenuItem } from "@mui/material";
+import { Drawer, Grid, Card, Tooltip, Menu, MenuItem, Dialog } from "@mui/material";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import DataTable from "examples/Tables/DataTable";
@@ -16,6 +16,7 @@ import { Button } from "@mui/material";
 import useNotification from "hooks/useComponent";
 import WithdrawalModal from "components/withdrawals/WithdrawalModal";
 import { ArrowDropDown } from "@mui/icons-material";
+import MDBadge from "components/MDBadge";
 
 const ApproveButton = styled(Button)`
   background: linear-gradient(195deg, #66BB6A, #43A047) !important;
@@ -28,12 +29,25 @@ const ApproveButton = styled(Button)`
   }
 `;
 
+const RejectButton = styled(Button)`
+  background: linear-gradient(195deg, #EF5350, #E53935) !important;
+  color: #ffffff !important;
+  width: 160px;
+  margin: 0 auto;
+  &:hover {
+    background-color: var(--green);
+    color: #ffffff;
+  }
+`;
+
+
 const DeatilTop = styled.div`
   margin-top: 10px;
   text-align: center;
   padding: 10px 0;
+  color: #fff;
   p {
-    color: rgba(0, 0, 0, 0.6);
+    color: #fff;
     text-transform: uppercase;
   }
 `;
@@ -46,13 +60,13 @@ function Withdrawals() {
     const { showNotification, NotificationComponent } = useNotification();
     const [open, setOpen] = useState(false);
     const [allUsersList, setAllUsersList] = useState([]);
-    const [statusFilter, setStatusFilter] = useState('pending');
+    const [statusFilter, setStatusFilter] = useState('all');
     const [statusAnchorEl, setStatusAnchorEl] = useState(null);
     const statusOpen = Boolean(statusAnchorEl)
     const statusOptions = [
         { value: 'all', label: 'All Withdrawals' },
         { value: 'pending', label: 'Pending' },
-        { value: 'approved', label: 'Approved' },
+        { value: 'completed', label: 'Approved' },
         { value: 'rejected', label: 'Rejected' },
     ];
 
@@ -67,13 +81,13 @@ function Withdrawals() {
     useEffect(() => {
         if (statusFilter == "all") {
             console.log(wcolumnData, statusFilter, 'all column data')
-            setWithdrawals([...wcolumnData])
+            setWColumnData([...withdrawals])
         }
         else {
-            let w = wcolumnData.filter((w) => w.status == statusFilter)
-            setWithdrawals([...w])
+            let w = withdrawals.filter((w) => w.status == statusFilter)
+            setWColumnData([...w])
         }
-    }, [statusFilter])
+    }, [statusFilter,withdrawals])
 
     const fetchUsers = async () => {
         try {
@@ -103,7 +117,7 @@ function Withdrawals() {
     async function fetchWithdrawals() {
         setLoading(true);
         const response = await API.get(`${URL}/payment/withdrawData`);
-        setWColumnData(response.data.withdrawals);
+        setWithdrawals([...response.data.withdrawals]);
         setLoading(false);
     }
 
@@ -118,6 +132,18 @@ function Withdrawals() {
             title: "withdrawal approved successfully!"
         });
     };
+
+    const handleReject = async () => {
+        await API.get(`${URL}/payment/rejectWithdraw?withdrawId=${selected.data._id}`);
+        setSelected({ ...selected, open: false });
+        const response = await API.get(`${URL}/payment/withdrawData`);
+        setWColumnData(response.data.withdrawals);
+        showNotification({
+            color: "success",
+            icon: "check",
+            title: "withdrawal rejected successfully!"
+        });
+    }
 
     const onUpdate = async (deposit) => {
         try {
@@ -138,106 +164,128 @@ function Withdrawals() {
     const { wcolumns, wrows } = withdrawalsTableData({ wcolumnData: wcolumnData, handleWView, handleApprove });
 
     return (
-        <DashboardLayout>
-            <DashboardNavbar />
-            <MDBox display="flex" justifyContent="space-between">
-                <MDBox>
-                    <Tooltip title="Filter matches by status">
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={handleStatusClick}
-                            endIcon={<ArrowDropDown />}
-                            sx={{ textTransform: "none", minWidth: 180, fontWeight: "medium", color: "#FFF !important" }}
-                        >
-                            Status: {statusOptions.find(o => o.value === statusFilter)?.label || 'All Matches'}
-                        </Button>
-                    </Tooltip>
+        <>
+            <DashboardLayout>
+                <DashboardNavbar />
+                <MDBox display="flex" justifyContent="space-between">
+                    <MDBox>
+                        <Tooltip title="Filter matches by status">
+                            <Button
+                                variant="outlined"
+                                color="primary"
+                                onClick={handleStatusClick}
+                                endIcon={<ArrowDropDown />}
+                                sx={{ textTransform: "none", minWidth: 180, fontWeight: "medium", color: "#FFF !important" }}
+                            >
+                                Status: {statusOptions.find(o => o.value === statusFilter)?.label || 'All Matches'}
+                            </Button>
+                        </Tooltip>
 
-                    <Menu anchorEl={statusAnchorEl} open={statusOpen} onClose={handleStatusClose}>
-                        {statusOptions.map(option => (
-                            <MenuItem
-                                key={option.value}
-                                selected={statusFilter === option.value}
-                                onClick={() => {
-                                    handleStatusSelect(option.value);
-                                    handleStatusClose();
-                                }}
-                            >
-                                {option.label}
-                            </MenuItem>
-                        ))}
-                    </Menu>
+                        <Menu anchorEl={statusAnchorEl} open={statusOpen} onClose={handleStatusClose}>
+                            {statusOptions.map(option => (
+                                <MenuItem
+                                    key={option.value}
+                                    selected={statusFilter === option.value}
+                                    onClick={() => {
+                                        handleStatusSelect(option.value);
+                                        handleStatusClose();
+                                    }}
+                                >
+                                    {option.label}
+                                </MenuItem>
+                            ))}
+                        </Menu>
+                    </MDBox>
+                    <Button
+                        variant="contained"
+                        sx={{}}
+                        onClick={() => setOpen(true)}
+                    >
+                        Add Withdraw
+                    </Button>
                 </MDBox>
-                <Button
-                    variant="contained"
-                    sx={{}}
-                    onClick={() => setOpen(true)}
-                >
-                    Add Withdraw
-                </Button>
-            </MDBox>
-            <MDBox py={3}>
-                <Grid container spacing={3}>
-                    <Grid item xs={12}>
-                        <Card>
-                            <MDBox
-                                mx={2}
-                                mt={3}
-                                py={3}
-                                px={2}
-                                variant="gradient"
-                                bgColor="info"
-                                borderRadius="lg"
-                                coloredShadow="info"
-                            >
-                                <MDTypography variant="h6" color="white">
-                                    Withdrawal Requests
-                                </MDTypography>
-                            </MDBox>
-                            <MDBox pt={3}>
-                                <DataTable
-                                    table={{ columns: wcolumns, rows: wrows }}
-                                    isSorted={true}
-                                    entriesPerPage={false}
-                                    showTotalEntries={false}
-                                    noEndBorder
-                                />
-                            </MDBox>
-                        </Card>
+                <MDBox py={3}>
+                    <Grid container spacing={3}>
+                        <Grid item xs={12}>
+                            <Card>
+                                <MDBox
+                                    mx={2}
+                                    mt={3}
+                                    py={3}
+                                    px={2}
+                                    variant="gradient"
+                                    bgColor="info"
+                                    borderRadius="lg"
+                                    coloredShadow="info"
+                                >
+                                    <MDTypography variant="h6" color="white">
+                                        Withdrawal Requests
+                                    </MDTypography>
+                                </MDBox>
+                                <MDBox pt={3}>
+                                    <DataTable
+                                        table={{ columns: wcolumns, rows: wrows }}
+                                        isSorted={true}
+                                        entriesPerPage={false}
+                                        showTotalEntries={false}
+                                        noEndBorder
+                                    />
+                                </MDBox>
+                            </Card>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </MDBox>
-            <WithdrawalModal
-                open={open}
-                onClose={() => setOpen(false)}
-                onDeposit={onUpdate}
-                allUsersList={allUsersList}
-            />
-            <Drawer anchor="top" open={selected.open} onClose={() => setSelected({ ...selected, open: false })}>
+                </MDBox>
+                <Footer />
+            </DashboardLayout>
+            <Dialog
+                open={selected.open}
+                onClose={() => setSelected({ ...selected, open: false })}
+                PaperProps={{
+                    sx: {
+                        width: "350px",
+                        maxWidth: "350px",
+                        p: 2,
+                        borderRadius: "12px",
+                        backgroundColor: "#344767", color: "#fff", p: 3
+                    }
+                }}
+            >
+                {/* Close button */}
+                < div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button variant="text" onClick={() => setSelected({ ...selected, open: false })}>
+                        <p style={{ color: "#fff" }}>Close</p>
+                    </Button>
+                </div>
+
                 <DeatilTop>
                     <p>Amount</p>
                     <h5>₹{selected?.data?.amount}</h5>
                 </DeatilTop>
+
                 <DeatilTop>
                     <p>User</p>
                     <h5>{selected?.data?.user[0]?.username}</h5>
                 </DeatilTop>
+
                 <DeatilTop>
                     <p>UPI ID</p>
                     <h5>{selected?.data?.user[0]?.upiId}</h5>
                 </DeatilTop>
+
                 <DeatilTop>
                     <p>Account Details</p>
                     <h5>{selected?.data?.user[0]?.accountNumber}</h5>
                     <h5>{selected?.data?.user[0]?.ifsc}</h5>
                 </DeatilTop>
-                <ApproveButton color="success" onClick={handleApprove}>
-                    Approve
-                </ApproveButton>
-            </Drawer>
-            <Footer />
-        </DashboardLayout>
+
+                <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                    <ApproveButton color="success" onClick={handleApprove}>Approve</ApproveButton>
+                    <RejectButton color="success" onClick={handleReject}>
+                        Reject
+                    </RejectButton>
+                </div>
+            </Dialog >
+        </>
     );
 }
 

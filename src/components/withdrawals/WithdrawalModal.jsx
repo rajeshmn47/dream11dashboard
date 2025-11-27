@@ -46,50 +46,8 @@ export default function WithdrawalModal({ open, onClose, userId, onDeposit, allU
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
-      <DialogTitle sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>Withdraw Money</DialogTitle>
-      <DialogContent sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>
-        <Box display="flex" flexDirection="column" gap={2} mt={1}>
-          <Typography variant="body2" color="text.secondary">
-            Enter the amount you want to withdraw from user's wallet.
-          </Typography>
-          <TextField
-            type="number"
-            label="Amount (₹)"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            fullWidth
-          />
-          <Grid item xs={3}>
-            <Autocomplete
-              options={allUsersList}
-              getOptionLabel={(option) => option.username}
-              value={allUsersList.find(p => p._id === user._id) || null}
-              onChange={(e, newValue) => {
-                if (newValue) setUser(newValue);
-              }}
-              renderInput={(params) => <TextField {...params} label="User Name" fullWidth />}
-            />
-          </Grid>
-        </Box>
-        {error && (
-          <Typography variant="caption" color="error">
-            {error}
-          </Typography>
-        )}
-      </DialogContent>
-      <DialogActions sx={{ backgroundColor: "#344767", color: "#fff", p: 3 }}>
-        <Button onClick={onClose} disabled={loading}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          onClick={handleWithdrawal}
-          disabled={loading}
-        >
-          {loading ? "Withdrawing..." : "Withdraw"}
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <div>
+      abcd
+    </div>
   );
 }

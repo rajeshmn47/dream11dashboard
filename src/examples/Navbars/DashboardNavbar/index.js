@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Material Dashboard 2 React - v2.2.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/material-dashboard-react
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 import { useState, useEffect } from "react";
 
 // react-router components
@@ -55,6 +40,8 @@ import {
 import { setLoggedIn } from "context";
 import { URL } from "constants/userconstants";
 import { API } from "api";
+import { getDisplayDate } from "utils/dateformat";
+import { Badge } from "@mui/material";
 
 function DashboardNavbar({ absolute, light, isMini }) {
   const navigate = useNavigate();
@@ -63,7 +50,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
   const { miniSidenav, transparentNavbar, fixedNavbar, openConfigurator, darkMode, loggedIn } = controller;
   const [openMenu, setOpenMenu] = useState(false);
   const [openAccountMenu, setOpenAccountMenu] = useState(false);
-  const [notifications, setNotifications] = useState()
+  const [notifications, setNotifications] = useState();
+  const [unreadCount, setUnreadCount] = useState(0);
   const route = useLocation().pathname.split("/").slice(1);
 
   useEffect(() => {
@@ -96,7 +84,8 @@ function DashboardNavbar({ absolute, light, isMini }) {
     const getNotifications = async () => {
       try {
         const { data } = await API.get(`${URL}/notifications/all?unreadOnly=true`);
-        setNotifications(data);   // save notifications to state
+        setNotifications(data.notifications.slice(0, 10));   // save notifications to state
+        setUnreadCount(data.unread)
       } catch (error) {
         console.error("Error fetching notifications:", error);
       }
@@ -114,7 +103,11 @@ function DashboardNavbar({ absolute, light, isMini }) {
 
   const handleMiniSidenav = () => setMiniSidenav(dispatch, !miniSidenav);
   const handleConfiguratorOpen = () => setOpenConfigurator(dispatch, !openConfigurator);
-  const handleOpenMenu = (event) => setOpenMenu(event.currentTarget);
+  const handleOpenMenu = async (event) => {
+    setOpenMenu(event.currentTarget);
+    await API.put(`${URL}/notifications/admin-mark-read`);
+    setUnreadCount(0);
+  }
   const handleOpenAccountMenu = (event) => setOpenAccountMenu(event.currentTarget);
   const handleCloseMenu = () => setOpenMenu(false);
   const handleCloseAccountMenu = () => setOpenAccountMenu(false);
@@ -145,13 +138,36 @@ function DashboardNavbar({ absolute, light, isMini }) {
           title="No notifications"
         />
       ) : (
-        <>{notifications.map((n) => (
-          <NotificationItem
-            key={n._id}
-            icon={<Icon>{notificationIcons[n.type] || "notifications"}</Icon>}
-            title={n.title}
-          />
-        ))}
+        <>
+          {notifications.map((n) => (
+            <div
+              key={n._id}
+              style={{
+                padding: "12px 16px",
+                borderBottom: "1px solid #eee",
+                background: n.read ? "#fff" : "#eef6ff", // highlight unread
+                cursor: "pointer",
+                minWidth: "260px"
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ fontWeight: n.read ? "normal" : "600" }}>
+                  {n.title}
+                </span>
+
+                {n.message && (
+                  <span style={{ fontSize: "0.85rem", color: "#555" }}>
+                    {n.message}
+                  </span>
+                )}
+
+                <span style={{ fontSize: "0.75rem", color: "gray", marginTop: "4px" }}>
+                  {getDisplayDate(n.createdAt)}
+                </span>
+              </div>
+            </div>
+          ))}
+
         </>
       )}
     </Menu>
@@ -241,7 +257,17 @@ function DashboardNavbar({ absolute, light, isMini }) {
                 variant="contained"
                 onClick={handleOpenMenu}
               >
-                <Icon sx={iconsStyle}>notifications</Icon>
+                <Badge
+                  badgeContent={unreadCount > 0 ? unreadCount : null}
+                  color="error"
+                  overlap="circular"
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <Icon sx={iconsStyle}>notifications</Icon>
+                </Badge>
               </IconButton>
               {renderMenu()}
             </MDBox>

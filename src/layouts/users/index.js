@@ -53,7 +53,7 @@ function UsersList() {
 
   const confirmDelete = async () => {
     try {
-      await API.delete(`${URL}/admin/users/${selectedUser}`);
+      await API.delete(`${URL}/admin/users/${selectedUser?._id}`);
       setDeleteDialogOpen(!deleteDialogOpen);
       showNotification({
         color: "error",
