@@ -50,6 +50,7 @@ const EditPlayerModal = ({ open, onClose, onUpdate, player, refresh }) => {
       await refresh();
       onClose();
       onUpdate();
+      refresh();
     } catch (err) {
       alert("Error updating player");
     }
