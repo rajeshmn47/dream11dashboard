@@ -87,7 +87,7 @@ function Withdrawals() {
             let w = withdrawals.filter((w) => w.status == statusFilter)
             setWColumnData([...w])
         }
-    }, [statusFilter,withdrawals])
+    }, [statusFilter, withdrawals])
 
     const fetchUsers = async () => {
         try {
@@ -122,28 +122,77 @@ function Withdrawals() {
     }
 
     const handleApprove = async () => {
-        await API.get(`${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`);
-        setSelected({ ...selected, open: false });
-        const response = await API.get(`${URL}/payment/withdrawData`);
-        setWColumnData(response.data.withdrawals);
-        showNotification({
-            color: "success",
-            icon: "check",
-            title: "withdrawal approved successfully!"
-        });
+        try {
+            setLoading(true);
+
+            const res = await API.get(
+                `${URL}/payment/approveWithdraw?withdrawId=${selected.data._id}`
+            );
+
+            showNotification({
+                color: "success",
+                icon: "check",
+                title: "Success!",
+                message: res.data.message || "Withdrawal approved successfully!"
+            });
+
+            setSelected({ ...selected, open: false });
+
+            const response = await API.get(`${URL}/payment/withdrawData`);
+            setWColumnData(response.data.withdrawals);
+
+        } catch (error) {
+            console.error("Approve withdraw error:", error);
+            setSelected({ ...selected, open: false });
+            showNotification({
+                color: "error",
+                icon: "x",
+                title: "Approval Failed!",
+                message:
+                    error?.response?.data?.message ||
+                    "Something went wrong while approving withdrawal."
+            });
+        } finally {
+            setLoading(false);
+        }
     };
 
+
     const handleReject = async () => {
-        await API.get(`${URL}/payment/rejectWithdraw?withdrawId=${selected.data._id}`);
-        setSelected({ ...selected, open: false });
-        const response = await API.get(`${URL}/payment/withdrawData`);
-        setWColumnData(response.data.withdrawals);
-        showNotification({
-            color: "success",
-            icon: "check",
-            title: "withdrawal rejected successfully!"
-        });
-    }
+        try {
+            setLoading(true);
+
+            const res = await API.get(
+                `${URL}/payment/rejectWithdraw?withdrawId=${selected.data._id}`
+            );
+
+            showNotification({
+                color: "success",
+                icon: "check",
+                title: "Rejected!",
+                message: res.data.message || "Withdrawal rejected successfully!"
+            });
+
+            setSelected({ ...selected, open: false });
+
+            const response = await API.get(`${URL}/payment/withdrawData`);
+            setWColumnData(response.data.withdrawals);
+
+        } catch (error) {
+            console.error("Reject withdraw error:", error);
+            setSelected({ ...selected, open: false });
+            showNotification({
+                color: "error",
+                icon: "x",
+                title: "Rejection Failed!",
+                message:
+                    error?.response?.data?.message ||
+                    "Something went wrong while rejecting withdrawal."
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const onUpdate = async (deposit) => {
         try {
@@ -285,6 +334,7 @@ function Withdrawals() {
                     </RejectButton>
                 </div>
             </Dialog >
+            <NotificationComponent />
         </>
     );
 }

@@ -188,6 +188,7 @@ function Deposits() {
         />
       </MDBox>
       <Footer />
+      <NotificationComponent />
     </DashboardLayout>
   );
 }
